@@ -20,6 +20,7 @@
   --sl-color-text-accent: var(--accent); --sl-color-bg-inline-code: var(--code-inline);
   --sl-color-hairline: var(--line); --sl-color-hairline-light: var(--line); --sl-color-hairline-shade: var(--line);
 }
+:root[data-theme] .sidebar a[aria-current='page'] { background: var(--accent); color: var(--paper); }
 * { box-sizing: border-box; }
 .personal-site { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.75 var(--sl-font); }
 .personal-site a { color: var(--accent); text-underline-offset: .22em; }

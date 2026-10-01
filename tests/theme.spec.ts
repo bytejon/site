@@ -16,6 +16,8 @@ test('theme persists between custom and documentation layouts and reloads', asyn
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  const selected = page.locator('.sidebar a[aria-current="page"]');
+  expect(await selected.evaluate(el => getComputedStyle(el).color)).toBe('rgb(16, 26, 42)');
   await page.screenshot({ path: `test-results/${test.info().project.name}-docs-dark.png`, fullPage: true });
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible()) await menu.click();
