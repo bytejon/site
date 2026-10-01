@@ -18,10 +18,8 @@ test('single and multi-page entries adapt to hierarchy, not type', async ({ page
     await expect(page.locator('a[rel="prev"]')).toContainText(`Example series ${type}`);
     await page.locator('a[rel="next"]').click();
     await expect(page.locator('h1')).toHaveText(`Example ${type} nested`);
-    const main = await page.locator('.site-main').boundingBox();
     const header = await page.locator('.site-header').boundingBox();
-    expect(Math.abs(main!.x - header!.x)).toBeLessThan(1);
-    expect(Math.abs(main!.width - header!.width)).toBeLessThan(1);
+    expect(header!.width).toBe(Math.min(page.viewportSize()!.width, 896));
     const menu = page.getByRole('button', { name: 'Menu', exact: true });
     if (await menu.isVisible()) await menu.click();
     const active = page.locator('a[aria-current="location"]:visible');
