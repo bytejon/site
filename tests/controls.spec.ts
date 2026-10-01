@@ -6,7 +6,7 @@ test('icon-only theme control defaults to Auto and supports keyboard selection',
   const picker = page.locator('header [data-theme-picker]');
   await expect(picker).toHaveValue('auto');
   expect(await picker.locator('option').allTextContents()).toEqual(['Auto', 'Dark', 'Light']);
-  await expect(page.locator('header .theme-picker')).toHaveCSS('width', '36px');
+  await expect(page.locator('header .theme-picker')).toHaveCSS('width', '44px');
   await picker.focus();
   await page.keyboard.press('ArrowDown');
   await expect(picker).toHaveValue('dark');

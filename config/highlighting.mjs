@@ -11,5 +11,5 @@ export const expressiveCode = {
   useDarkModeMediaQuery: false,
   themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
   shiki: { langs: [luau] },
-  styleOverrides: { borderRadius: '4px', codeFontSize: '0.875rem' },
+  styleOverrides: { borderRadius: '4px', codeFontSize: '0.875rem', codePaddingBlock: 'var(--space-4)', codePaddingInline: 'var(--space-5)' },
 };

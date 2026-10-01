@@ -1,18 +1,34 @@
 ---
+import Search from '@astrojs/starlight/components/Search.astro';
 import DefaultSidebar from '@astrojs/starlight/components/Sidebar.astro';
 import { href } from '../lib/site';
 const current = Astro.url.pathname;
 const links = [['Writing', 'writing/'], ['Projects', 'projects/'], ['About', 'about/']];
 ---
+<div class="docs-search"><Search /></div>
 <nav class="docs-primary-menu" aria-label="Site menu">
   {links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? (current === href(path) ? 'page' : 'location') : undefined}>{label}</a>)}
 </nav>
 <DefaultSidebar />
 <style>
+  .docs-search { margin-bottom: var(--space-4); }
+  .docs-search :global(site-search > button) { width: 100%; }
   .docs-primary-menu { display: none; }
   @media (max-width: 49.999rem) {
     .docs-primary-menu { display: grid; gap: .35rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
-    a { display: block; padding: .35rem .5rem; text-decoration: none; color: var(--ink); font-weight: 550; }
+    a { display: block; min-height: var(--control-size); padding: var(--space-3); text-decoration: none; color: var(--ink); font-weight: 550; }
     a:hover { background: var(--surface); color: var(--accent); }
   }
 </style>
+
+<script>
+  // Keep the native search dialog usable when the mobile sidebar popover is closed.
+  customElements.whenDefined('site-search').then(() => {
+    const dialog = document.querySelector<HTMLDialogElement>('.docs-search dialog');
+    if (!dialog) return;
+    document.body.append(dialog);
+    dialog.addEventListener('toggle', event => {
+      if ((event as ToggleEvent).newState === 'open') dialog.querySelector<HTMLInputElement>('input')?.focus();
+    });
+  });
+</script>

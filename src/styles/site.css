@@ -132,5 +132,32 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .site-header, .page > .header { max-width: var(--site-header-width); padding-inline: var(--site-header-gutter); }
 @media (max-width: 49.999rem) {
   :root { --site-header-gutter: 22px; --sl-nav-pad-x: var(--site-header-gutter); }
-  :root[data-has-sidebar] .page > .header { padding-inline-end: calc(var(--site-header-gutter) + var(--sl-nav-gap) + var(--sl-menu-button-size)); }
+}
+
+:root {
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+  --control-size: 44px; --sl-menu-button-size: var(--control-size); --sl-nav-height: 88px;
+}
+.site-header, .page > .header { height: var(--sl-nav-height); padding-block: 0; background: var(--paper); }
+.site-header .site-nav, .docs-header .site-nav { height: 100%; min-height: 0; padding-block: 0; }
+.site-nav .wordmark { width: var(--control-size); height: var(--control-size); padding: 6px; flex-shrink: 0; }
+.site-nav .nav-links a { display: inline-flex; align-items: center; min-height: var(--control-size); padding: var(--space-3) var(--space-4); }
+.nav-controls { gap: var(--space-3); }
+.docs-menu-space { display: none; width: var(--control-size); height: var(--control-size); flex-shrink: 0; }
+.mobile-nav-panel { padding: var(--space-3); }
+.mobile-nav-panel a { min-height: var(--control-size); padding: var(--space-3) var(--space-4); }
+.section-row { padding: var(--space-6) var(--space-4); }
+.note { padding: var(--space-4) var(--space-5); }
+.prose > ul:not(.tags), .prose > ol { padding-inline-start: var(--space-6); }
+.prose blockquote { padding: var(--space-2) var(--space-5); }
+.tags a { display: inline-flex; align-items: center; min-height: var(--control-size); padding-inline: var(--space-2); }
+.chapter-pagination a { min-height: var(--control-size); padding: var(--space-3); }
+.sidebar-content a, .sidebar-content summary, .docs-primary-menu a { min-height: var(--control-size); padding: var(--space-3) var(--space-3); }
+.right-sidebar a { min-height: var(--control-size); padding: var(--space-3); }
+site-search > button { min-height: var(--control-size); padding: var(--space-2) var(--space-3); }
+:root .expressive-code .copy button { width: var(--control-size); height: var(--control-size); padding: var(--space-2); }
+@media (max-width: 49.999rem) {
+  :root { --sl-nav-height: 80px; }
+  .docs-menu-space { display: inline-flex; }
+  .mobile-nav-panel:popover-open { top: calc(var(--sl-nav-height) + var(--space-2)); }
 }

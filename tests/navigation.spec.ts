@@ -41,19 +41,22 @@ test('topbar has identical centered bounds across layout families', async ({ pag
   if (process.env.TEST_AUTHORING === 'true') paths.push('writing/single-article/', 'writing/single-tutorial/', 'writing/series-article/chapter/', 'writing/series-tutorial/chapter/', 'projects/example-project/reference/api/');
   for (const width of [390, 700, 1440, 1920]) {
     await page.setViewportSize({ width, height: 1000 });
-    let reference: { x: number; width: number; logoX: number; right: number } | undefined;
+    let reference: { x: number; width: number; logoX: number; right: number; height: number; writingX: number; themeX: number } | undefined;
     for (const path of paths) {
       await page.goto(path);
       const header = (await page.locator('body.personal-site > header, .page > header').boundingBox())!;
       const logo = (await page.locator('header .site-logo').boundingBox())!;
       const menu = page.getByRole('button', { name: 'Menu', exact: true });
       const end = (await (await menu.isVisible() ? menu : page.locator('header .theme-picker')).boundingBox())!;
-      const bounds = { x: header.x, width: header.width, logoX: logo.x, right: end.x + end.width };
+      const bounds = { x: header.x, width: header.width, logoX: logo.x, right: end.x + end.width, height: header.height, writingX: width >= 800 ? (await page.locator('header .nav-links a').first().boundingBox())!.x : 0, themeX: (await page.locator('header .theme-picker').boundingBox())!.x };
       reference ||= bounds;
       expect(Math.abs(bounds.x - reference.x)).toBeLessThan(1);
       expect(Math.abs(bounds.width - reference.width)).toBeLessThan(1);
       expect(Math.abs(bounds.logoX - reference.logoX)).toBeLessThan(1);
       expect(Math.abs(bounds.right - reference.right)).toBeLessThan(1);
+      expect(Math.abs(bounds.height - reference.height)).toBeLessThan(1);
+      expect(Math.abs(bounds.writingX - reference.writingX)).toBeLessThan(1);
+      expect(Math.abs(bounds.themeX - reference.themeX)).toBeLessThan(1);
       expect(Math.abs(header.x + header.width / 2 - width / 2)).toBeLessThan(1);
       expect(header.width).toBe(Math.min(width, 896));
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

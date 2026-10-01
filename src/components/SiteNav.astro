@@ -12,6 +12,6 @@ const current = Astro.url.pathname;
   <div class="nav-links">
     {links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? (current === href(path) ? 'page' : 'location') : undefined}>{label}</a>)}
   </div>
-  {!docs && <div class="nav-controls"><ThemeSelect /><MenuButton /></div>}
+  <div class="nav-controls"><ThemeSelect />{docs ? <span class="docs-menu-space" aria-hidden="true"></span> : <MenuButton />}</div>
 </nav>
 {!docs && <div id="site-mobile-menu" class="mobile-nav-panel" popover="auto"><nav aria-label="Site menu">{links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? (current === href(path) ? 'page' : 'location') : undefined}>{label}</a>)}</nav></div>}
