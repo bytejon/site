@@ -1,0 +1,30 @@
+---
+interface Props { controls?: string; docs?: boolean }
+import { IconMenu2 } from '@tabler/icons-astro';
+const { controls = 'site-mobile-menu', docs = false } = Astro.props;
+---
+<button class:list={['mobile-menu-button', { 'docs-menu-button': docs }]} type="button" popovertarget={controls} aria-label="Menu" aria-controls={controls} aria-expanded="false" data-nav-toggle>
+  <IconMenu2 size={20} stroke={1.6} aria-hidden="true" focusable="false" />
+</button>
+<script>
+  const desktop = matchMedia('(min-width: 50rem)');
+  document.querySelectorAll<HTMLButtonElement>('[data-nav-toggle]').forEach(button => {
+    const panel = document.getElementById(button.getAttribute('aria-controls')!);
+    if (!panel) return;
+    panel.addEventListener('toggle', event => {
+      const open = (event as ToggleEvent).newState === 'open';
+      button.setAttribute('aria-expanded', String(open));
+      if (panel.id === 'site-mobile-menu') {
+        document.querySelectorAll<HTMLElement>('.site-main, .site-footer').forEach(el => el.toggleAttribute('inert', open));
+      }
+    });
+    desktop.addEventListener('change', () => { if (desktop.matches && panel.matches(':popover-open')) panel.hidePopover(); });
+  });
+</script>
+<style>
+  .mobile-menu-button { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); cursor: pointer; padding: 7px; }
+  @media (max-width: 49.999rem) {
+    .mobile-menu-button { display: inline-flex; }
+    .docs-menu-button { position: fixed; top: calc((var(--sl-nav-height) - 36px) / 2); right: var(--sl-nav-pad-x); z-index: var(--sl-z-index-navbar); }
+  }
+</style>

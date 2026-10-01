@@ -97,6 +97,14 @@ Copy the starter folders from `examples/tutorials/` or `examples/projects/` into
 
 Edit the home page in `src/pages/index.astro` and your bio in `src/pages/about.astro`. Styling is in `src/styles/site.css`. No invented articles or project descriptions are published in this starter.
 
+## Shared appearance and navigation
+
+Every section uses the same Light/Dark/Auto preference in `starlight-theme` local storage. Auto follows the operating system. The theme provider runs before page styling, preventing a light-theme flash on reload. Warm light and blue-toned dark colors, readable type, borders, focus states, code, and callouts share the tokens in `src/styles/site.css`. Expressive Code follows `data-theme`, including explicit preferences that differ from the OS.
+
+`src/components/ThemeSelect.astro` serves both layout families. Narrow screens use native popover hamburger menus with keyboard/Escape support and synchronized `aria-expanded`; docs retain nested sidebar navigation. Topbars and mobile menus contain no GitHub link. Footer and relevant project source links remain available. Tabler's official `@tabler/icons-astro` package supplies the inline SVG icons, with `currentColor` styling and decorative accessibility attributes.
+
+The supplied three-color logo was recreated as a clean vector in `public/logo.svg` and reused as `public/favicon.svg`. Its background is transparent. The original input remains unchanged in Library; the website publishes only the selected vector artwork.
+
 ## Deploy
 
 Commit and push to `main` in `bytejon/site`. `.github/workflows/deploy.yml` installs the locked dependencies, checks types, builds, verifies the output, and deploys the `dist/` artifact through GitHub Pages. Repository Settings → Pages → Source must be **GitHub Actions**. Each push replaces the public build. GitHub Actions logs show deployment status. To roll back, revert the commit and push.
@@ -112,7 +120,7 @@ As inspected before migration on 2026-10-01, `bytejon/website` owned `www.jonbyt
 3. At the DNS provider, update **only** `www` CNAME from `jonbyte2.github.io` to `bytejon.github.io`. The apex A records already match GitHub Pages: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`. Preserve the existing nameservers, MX, SPF, and all other mail/verification records. No nameserver change is needed. The observed TTL is 14400 seconds (4 hours).
 4. Wait for GitHub's DNS check and certificate issuance, enforce HTTPS, and verify both `https://jonbyte.com` and `https://www.jonbyte.com`, redirects, assets, and RSS before considering the migration complete.
 
-DNS must be updated at Squarespace by the domain owner. Do not consider the migration complete until both domain names and HTTPS have been verified. Draft/demo examples are excluded from the public production build.
+Migration performed on 2026-10-01: `jonbyte.com` is associated with `bytejon/site`, the user updated Squarespace's `www` CNAME to `bytejon.github.io`, and GitHub approved a certificate for both domain names. HTTPS enforcement is enabled. The old `bytejon/website` Pages deployment is unpublished and its deployment workflow is disabled; its source is unchanged. Verify both names after any future DNS change. Draft/demo examples are excluded from the public production build.
 
 ## Verification
 

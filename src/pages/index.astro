@@ -1,20 +1,20 @@
 ---
 import Arrow from '../components/Arrow.astro';
+import { IconPencil, IconBook2, IconCode } from '@tabler/icons-astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { href, posts, formatDate } from '../lib/site';
 const latest = (await posts()).slice(0, 3);
 ---
 <SiteLayout title="Jon">
   <section class="hero">
-    <p class="eyebrow">Jon / bytejon</p>
-    <h1>A place for things<br />I’m working on.</h1>
-    <p class="lede">Writing, tutorials, and open-source projects. An index of interests, ideas, and things learned along the way.</p>
+    <h1>Jon</h1>
+    <p class="lede">Writing, tutorials, and open-source projects.</p>
   </section>
   <section aria-labelledby="explore"><h2 id="explore">Explore</h2>
     <ul class="section-list">
-      <li><a class="section-row" href={href('blog/')}><strong>Blog</strong><p>Posts about interests, work, and ideas.</p><Arrow external /></a></li>
-      <li><a class="section-row" href={href('tutorials/')}><strong>Tutorials</strong><p>Guides with room to work through the details.</p><Arrow external /></a></li>
-      <li><a class="section-row" href={href('projects/')}><strong>Projects</strong><p>Open-source code and its documentation.</p><Arrow external /></a></li>
+      <li><a class="section-row" href={href('blog/')}><strong><IconPencil size={20} stroke={1.6} aria-hidden="true" focusable="false" />Blog</strong><p>Posts about interests, work, and ideas.</p><Arrow /></a></li>
+      <li><a class="section-row" href={href('tutorials/')}><strong><IconBook2 size={20} stroke={1.6} aria-hidden="true" focusable="false" />Tutorials</strong><p>Guides with room to work through the details.</p><Arrow /></a></li>
+      <li><a class="section-row" href={href('projects/')}><strong><IconCode size={20} stroke={1.6} aria-hidden="true" focusable="false" />Projects</strong><p>Open-source code and its documentation.</p><Arrow /></a></li>
     </ul>
   </section>
   <section aria-labelledby="recent"><div class="section-heading"><h2 id="recent">Recent writing</h2><a href={href('blog/')}>All posts <Arrow /></a></div>

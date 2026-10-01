@@ -8,6 +8,8 @@ export const luau = {
 
 export const expressiveCode = {
   themes: ['github-light', 'github-dark'],
+  useDarkModeMediaQuery: false,
+  themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
   shiki: { langs: [luau] },
   styleOverrides: { borderRadius: '4px', codeFontSize: '0.875rem' },
 };

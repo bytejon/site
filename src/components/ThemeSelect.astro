@@ -1,0 +1,40 @@
+---
+import { IconSunMoon } from '@tabler/icons-astro';
+---
+<label class="theme-picker">
+  <IconSunMoon size={17} stroke={1.6} aria-hidden="true" focusable="false" />
+  <span class="theme-label">Theme</span>
+  <select aria-label="Color theme" data-theme-picker>
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+    <option value="auto" selected>Auto</option>
+  </select>
+</label>
+<script>
+  type Theme = 'light' | 'dark' | 'auto';
+  const preference = (): Theme => {
+    const value = localStorage.getItem('starlight-theme');
+    return value === 'light' || value === 'dark' ? value : 'auto';
+  };
+  const systemTheme = matchMedia('(prefers-color-scheme: light)');
+  function apply(value: Theme) {
+    document.documentElement.dataset.theme = value === 'auto' ? (systemTheme.matches ? 'light' : 'dark') : value;
+    document.querySelectorAll<HTMLSelectElement>('[data-theme-picker]').forEach(picker => { picker.value = value; });
+  }
+  document.querySelectorAll<HTMLSelectElement>('[data-theme-picker]').forEach(picker => {
+    picker.addEventListener('change', () => {
+      const value = picker.value as Theme;
+      localStorage.setItem('starlight-theme', value === 'auto' ? '' : value);
+      apply(value);
+    });
+  });
+  systemTheme.addEventListener('change', () => { if (preference() === 'auto') apply('auto'); });
+  window.addEventListener('storage', () => apply(preference()));
+  apply(preference());
+</script>
+<style>
+  .theme-picker { display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; color: var(--muted); }
+  select { color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: .35rem .4rem; font: inherit; cursor: pointer; min-height: 34px; }
+  select:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .theme-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>

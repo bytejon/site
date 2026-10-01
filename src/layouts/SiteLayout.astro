@@ -1,5 +1,6 @@
 ---
 import SiteNav from '../components/SiteNav.astro';
+import ThemeProvider from '@astrojs/starlight/components/ThemeProvider.astro';
 import { href } from '../lib/site';
 import '../styles/site.css';
 interface Props { title: string; description?: string }
@@ -11,6 +12,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ThemeProvider />
     <title>{title === 'Jon' ? title : `${title} · Jon`}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -24,6 +26,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header"><SiteNav /></header>
     <main id="main" class="site-main"><slot /></main>
-    <footer class="site-footer"><span>Jon / bytejon</span><div><a href={href('rss.xml')}>RSS</a><a href="https://github.com/bytejon">GitHub</a></div></footer>
+    <footer class="site-footer"><span>Jon</span><div><a href={href('rss.xml')}>RSS</a><a href="https://github.com/bytejon">GitHub</a></div></footer>
   </body>
 </html>

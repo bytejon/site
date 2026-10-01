@@ -1,19 +1,17 @@
 ---
 import Search from '@astrojs/starlight/components/Search.astro';
-import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
+import ThemeSelect from './ThemeSelect.astro';
 import SiteNav from './SiteNav.astro';
+const { hasSidebar } = Astro.locals.starlightRoute;
 ---
-<div class="docs-header"><SiteNav /><div class="docs-tools"><Search /><div class="theme-control"><ThemeSelect /></div></div></div>
+<div class="docs-header"><SiteNav docs={hasSidebar} /><div class="docs-tools"><Search />{hasSidebar && <div class="theme-control"><ThemeSelect /></div>}</div></div>
 <style>
   .docs-header { width: 100%; display: flex; align-items: center; gap: 1rem; }
   .docs-tools { margin-left: auto; display: flex; align-items: center; gap: .75rem; }
   .docs-header :global(.site-nav) { flex: 1; min-height: auto; }
   @media (max-width: 49.99rem) {
     .docs-header { gap: .5rem; }
-    .docs-header :global(.github-link), .theme-control { display: none; }
     .docs-header :global(.site-nav) { flex: 1; padding: 0; align-items: center; gap: .75rem; }
     .docs-header :global(.wordmark) { font-size: 1.35rem; }
-    .docs-header :global(.nav-links) { flex-wrap: nowrap; gap: .65rem; }
-    .docs-header :global(.nav-links a) { font-size: .76rem; }
   }
 </style>

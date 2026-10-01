@@ -16,10 +16,12 @@ for (const path of ['', 'blog/', 'about/', 'tutorials/', 'projects/']) {
 
 test('home navigation opens blog and return link works', async ({ page }) => {
   await page.goto('');
-  await page.getByRole('navigation', { name: 'Site', exact: true }).getByRole('link', { name: 'Blog', exact: true }).click();
+  const menu = page.getByRole('button', { name: 'Menu', exact: true });
+  if (await menu.isVisible()) await menu.click();
+  await page.locator('a:visible').filter({ hasText: /^Blog$/ }).first().click();
   await expect(page.locator('h1')).toHaveText('Blog');
   await page.getByRole('link', { name: 'Jon', exact: true }).click();
-  await expect(page.locator('h1')).toContainText('A place for things');
+  await expect(page.locator('h1')).toHaveText('Jon');
 });
 
 test('draft MDX and nested docs authoring fixtures', async ({ page }) => {

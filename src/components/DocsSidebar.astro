@@ -1,0 +1,17 @@
+---
+import DefaultSidebar from '@astrojs/starlight/components/Sidebar.astro';
+import { href } from '../lib/site';
+const links = [['Blog', 'blog/'], ['Tutorials', 'tutorials/'], ['Projects', 'projects/'], ['About', 'about/']];
+---
+<nav class="docs-primary-menu" aria-label="Site menu">
+  {links.map(([label, path]) => <a href={href(path)}>{label}</a>)}
+</nav>
+<DefaultSidebar />
+<style>
+  .docs-primary-menu { display: none; }
+  @media (max-width: 49.999rem) {
+    .docs-primary-menu { display: grid; gap: .35rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+    a { display: block; padding: .35rem .5rem; text-decoration: none; color: var(--ink); font-weight: 550; }
+    a:hover { background: var(--surface); color: var(--accent); }
+  }
+</style>

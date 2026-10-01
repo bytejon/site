@@ -1,0 +1,48 @@
+import { test, expect } from '@playwright/test';
+
+test('theme persists between custom and documentation layouts and reloads', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.locator('[data-theme-picker]:visible').first().selectOption('dark');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  expect(await page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('dark');
+  expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(16, 26, 42)');
+  await page.screenshot({ path: `test-results/${test.info().project.name}-home-dark.png`, fullPage: true });
+  expect(await page.locator('body').innerText()).not.toMatch(/bytejon|A place for things/);
+  const homeMenu = page.getByRole('button', { name: 'Menu', exact: true });
+  if (await homeMenu.isVisible()) await homeMenu.click();
+  await page.locator('a:visible').filter({ hasText: /^Tutorials$/ }).first().click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.screenshot({ path: `test-results/${test.info().project.name}-docs-dark.png`, fullPage: true });
+  const menu = page.getByRole('button', { name: 'Menu', exact: true });
+  if (await menu.isVisible()) await menu.click();
+  await page.locator('[data-theme-picker]:visible').first().selectOption('light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.goto('blog/');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(250, 247, 240)');
+  await page.locator('[data-theme-picker]:visible').first().selectOption('auto');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.goto('about/');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  expect(await page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('');
+});
+
+test('Luau code follows the selected theme', async ({ page }) => {
+  test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for local draft verification');
+  await page.goto('blog/authoring-example/');
+  await page.locator('[data-theme-picker]:visible').first().selectOption('dark');
+  const token = page.locator('pre[data-language="luau"] span[style]').first();
+  const darkColor = await token.evaluate(el => getComputedStyle(el).color);
+  await page.screenshot({ path: `test-results/${test.info().project.name}-luau-dark.png`, fullPage: true });
+  await page.locator('[data-theme-picker]:visible').first().selectOption('light');
+  const lightColor = await token.evaluate(el => getComputedStyle(el).color);
+  expect(lightColor).not.toBe(darkColor);
+  await expect(page.getByRole('complementary', { name: 'Custom component example' })).toBeVisible();
+});
