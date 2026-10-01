@@ -1,13 +1,13 @@
 ---
 import { IconSunMoon } from '@tabler/icons-astro';
 ---
-<label class="theme-picker">
+<label class="theme-picker" title="Color theme">
   <IconSunMoon size={17} stroke={1.6} aria-hidden="true" focusable="false" />
   <span class="theme-label">Theme</span>
   <select aria-label="Color theme" data-theme-picker>
-    <option value="light">Light</option>
-    <option value="dark">Dark</option>
     <option value="auto" selected>Auto</option>
+    <option value="dark">Dark</option>
+    <option value="light">Light</option>
   </select>
 </label>
 <script>
@@ -33,8 +33,9 @@ import { IconSunMoon } from '@tabler/icons-astro';
   apply(preference());
 </script>
 <style>
-  .theme-picker { display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; color: var(--muted); }
-  select { color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: .35rem .4rem; font: inherit; cursor: pointer; min-height: 34px; }
-  select:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .theme-picker { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 4px; color: var(--muted); }
+  .theme-picker:hover { background: var(--surface); color: var(--ink); }
+  .theme-picker:has(select:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }
+  select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; color: var(--ink); background: var(--surface); font: inherit; cursor: pointer; }
   .theme-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 </style>

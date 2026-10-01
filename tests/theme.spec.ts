@@ -12,18 +12,18 @@ test('theme persists between custom and documentation layouts and reloads', asyn
   expect(await page.locator('body').innerText()).not.toMatch(/bytejon|A place for things/);
   const homeMenu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await homeMenu.isVisible()) await homeMenu.click();
-  await page.locator('a:visible').filter({ hasText: /^Tutorials$/ }).first().click();
+  await page.locator('a:visible').filter({ hasText: /^Projects$/ }).first().click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  const selected = page.locator('.sidebar a[aria-current="page"]');
+  const selected = page.locator('sl-sidebar-state-persist a[aria-current="page"]');
   expect(await selected.evaluate(el => getComputedStyle(el).color)).toBe('rgb(20, 23, 28)');
   await page.screenshot({ path: `test-results/${test.info().project.name}-docs-dark.png`, fullPage: true });
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible()) await menu.click();
   await page.locator('[data-theme-picker]:visible').first().selectOption('light');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.goto('blog/');
+  await page.goto('writing/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -38,7 +38,7 @@ test('theme persists between custom and documentation layouts and reloads', asyn
 
 test('Luau code follows the selected theme', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for local draft verification');
-  await page.goto('blog/authoring-example/');
+  await page.goto('writing/authoring-example/');
   await page.locator('[data-theme-picker]:visible').first().selectOption('dark');
   const token = page.locator('pre[data-language="luau"] span[style]').first();
   const darkColor = await token.evaluate(el => getComputedStyle(el).color);

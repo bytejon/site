@@ -6,12 +6,16 @@ import { docsSchema } from '@astrojs/starlight/schema';
 
 export const collections = {
   docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
-  blog: defineCollection({
-    loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
+  writing: defineCollection({
+    loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/writing' }),
     schema: z.object({
       title: z.string(),
       description: z.string(),
-      date: z.coerce.date(),
+      date: z.coerce.date().optional(),
+      type: z.enum(['article', 'tutorial']).default('article'),
+      parent: z.string().optional(),
+      order: z.number().default(0),
+      toc: z.boolean().default(false),
       tags: z.array(z.string()).default([]),
       draft: z.boolean().default(true),
     }),

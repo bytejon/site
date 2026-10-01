@@ -1,5 +1,33 @@
 ---
-import Arrow from '../components/Arrow.astro';
+import { IconBrandGithub, IconBrandYoutube, IconBrandX, IconBrandDiscord } from '@tabler/icons-astro';
+import RobloxIcon from '../components/RobloxIcon.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
+const accounts = [
+  { label: 'GitHub', handle: 'bytejon', href: 'https://github.com/bytejon', icon: IconBrandGithub },
+  { label: 'YouTube', handle: '@jonbyte', href: 'https://www.youtube.com/@jonbyte', icon: IconBrandYoutube },
+  { label: 'YouTube', handle: '@bytejon', href: 'https://www.youtube.com/@bytejon', icon: IconBrandYoutube },
+  { label: 'X', handle: '@bytejon', href: 'https://x.com/bytejon', icon: IconBrandX },
+  { label: 'Roblox', handle: '@jonbyte', href: 'https://www.roblox.com/users/45851993/profile', icon: RobloxIcon },
+  { label: 'Discord', handle: '@jonbyte', href: undefined, icon: IconBrandDiscord },
+];
 ---
-<SiteLayout title="About"><article class="prose"><p class="eyebrow">About</p><h1>Jon</h1><p class="lede">This site collects my writing, tutorials, and open-source projects.</p><p><a href="https://github.com/bytejon">Find my work on GitHub <Arrow /></a></p></article></SiteLayout>
+<SiteLayout title="About">
+  <article class="prose">
+    <h1>About</h1>
+    <ul class="accounts">
+      {accounts.map(({ label, handle, href, icon: Icon }) => <li>
+        {href ? <a href={href} aria-label={`${label}: ${handle}`}><Icon size={22} stroke={1.6} aria-hidden="true" /><span>{label}</span><span class="handle">{handle}</span></a>
+          : <div><Icon size={22} stroke={1.6} aria-hidden="true" /><span>{label}</span><span class="handle">{handle}</span></div>}
+      </li>)}
+    </ul>
+  </article>
+</SiteLayout>
+<style>
+  .accounts { list-style: none; padding: 0; margin: 32px 0 0; border-top: 1px solid var(--line); }
+  .accounts li { border-bottom: 1px solid var(--line); }
+  .accounts a, .accounts div { display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 16px; padding: 20px 0; color: var(--ink); text-decoration: none; }
+  .accounts svg { color: var(--accent); }
+  .handle { color: var(--muted); }
+  .accounts a:hover .handle { color: var(--accent); text-decoration: underline; text-underline-offset: .22em; }
+  @media (max-width: 400px) { .accounts a, .accounts div { gap: 12px; } }
+</style>

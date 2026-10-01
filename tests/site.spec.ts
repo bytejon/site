@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-for (const path of ['', 'blog/', 'about/', 'tutorials/', 'projects/']) {
+for (const path of ['', 'writing/', 'about/', 'projects/']) {
   test(`page ${path || 'home'} is navigable and fits the viewport`, async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -14,19 +14,19 @@ for (const path of ['', 'blog/', 'about/', 'tutorials/', 'projects/']) {
   });
 }
 
-test('home navigation opens blog and return link works', async ({ page }) => {
+test('home navigation opens Writing and return link works', async ({ page }) => {
   await page.goto('');
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible()) await menu.click();
-  await page.locator('a:visible').filter({ hasText: /^Blog$/ }).first().click();
-  await expect(page.locator('h1')).toHaveText('Blog');
+  await page.locator('a:visible').filter({ hasText: /^Writing$/ }).first().click();
+  await expect(page.locator('h1')).toHaveText('Writing');
   await page.getByRole('link', { name: 'Jon', exact: true }).click();
   await expect(page.locator('h1')).toHaveText('Jon');
 });
 
 test('draft MDX and nested docs authoring fixtures', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for a local authoring fixture build');
-  await page.goto('blog/authoring-example/');
+  await page.goto('writing/authoring-example/');
   await expect(page.getByRole('complementary', { name: 'Custom component example' })).toBeVisible();
   await expect(page.locator('pre[data-language="luau"]')).toBeVisible();
   const code = page.locator('pre[data-language="luau"]');
@@ -35,14 +35,10 @@ test('draft MDX and nested docs authoring fixtures', async ({ page }) => {
     await code.focus();
     await expect(code).toBeFocused();
   }
-  await page.goto('tutorials/example-guide/first-chapter/');
-  await expect(page.locator('h1')).toHaveText('First chapter');
-  await expect(page.locator('pre[data-language="luau"]')).toBeVisible();
+  await page.goto('projects/example-project/reference/api/');
+  await expect(page.locator('h1')).toHaveText('API reference');
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible()) await menu.click();
-  const sidebar = page.locator('nav.sidebar');
-  await expect(sidebar.getByRole('link', { name: 'First chapter', exact: true })).toBeVisible();
-  await sidebar.getByRole('link', { name: 'API reference', exact: true }).click();
-  await expect(page.locator('h1')).toHaveText('API reference');
+  await expect(page.locator('nav.sidebar').getByRole('link', { name: 'API reference', exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

@@ -1,0 +1,52 @@
+---
+import Arrow from '../../components/Arrow.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { posts, href, formatDate } from '../../lib/site';
+const entries = await posts();
+const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
+---
+<SiteLayout title="Writing">
+  <h1>Writing</h1>
+  <form class="writing-filters" aria-label="Filter writing">
+    <label>Type <select name="type"><option value="">All types</option><option value="article">Article</option><option value="tutorial">Tutorial</option></select></label>
+    <label>Topic <select name="topic"><option value="">All topics</option>{tags.map(tag => <option value={tag}>{tag}</option>)}</select></label>
+  </form>
+  <p class="filter-count" aria-live="polite"></p>
+  <ul class="section-list writing-list">{entries.map(post => <li data-type={post.data.type} data-tags={JSON.stringify(post.data.tags)}><a class="section-row" href={href(`writing/${post.id}/`)}><strong>{post.data.title}{post.data.draft ? ' (draft)' : ''}</strong><p>{post.data.type === 'article' ? 'Article' : 'Tutorial'} · {formatDate(post.data.date!)}<br />{post.data.description}</p><Arrow /></a></li>)}</ul>
+  <p class="empty" data-empty hidden={entries.length > 0}>No writing to show.</p>
+</SiteLayout>
+<script>
+  const form = document.querySelector<HTMLFormElement>('.writing-filters')!;
+  const type = form.elements.namedItem('type') as HTMLSelectElement;
+  const topic = form.elements.namedItem('topic') as HTMLSelectElement;
+  function filter() {
+    let count = 0;
+    document.querySelectorAll<HTMLElement>('.writing-list > li').forEach(row => {
+      row.hidden = Boolean((type.value && row.dataset.type !== type.value) || (topic.value && !JSON.parse(row.dataset.tags!).includes(topic.value)));
+      if (!row.hidden) count++;
+    });
+    document.querySelector<HTMLElement>('[data-empty]')!.hidden = count > 0;
+    document.querySelector('.filter-count')!.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
+  }
+  function restore() {
+    const params = new URLSearchParams(location.search);
+    type.value = params.get('type') || ''; topic.value = params.get('topic') || '';
+    filter();
+  }
+  form.addEventListener('change', () => {
+    const params = new URLSearchParams();
+    if (type.value) params.set('type', type.value);
+    if (topic.value) params.set('topic', topic.value);
+    history.replaceState(null, '', `${location.pathname}${params.size ? '?' + params : ''}`);
+    filter();
+  });
+  form.addEventListener('submit', event => event.preventDefault());
+  window.addEventListener('popstate', restore); restore();
+</script>
+<style>
+  .writing-filters { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 32px; }
+  label { display: flex; align-items: center; gap: 10px; font-size: .9rem; }
+  select { font: inherit; padding: 8px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; }
+  select:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .filter-count { font-size: .85rem; color: var(--muted); }
+</style>

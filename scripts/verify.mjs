@@ -17,6 +17,7 @@ const htmlFiles = files.filter(file => file.endsWith('.html'));
 assert(htmlFiles.length >= 6, 'Expected home, blog, about, docs, and 404 pages');
 for (const file of htmlFiles) {
   const html = await readFile(file, 'utf8');
+  if (/http-equiv=["']refresh/i.test(html)) continue;
   if (!drafts) assert(!html.includes('Authoring example'), `Draft leaked into ${file}`);
   const $ = load(html);
   assert.equal($('html').attr('lang'), 'en');
@@ -59,7 +60,7 @@ for (const word of ['export', 'type', 'number', 'continue']) {
 assert(scopeTokens.some(t => t.scopes.some(s => /interpolat|template/.test(s))), 'Luau string interpolation not tokenized');
 highlighter.dispose();
 if (drafts) {
-  const example = load(await readFile('dist/blog/authoring-example/index.html', 'utf8'));
+  const example = load(await readFile('dist/writing/authoring-example/index.html', 'utf8'));
   assert(example('aside[aria-label="Custom component example"]').length, 'MDX component did not render');
   assert(example('.expressive-code pre[data-language="luau"]').length, 'Luau fence did not render with Expressive Code');
   assert(example('.expressive-code span[style]').length > 10, 'Expected syntax-colored Luau tokens');

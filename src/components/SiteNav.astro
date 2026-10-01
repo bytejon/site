@@ -4,14 +4,14 @@ import ThemeSelect from './ThemeSelect.astro';
 import { href } from '../lib/site';
 interface Props { docs?: boolean }
 const { docs = false } = Astro.props;
-const links = [['Blog', 'blog/'], ['Tutorials', 'tutorials/'], ['Projects', 'projects/'], ['About', 'about/']];
+const links = [['Writing', 'writing/'], ['Projects', 'projects/'], ['About', 'about/']];
 const current = Astro.url.pathname;
 ---
 <nav class="site-nav" aria-label="Site">
   <a class="wordmark" href={href()} aria-label="Jon"><img class="site-logo" src={href('logo.svg')} width="32" height="32" alt="" /></a>
   <div class="nav-links">
-    {links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? 'page' : undefined}>{label}</a>)}
+    {links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? (current === href(path) ? 'page' : 'location') : undefined}>{label}</a>)}
   </div>
   {!docs && <div class="nav-controls"><ThemeSelect /><MenuButton /></div>}
 </nav>
-{!docs && <div id="site-mobile-menu" class="mobile-nav-panel" popover="auto"><nav aria-label="Site menu">{links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? 'page' : undefined}>{label}</a>)}</nav></div>}
+{!docs && <div id="site-mobile-menu" class="mobile-nav-panel" popover="auto"><nav aria-label="Site menu">{links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? (current === href(path) ? 'page' : 'location') : undefined}>{label}</a>)}</nav></div>}

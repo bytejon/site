@@ -1,0 +1,50 @@
+---
+import { render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { writingPages, rootOf, chapterTree, href, formatDate } from '../../lib/site';
+export async function getStaticPaths() {
+  const pages = await writingPages();
+  return pages.map(post => ({ params: { id: post.id }, props: { post, pages } }));
+}
+const { post, pages } = Astro.props;
+const root = rootOf(post, pages);
+const chapters = chapterTree(root, pages);
+const index = chapters.findIndex(item => item.page.id === post.id);
+const previous = chapters[index - 1]?.page;
+const next = chapters[index + 1]?.page;
+const { Content, headings } = await render(post);
+const outline = headings.filter(h => h.depth === 2 || h.depth === 3);
+---
+<SiteLayout title={post.data.title} description={post.data.description} wide={chapters.length > 1} draft={post.data.draft}>
+  <div class:list={["writing-reader", { "has-chapters": chapters.length > 1 }]}>
+    {chapters.length > 1 && <aside class="chapter-sidebar" data-pagefind-ignore>
+      <details open><summary>Chapters</summary><nav aria-label="Chapters"><ol>{chapters.map(({ page, depth }) => <li style={`--depth: ${depth}`}><a href={href(`writing/${page.id}/`)} aria-current={page.id === post.id ? 'page' : undefined}>{page.data.title}</a></li>)}</ol></nav></details>
+    </aside>}
+    <article class="prose">
+      <p class="eyebrow"><a href={href('writing/')}>Writing</a> / {root.data.type === 'article' ? 'Article' : 'Tutorial'}</p>
+      <h1>{post.data.title}</h1>
+      <div class="post-meta"><time datetime={root.data.date!.toISOString()}>{formatDate(root.data.date!)}</time></div>
+      {post.data.draft && <aside class="note" data-pagefind-ignore><strong>Unpublished authoring example</strong><p>This draft demonstrates the site's features. It is not published writing by Jon.</p></aside>}
+      {post.data.toc && outline.length > 0 && <nav class="page-outline" aria-label="On this page"><strong>On this page</strong><ul>{outline.map(heading => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}
+      <Content />
+      {root.data.tags.length > 0 && <ul class="tags" aria-label="Topics">{root.data.tags.map(tag => <li><a href={href(`writing/?topic=${encodeURIComponent(tag)}`)}>{tag}</a></li>)}</ul>}
+      {chapters.length > 1 && <nav class="chapter-pagination" aria-label="Chapter navigation" data-pagefind-ignore>{previous ? <a rel="prev" href={href(`writing/${previous.id}/`)}>← {previous.data.title}</a> : <span />}{next && <a rel="next" href={href(`writing/${next.id}/`)}>{next.data.title} →</a>}</nav>}
+    </article>
+  </div>
+</SiteLayout>
+<style>
+  .writing-reader { min-width: 0; }
+  .has-chapters { display: grid; grid-template-columns: 220px minmax(0, 720px); gap: 40px; }
+  .prose { width: 100%; min-width: 0; }
+  .chapter-sidebar { font-size: .9rem; }
+  .chapter-sidebar details { position: sticky; top: 24px; }
+  summary { font-weight: 600; cursor: pointer; }
+  ol { list-style: none; padding: 0; }
+  .chapter-sidebar li { padding-left: calc(var(--depth) * 12px); }
+  .chapter-sidebar a { display: block; padding: 8px; color: var(--muted); text-decoration: none; }
+  .chapter-sidebar a[aria-current='page'] { color: var(--accent); background: var(--surface); }
+  .chapter-pagination { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); margin-top: 40px; padding-top: 20px; }
+  .page-outline { padding: 16px 20px; border-left: 2px solid var(--line); margin-bottom: 28px; font-size: .9rem; }
+  .page-outline ul { margin-bottom: 0; padding-left: 20px; }
+  @media (max-width: 799px) { .has-chapters { display: block; } .chapter-sidebar { margin-bottom: 32px; } .chapter-sidebar details { position: static; } }
+</style>

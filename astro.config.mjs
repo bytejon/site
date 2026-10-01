@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
 import expressiveCodeIntegration from 'astro-expressive-code';
 import { expressiveCode } from './config/highlighting.mjs';
 
@@ -24,11 +25,11 @@ export default defineConfig({
         MobileMenuFooter: './src/components/DocsMobileFooter.astro',
       },
       sidebar: [
-        { label: 'Tutorials', items: [{ autogenerate: { directory: 'tutorials' } }] },
         { label: 'Projects', items: [{ autogenerate: { directory: 'projects' } }] },
       ],
       editLink: { baseUrl: 'https://github.com/bytejon/site/edit/main/' },
     }),
+    sitemap({ filter: page => !/\/(blog|tutorials)(\/|$)/.test(new URL(page).pathname) }),
     mdx(),
   ],
 });
