@@ -103,7 +103,7 @@ Every section uses the same Light/Dark/Auto preference in `starlight-theme` loca
 
 `src/components/ThemeSelect.astro` serves both layout families. Narrow screens use native popover hamburger menus with keyboard/Escape support and synchronized `aria-expanded`; docs retain nested sidebar navigation. Topbars and mobile menus contain no GitHub link. Footer and relevant project source links remain available. Tabler's official `@tabler/icons-astro` package supplies the inline SVG icons, with `currentColor` styling and decorative accessibility attributes.
 
-The supplied three-color logo was recreated as a clean vector in `public/logo.svg` and reused as `public/favicon.svg`. Its background is transparent. The original input remains unchanged in Library; the website publishes only the selected vector artwork.
+The supplied three-color logo was recreated as a clean vector in `public/logo.svg` and reused as `public/favicon.svg`. Its background is transparent. Headers use the logo alone with an accessible home-link label. The original input remains unchanged in Library; the website publishes only the selected vector artwork. Links, selected navigation, and focus states use contrast-appropriate blue accents in both themes.
 
 ## Deploy
 

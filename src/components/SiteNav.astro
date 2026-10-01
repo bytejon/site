@@ -8,7 +8,7 @@ const links = [['Blog', 'blog/'], ['Tutorials', 'tutorials/'], ['Projects', 'pro
 const current = Astro.url.pathname;
 ---
 <nav class="site-nav" aria-label="Site">
-  <a class="wordmark" href={href()} aria-label="Jon"><img class="site-logo" src={href('logo.svg')} width="32" height="32" alt="" />Jon</a>
+  <a class="wordmark" href={href()} aria-label="Jon"><img class="site-logo" src={href('logo.svg')} width="32" height="32" alt="" /></a>
   <div class="nav-links">
     {links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? 'page' : undefined}>{label}</a>)}
   </div>
