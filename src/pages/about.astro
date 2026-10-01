@@ -16,7 +16,7 @@ const accounts = [
     <h1>About</h1>
     <ul class="accounts">
       {accounts.map(({ label, handle, href, icon: Icon }) => <li>
-        {href ? <a href={href} aria-label={`${label}: ${handle}`}><Icon size={22} stroke={1.6} aria-hidden="true" /><span>{label}</span><span class="handle">{handle}</span></a>
+        {href ? <a href={href} target="_blank" rel="noopener noreferrer" aria-description="Opens in a new tab" aria-label={`${label}: ${handle}`}><Icon size={22} stroke={1.6} aria-hidden="true" /><span>{label}</span><span class="handle">{handle}</span></a>
           : <div><Icon size={22} stroke={1.6} aria-hidden="true" /><span>{label}</span><span class="handle">{handle}</span></div>}
       </li>)}
     </ul>

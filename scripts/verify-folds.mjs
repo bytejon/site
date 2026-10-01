@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {luauFolds} from '../config/luau-folds.mjs';
+const code=(await readFile('scripts/fixtures/structural-scopes.luau','utf8')).trimEnd();
+const {folds,supported}=await luauFolds(code);
+assert(supported);
+assert.deepEqual(folds.map(fold=>fold.kind).sort(),['do','for','function','function','if','repeat','table','table','while'].sort());
+assert(!folds.some(fold=>fold.start>=9&&fold.start<=20),'String/comment keywords became scope controls');
+assert(folds.every(fold=>fold.end>fold.start+1));
+for(const outer of folds) for(const inner of folds) assert(!(outer.start<inner.start&&inner.start<outer.end&&outer.end<inner.end),'Crossing fold ranges');
+assert.equal((await luauFolds('local function unfinished()\n print("end")')).supported,false);
+assert.deepEqual((await luauFolds('local value = "function end if"\n-- for repeat until')).folds,[]);
+const tricky=await readFile('scripts/fixtures/folding-edge-cases.luau','utf8');
+assert.equal((await luauFolds(tricky)).supported,true);
+console.log(`Verified ${folds.length} structural Luau folds, strings/comments/interpolation, nesting, and incomplete-code fallback.`);

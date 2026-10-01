@@ -4,11 +4,20 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import expressiveCodeIntegration from 'astro-expressive-code';
 import { expressiveCode } from './config/highlighting.mjs';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import { unified } from '@astrojs/markdown-remark';
 
 export default defineConfig({
   site: process.env.SITE_URL || 'https://jonbyte.com',
   base: process.env.SITE_BASE || '/',
   trailingSlash: 'always',
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [[rehypeKatex, { output: 'htmlAndMathml', throwOnError: true, trust: false }]],
+    }),
+  },
   integrations: [
     expressiveCodeIntegration(expressiveCode),
     starlight({
@@ -19,6 +28,7 @@ export default defineConfig({
       customCss: ['./src/styles/site.css'],
       components: {
         Header: './src/components/DocsHeader.astro',
+        PageTitle: './src/components/DocsPageTitle.astro',
         ThemeSelect: './src/components/ThemeSelect.astro',
         Sidebar: './src/components/DocsSidebar.astro',
         MobileMenuToggle: './src/components/DocsMenuButton.astro',

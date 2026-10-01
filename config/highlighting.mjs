@@ -1,4 +1,7 @@
 import { readFileSync } from 'node:fs';
+import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
+import { codeThemes } from './code-themes.mjs';
+import { pluginCodeTools } from './code-tools.mjs';
 
 // Dedicated Luau grammar: source.luau, never an alias to Lua.
 export const luau = {
@@ -7,9 +10,10 @@ export const luau = {
 };
 
 export const expressiveCode = {
-  themes: ['github-light', 'github-dark'],
+  themes: codeThemes,
+  plugins: [pluginLineNumbers(), pluginCodeTools()],
   useDarkModeMediaQuery: false,
   themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
   shiki: { langs: [luau] },
-  styleOverrides: { borderRadius: '4px', codeFontSize: '0.875rem', codePaddingBlock: 'var(--space-4)', codePaddingInline: 'var(--space-5)' },
+  styleOverrides: { borderRadius: '8px', gutterBorderWidth: '0px', codeFontSize: '0.875rem', codeLineHeight: '1.75', codePaddingBlock: 'var(--space-4)', codePaddingInline: 'var(--space-4)', frames: { editorActiveTabIndicator: 'var(--accent)' } },
 };

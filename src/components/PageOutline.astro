@@ -1,0 +1,37 @@
+---
+interface Props { headings: { depth: number; slug: string; text: string }[] }
+const headings = Astro.props.headings.filter(h => h.depth === 2 || h.depth === 3);
+---
+{headings.length > 0 && <aside class="reader-outline" data-pagefind-ignore><details open><summary>On this page</summary><nav aria-label="On this page"><ul>{headings.map(heading => <li style={`--outline-depth: ${heading.depth - 2}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav></details></aside>}
+<style>
+  .reader-outline { font-size: 13px; min-width: 0; }
+  details { position: sticky; top: calc(var(--sl-nav-height) + 32px); max-height: calc(100vh - var(--sl-nav-height) - 64px); overflow-y: auto; }
+  summary { font-weight: 600; color: var(--ink); list-style: none; padding: 8px 12px; min-height: 36px; }
+  summary::-webkit-details-marker { display: none; }
+  ul { list-style: none; margin: 4px 0 0; padding: 0; }
+  li { padding-left: calc(var(--outline-depth) * 12px); }
+  a { display: block; padding: 8px 12px; min-height: 36px; line-height: 1.5; color: var(--muted); text-decoration: none; overflow-wrap: anywhere; }
+  a:hover, a[aria-current='location'] { color: var(--accent); }
+  a[aria-current='location'] { font-weight: 600; }
+  @media(max-width: 1099px) { details { position: static; max-height: none; } summary { cursor: pointer; min-height: 44px; padding-inline: 0; list-style: disclosure-closed; } details[open] > summary { list-style: disclosure-open; } a { min-height: 44px; } .reader-outline { margin-bottom: 24px; } }
+</style>
+<script>
+  for (const outline of document.querySelectorAll<HTMLElement>('.reader-outline')) {
+    const details = outline.querySelector('details')!;
+    const narrow = matchMedia('(max-width: 1099px)');
+    const collapse = () => { details.open = !narrow.matches; };
+    collapse(); narrow.addEventListener('change', collapse);
+    const links = [...outline.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const headings = links.map(link => document.getElementById(decodeURIComponent(link.hash.slice(1)))).filter((heading): heading is HTMLElement => !!heading);
+    let scheduled = false;
+    function update() {
+      scheduled = false;
+      const offset = document.querySelector('header')?.getBoundingClientRect().bottom || 88;
+      let current = headings[0];
+      for (const heading of headings) if (heading.getBoundingClientRect().top <= offset + 48) current = heading;
+      for (const link of links) { if (link.hash === `#${current?.id}`) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current'); }
+    }
+    const schedule = () => { if (!scheduled) { scheduled = true; requestAnimationFrame(update); } };
+    addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule); update();
+  }
+</script>

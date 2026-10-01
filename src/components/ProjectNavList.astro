@@ -1,0 +1,27 @@
+---
+import { IconChevronRight } from '@tabler/icons-astro';
+type SidebarEntry = (typeof Astro.locals.starlightRoute.sidebar)[number];
+interface Props { entries: SidebarEntry[]; nested?: boolean; rootHref: string }
+const { entries, nested = false, rootHref } = Astro.props;
+const label = (value: string) => value.replaceAll('-', ' ').replace(/^\w/, c => c.toUpperCase());
+const hasCurrent = (entry: SidebarEntry): boolean => entry.type === 'link' ? entry.isCurrent : entry.entries.some(hasCurrent);
+---
+<ul class:list={['project-tree', { 'top-level': !nested }]}>
+  {entries.map(entry => <li>{entry.type === 'link' ? <a {...entry.attrs} href={entry.href} aria-current={entry.isCurrent ? 'page' : undefined}>{entry.href === rootHref ? 'Overview' : entry.label}</a> : <details open={hasCurrent(entry) || !entry.collapsed}><summary><span>{label(entry.label)}</span><IconChevronRight size={14} aria-hidden="true" /></summary><Astro.self entries={entry.entries} nested rootHref={rootHref} /></details>}</li>)}
+</ul>
+<style>
+  ul { list-style: none; padding: 0; margin: 0; }
+  .top-level > li + li { margin-top: 4px; }
+  .top-level > li:has(details) { margin-top: 20px; }
+  a, summary { display: flex; align-items: center; min-height: 40px; padding: 8px 12px; line-height: 1.5; font-size: 14px; border-radius: 4px; text-decoration: none; }
+  a { color: var(--muted); position: relative; }
+  a:hover { color: var(--ink); background: var(--surface); }
+  a[aria-current='page'] { color: var(--accent); background: var(--surface); font-weight: 600; }
+  a[aria-current='page']::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px; background: var(--accent); border-radius: 2px; }
+  summary { justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary svg { color: var(--muted); transition: transform .15s; }
+  details[open] > summary svg { transform: rotate(90deg); }
+  details > ul { margin-left: 12px; }
+  @media(max-width: 799px) { a, summary { min-height: 44px; } }
+</style>

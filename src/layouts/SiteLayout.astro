@@ -26,6 +26,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header"><SiteNav /></header>
     <main id="main" class:list={["site-main", { "writing-wide": wide }]} data-pagefind-body={!draft || undefined} data-pagefind-ignore={draft || undefined}><slot /></main>
-    <footer class="site-footer"><span>Jon</span><div><a href={href('rss.xml')}>RSS</a><a href="https://github.com/bytejon">GitHub</a></div></footer>
+    <footer class="site-footer"><span>Jon</span><div><a href={href('rss.xml')}>RSS</a><a href="https://github.com/bytejon" target="_blank" rel="noopener noreferrer" aria-description="Opens in a new tab">GitHub</a></div></footer>
   </body>
 </html>
