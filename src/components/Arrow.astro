@@ -1,0 +1,8 @@
+---
+interface Props { external?: boolean }
+const { external = false } = Astro.props;
+---
+<svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {external ? <path d="M7 17 17 7M7 7h10v10" /> : <path d="M4 12h16m-6-6 6 6-6 6" />}
+</svg>
+<style>.arrow-icon { display: inline-block; vertical-align: -.15em; flex-shrink: 0; }</style>
