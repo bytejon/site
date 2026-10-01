@@ -114,7 +114,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .site-nav .nav-links { gap: .35rem; }
 .site-nav .nav-links a { font-weight: 650; padding: .45rem .8rem; border-radius: 6px; line-height: 1.4; }
 .site-nav .nav-links a:hover { background: var(--surface); text-decoration: none; }
-.site-nav .nav-links a[aria-current], .mobile-nav-panel a[aria-current], .docs-primary-menu a[aria-current] { background: var(--nav-active); color: #fff; text-decoration: none; border-radius: 6px; }
+.site-nav .nav-links a[aria-current], .mobile-nav-panel a[aria-current], :root[data-theme] .docs-primary-menu a[aria-current] { background: var(--nav-active); color: #fff; text-decoration: none; border-radius: 6px; }
 .mobile-nav-panel a, .docs-primary-menu a { font-weight: 600; border-radius: 6px; }
 .personal-site { line-height: 1.7; }
 .prose h2 { line-height: 1.35; }

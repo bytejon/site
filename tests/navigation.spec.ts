@@ -53,11 +53,12 @@ test('topbar shares centered content bounds', async ({ page }) => {
 
 test('active navigation uses a contrasting blue rectangle', async ({ page }) => {
   for (const theme of ['light', 'dark']) {
-    await page.goto('writing/');
+    for (const section of ['Writing', 'Projects']) {
+    await page.goto(`${section.toLowerCase()}/`);
     await page.locator('header [data-theme-picker]').selectOption(theme);
     await page.setViewportSize({ width: 1440, height: 1000 });
     const active = page.locator('header a[aria-current]:visible');
-    await expect(active).toHaveText('Writing');
+    await expect(active).toHaveText(section);
     await expect(active).toHaveAttribute('aria-current', 'page');
     await expect(active).toHaveCSS('color', 'rgb(255, 255, 255)');
     await expect(active).toHaveCSS('background-color', 'rgb(49, 95, 204)');
@@ -68,8 +69,9 @@ test('active navigation uses a contrasting blue rectangle', async ({ page }) => 
     expect(1.05 / (blue + .05)).toBeGreaterThan(4.5);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.getByRole('button', { name: 'Menu', exact: true }).click();
-    await expect(page.locator(':popover-open a[aria-current]')).toHaveText('Writing');
-    await expect(page.locator(':popover-open a[aria-current]')).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(page.getByRole('navigation', { name: 'Site menu', exact: true }).locator('a[aria-current]')).toHaveText(section);
+    await expect(page.getByRole('navigation', { name: 'Site menu', exact: true }).locator('a[aria-current]')).toHaveCSS('color', 'rgb(255, 255, 255)');
     await page.keyboard.press('Escape');
+    }
   }
 });
