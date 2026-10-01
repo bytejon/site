@@ -1,4 +1,5 @@
 ---
+import ChoicePicker from '../../components/ChoicePicker.astro';
 import Arrow from '../../components/Arrow.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { posts, href, formatDate } from '../../lib/site';
@@ -8,8 +9,8 @@ const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
 <SiteLayout title="Writing">
   <h1>Writing</h1>
   <form class="writing-filters" aria-label="Filter writing">
-    <label>Type <select name="type"><option value="">All types</option><option value="article">Article</option><option value="tutorial">Tutorial</option></select></label>
-    <label>Topic <select name="topic"><option value="">All topics</option>{tags.map(tag => <option value={tag}>{tag}</option>)}</select></label>
+    <div class="filter-field"><span>Type</span><ChoicePicker label="Type" name="type" options={[{value:"",label:"All types"},{value:"article",label:"Article"},{value:"tutorial",label:"Tutorial"}]} /></div>
+    <div class="filter-field"><span>Topic</span><ChoicePicker label="Topic" name="topic" options={[{value:"",label:"All topics"},...tags.map(tag => ({value:tag,label:tag}))]} /></div>
   </form>
   <p class="filter-count" aria-live="polite"></p>
   {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-type={post.data.type} data-tags={JSON.stringify(post.data.tags)}><a class="section-row" href={href(`writing/${post.id}/`)}><strong>{post.data.title}{post.data.draft ? ' (draft)' : ''}</strong><p>{post.data.type === 'article' ? 'Article' : 'Tutorial'} · {formatDate(post.data.date!)}<br />{post.data.description}</p><Arrow /></a></li>)}</ul>}
@@ -17,8 +18,8 @@ const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
 </SiteLayout>
 <script>
   const form = document.querySelector<HTMLFormElement>('.writing-filters')!;
-  const type = form.elements.namedItem('type') as HTMLSelectElement;
-  const topic = form.elements.namedItem('topic') as HTMLSelectElement;
+  const type = form.elements.namedItem('type') as HTMLInputElement;
+  const topic = form.elements.namedItem('topic') as HTMLInputElement;
   function filter() {
     let count = 0;
     document.querySelectorAll<HTMLElement>('.writing-list > li').forEach(row => {
@@ -32,7 +33,7 @@ const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
   }
   function restore() {
     const params = new URLSearchParams(location.search);
-    type.value = params.get('type') || ''; topic.value = params.get('topic') || '';
+    for (const input of [type, topic]) input.closest('choice-picker')!.dispatchEvent(new CustomEvent('choice:set', { detail: params.get(input.name) || '' }));
     filter();
   }
   form.addEventListener('change', () => {
@@ -43,12 +44,10 @@ const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
     filter();
   });
   form.addEventListener('submit', event => event.preventDefault());
-  window.addEventListener('popstate', restore); restore();
+  window.addEventListener('popstate', restore); customElements.whenDefined('choice-picker').then(restore);
 </script>
 <style>
   .writing-filters { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: 32px; }
-  label { display: flex; align-items: center; gap: 10px; font-size: .9rem; }
-  select { font: inherit; min-height: var(--control-size); padding: var(--space-3); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; }
-  select:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .filter-field { display: flex; align-items: center; gap: 10px; font-size: .9rem; }
   .filter-count { font-size: .85rem; color: var(--muted); }
 </style>

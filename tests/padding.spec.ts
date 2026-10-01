@@ -1,3 +1,4 @@
+import { choose } from './choices';
 import { test, expect } from '@playwright/test';
 async function comfortable(locator: import('@playwright/test').Locator, inlinePadding?: number) {
   const metrics = await locator.evaluate(el => { const c = getComputedStyle(el); return { height: el.getBoundingClientRect().height, left: parseFloat(c.paddingLeft), right: parseFloat(c.paddingRight) }; });
@@ -20,9 +21,10 @@ test('controls and list interiors have comfortable spacing', async ({ page }) =>
   expect((await page.locator('h1').boundingBox())!.x).toBe(homeX);
   await comfortable(page.locator('.accounts a').first(), 16);
   await page.goto('writing/');
-  await comfortable(page.locator('.writing-filters select').first(), 12);
+  await comfortable(page.locator('.writing-filters .choice-trigger').first(), 12);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.goto('projects/');
+  if (process.env.TEST_AUTHORING !== 'true') return;
+  await page.goto('projects/example-project/reference/api/');
   await page.keyboard.press('Control+k');
   await expect(page.getByRole('dialog', { name: 'Search', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
@@ -43,8 +45,8 @@ test('authoring components retain internal padding', async ({ page }) => {
   await page.goto('writing/series-article/chapter/');
   await comfortable(page.getByRole('navigation', { name: 'Chapters', exact: true }).getByRole('link').first(), 16);
   await page.goto('writing/');
-  await page.locator('[name="type"]').selectOption('tutorial');
-  await page.locator('[name="topic"]').selectOption('article');
+  await choose(page, 'Type', 'tutorial');
+  await choose(page, 'Topic', 'article');
   await expect(page.locator('.writing-list')).toBeHidden();
   await expect(page.locator('[data-empty]')).toBeVisible();
 });

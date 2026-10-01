@@ -1,3 +1,4 @@
+import { choose } from './choices';
 import { test, expect } from '@playwright/test';
 
 for (const path of ['', 'projects/']) {
@@ -68,7 +69,7 @@ test('active navigation uses a contrasting blue rectangle', async ({ page }) => 
   for (const theme of ['light', 'dark']) {
     for (const section of ['Writing', 'Projects']) {
     await page.goto(`${section.toLowerCase()}/`);
-    await page.locator('header [data-theme-picker]').selectOption(theme);
+    await choose(page, 'Color theme', theme);
     await page.setViewportSize({ width: 1440, height: 1000 });
     const active = page.locator('header a[aria-current]:visible');
     await expect(active).toHaveText(section);

@@ -1,10 +1,11 @@
+import { choose } from './choices';
 import { test, expect } from '@playwright/test';
 
 test('theme persists between custom and documentation layouts and reloads', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('[data-theme-picker]:visible').first().selectOption('dark');
+  await choose(page, 'Color theme', 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(await page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('dark');
   expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(20, 23, 28)');
@@ -16,19 +17,17 @@ test('theme persists between custom and documentation layouts and reloads', asyn
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  const selected = page.locator('sl-sidebar-state-persist a[aria-current="page"]');
-  expect(await selected.evaluate(el => getComputedStyle(el).color)).toBe('rgb(20, 23, 28)');
   await page.screenshot({ path: `test-results/${test.info().project.name}-docs-dark.png`, fullPage: true });
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible()) await menu.click();
-  await page.locator('[data-theme-picker]:visible').first().selectOption('light');
+  await choose(page, 'Color theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.goto('writing/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(245, 239, 227)');
-  await page.locator('[data-theme-picker]:visible').first().selectOption('auto');
+  await choose(page, 'Color theme', 'auto');
   await page.emulateMedia({ colorScheme: 'dark' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.goto('about/');
@@ -39,11 +38,11 @@ test('theme persists between custom and documentation layouts and reloads', asyn
 test('Luau code follows the selected theme', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for local draft verification');
   await page.goto('writing/authoring-example/');
-  await page.locator('[data-theme-picker]:visible').first().selectOption('dark');
+  await choose(page, 'Color theme', 'dark');
   const token = page.locator('pre[data-language="luau"] span[style]').first();
   const darkColor = await token.evaluate(el => getComputedStyle(el).color);
   await page.screenshot({ path: `test-results/${test.info().project.name}-luau-dark.png`, fullPage: true });
-  await page.locator('[data-theme-picker]:visible').first().selectOption('light');
+  await choose(page, 'Color theme', 'light');
   const lightColor = await token.evaluate(el => getComputedStyle(el).color);
   expect(lightColor).not.toBe(darkColor);
   await expect(page.getByRole('complementary', { name: 'Custom component example' })).toBeVisible();

@@ -1,3 +1,4 @@
+import { choose } from './choices';
 import { test, expect } from '@playwright/test';
 test('legacy index URLs lead to Writing with the tutorial filter', async ({ page }) => {
   await page.goto('blog/'); await expect(page).toHaveURL(/\/writing\/$/);
@@ -27,7 +28,7 @@ test('single and multi-page entries adapt to hierarchy, not type', async ({ page
     await expect(active).toHaveCSS('color', 'rgb(255, 255, 255)');
     if (await menu.isVisible()) await page.keyboard.press('Escape');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.locator('header [data-theme-picker]').selectOption('dark');
+    await choose(page, 'Color theme', 'dark');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await page.screenshot({ path: `test-results/${test.info().project.name}-series-${type}.png`, fullPage: true });
   }
@@ -35,12 +36,12 @@ test('single and multi-page entries adapt to hierarchy, not type', async ({ page
 test('Writing type and topic filters compose and survive reload', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Local unpublished authoring fixtures');
   await page.goto('writing/');
-  await page.locator('[name="type"]').selectOption('tutorial');
+  await choose(page, 'Type', 'tutorial');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
-  await page.locator('[name="topic"]').selectOption('article');
+  await choose(page, 'Topic', 'article');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(0);
   await expect(page.locator('[data-empty]')).toBeVisible();
-  await page.locator('[name="topic"]').selectOption('tutorial'); await page.reload();
+  await choose(page, 'Topic', 'tutorial'); await page.reload();
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
   await expect(page.locator('[name="type"]')).toHaveValue('tutorial');
   await expect(page.locator('[name="topic"]')).toHaveValue('tutorial');

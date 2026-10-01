@@ -161,3 +161,16 @@ site-search > button { min-height: var(--control-size); padding: var(--space-2) 
   .docs-menu-space { display: inline-flex; }
   .mobile-nav-panel:popover-open { top: calc(var(--sl-nav-height) + var(--space-2)); }
 }
+
+/* Keep the same shell and typography when entering project documentation. */
+.site-header { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; z-index: var(--sl-z-index-navbar, 10); }
+.personal-site { padding-top: var(--sl-nav-height); }
+html { scroll-padding-top: calc(var(--sl-nav-height) + 16px); }
+.site-nav { font-family: var(--sl-font); font-size: 17px; line-height: 1.4; }
+.site-nav .nav-links a { font-size: 14.4px; }
+.site-header, .page > .header { border-bottom: 1px solid var(--line); }
+.page main > .content-panel:first-child { padding-top: 72px; }
+.page h1 { font-size: clamp(2.25rem, 4vw, 2.8rem); line-height: 1.2; font-weight: 580; letter-spacing: -.035em; }
+.project-intro { max-width: 720px; }
+.project-intro p { margin-block: 1.2rem; }
+@media (max-width: 49.999rem) { .page main > .content-panel:first-child { padding-top: 48px; } }

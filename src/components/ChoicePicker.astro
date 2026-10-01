@@ -1,0 +1,84 @@
+---
+import { IconCheck, IconChevronDown, IconSunMoon } from '@tabler/icons-astro';
+interface Props { label: string; name?: string; value?: string; options: { value: string; label: string }[]; theme?: boolean }
+const { label, name, value = '', options, theme = false } = Astro.props;
+const id = `choices-${name || 'theme'}-${crypto.randomUUID()}`;
+---
+<choice-picker data-value={value} data-theme-picker={theme || undefined}>
+  {name && <input type="hidden" name={name} value={value} />}
+  <button type="button" class:list={['choice-trigger', { 'theme-picker': theme }]} aria-label={theme ? 'Color theme' : label} aria-haspopup="listbox" aria-expanded="false" aria-controls={id} popovertarget={id}>
+    {theme ? <IconSunMoon size={17} stroke={1.6} aria-hidden="true" /> : <span data-choice-label>{options.find(option => option.value === value)?.label}</span>}
+    {!theme && <IconChevronDown size={16} stroke={1.6} aria-hidden="true" />}
+  </button>
+  <div id={id} class="choice-panel" popover="auto" role="listbox" aria-label={label}>
+    {options.map(option => <button type="button" role="option" tabindex="-1" data-value={option.value} aria-selected={option.value === value}><span>{option.label}</span><IconCheck size={16} stroke={1.8} aria-hidden="true" /></button>)}
+  </div>
+</choice-picker>
+<script>
+  class ChoicePicker extends HTMLElement {
+    connectedCallback() {
+      const trigger = this.querySelector<HTMLButtonElement>('.choice-trigger')!;
+      const panel = this.querySelector<HTMLElement>('.choice-panel')!;
+      const options = [...panel.querySelectorAll<HTMLButtonElement>('[role="option"]')];
+      const set = (value: string) => {
+        const selected = options.find(option => option.dataset.value === value) || options[0];
+        this.dataset.value = selected.dataset.value;
+        const input = this.querySelector<HTMLInputElement>('input');
+        if (input) input.value = selected.dataset.value!;
+        const label = this.querySelector('[data-choice-label]');
+        if (label) label.textContent = selected.querySelector('span')!.textContent;
+        options.forEach(option => option.setAttribute('aria-selected', String(option === selected)));
+      };
+      const position = () => {
+        const bounds = trigger.getBoundingClientRect();
+        panel.style.width = `${Math.min(Math.max(176, bounds.width), innerWidth - 32)}px`;
+        panel.style.left = `${Math.max(16, Math.min(bounds.left, innerWidth - panel.offsetWidth - 16))}px`;
+        panel.style.top = `${bounds.bottom + 8 + panel.offsetHeight < innerHeight ? bounds.bottom + 8 : Math.max(16, bounds.top - panel.offsetHeight - 8)}px`;
+      };
+      this.addEventListener('choice:set', event => set((event as CustomEvent<string>).detail));
+      panel.addEventListener('toggle', event => {
+        const open = (event as ToggleEvent).newState === 'open';
+        trigger.setAttribute('aria-expanded', String(open));
+      });
+      const open = () => {
+        panel.showPopover(); position();
+        (options.find(option => option.getAttribute('aria-selected') === 'true') || options[0]).focus();
+      };
+      trigger.addEventListener('click', event => {
+        event.preventDefault();
+        if (panel.matches(':popover-open')) panel.hidePopover(); else open();
+      });
+      trigger.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); open(); }
+      });
+      panel.addEventListener('keydown', event => {
+        const index = options.indexOf(document.activeElement as HTMLButtonElement);
+        if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+          event.preventDefault();
+          options[event.key === 'Home' ? 0 : event.key === 'End' ? options.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length].focus();
+        } else if (event.key === 'Escape' || event.key === 'Tab') { panel.hidePopover(); trigger.focus(); }
+        else if (event.key.length === 1 && /\S/.test(event.key)) options.find(option => option.textContent!.trim().toLowerCase().startsWith(event.key.toLowerCase()))?.focus();
+      });
+      options.forEach(option => option.addEventListener('click', () => {
+        set(option.dataset.value!); panel.hidePopover(); trigger.focus(); this.dispatchEvent(new Event('change', { bubbles: true }));
+      }));
+      window.addEventListener('resize', () => { if (panel.matches(':popover-open')) position(); });
+      window.addEventListener('scroll', () => { if (panel.matches(':popover-open')) position(); }, { passive: true });
+      set(this.dataset.value || '');
+    }
+  }
+  if (!customElements.get('choice-picker')) customElements.define('choice-picker', ChoicePicker);
+</script>
+<style>
+  choice-picker { display: inline-flex; font-size: 15px; line-height: 1.4; }
+  button { font: inherit; color: var(--ink); cursor: pointer; }
+  .choice-trigger { display: inline-flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .theme-picker { width: 44px; height: 44px; padding: 0; justify-content: center; background: transparent; border-color: transparent; color: var(--muted); }
+  .choice-trigger:hover, .choice-trigger[aria-expanded='true'] { background: var(--surface); border-color: var(--line); color: var(--ink); }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .choice-panel { position: fixed; inset: auto; margin: 0; padding: 8px; max-height: min(360px, 70vh); overflow: auto; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgb(0 0 0 / .12); }
+  .choice-panel button { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 44px; padding: 12px; background: transparent; border: 0; border-radius: 5px; text-align: left; }
+  .choice-panel button:hover, .choice-panel button:focus-visible { background: var(--surface); }
+  .choice-panel button[aria-selected='true'] { font-weight: 650; }
+  .choice-panel button[aria-selected='false'] svg { visibility: hidden; }
+</style>
