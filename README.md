@@ -99,7 +99,7 @@ Edit the home page in `src/pages/index.astro` and your bio in `src/pages/about.a
 
 ## Shared appearance and navigation
 
-Every section uses the same Light/Dark/Auto preference in `starlight-theme` local storage. Auto follows the operating system. The theme provider runs before page styling, preventing a light-theme flash on reload. Warm light and blue-toned dark colors, readable type, borders, focus states, code, and callouts share the tokens in `src/styles/site.css`. Expressive Code follows `data-theme`, including explicit preferences that differ from the OS.
+Every section uses the same Light/Dark/Auto preference in `starlight-theme` local storage. Auto follows the operating system. The theme provider runs before page styling, preventing a light-theme flash on reload. Warm tan light colors and near-black dark colors with a subtle cool undertone, readable type, borders, focus states, code, and callouts share the tokens in `src/styles/site.css`. Expressive Code follows `data-theme`, including explicit preferences that differ from the OS.
 
 `src/components/ThemeSelect.astro` serves both layout families. Narrow screens use native popover hamburger menus with keyboard/Escape support and synchronized `aria-expanded`; docs retain nested sidebar navigation. Topbars and mobile menus contain no GitHub link. Footer and relevant project source links remain available. Tabler's official `@tabler/icons-astro` package supplies the inline SVG icons, with `currentColor` styling and decorative accessibility attributes.
 

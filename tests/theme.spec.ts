@@ -7,7 +7,7 @@ test('theme persists between custom and documentation layouts and reloads', asyn
   await page.locator('[data-theme-picker]:visible').first().selectOption('dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(await page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('dark');
-  expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(16, 26, 42)');
+  expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(20, 23, 28)');
   await page.screenshot({ path: `test-results/${test.info().project.name}-home-dark.png`, fullPage: true });
   expect(await page.locator('body').innerText()).not.toMatch(/bytejon|A place for things/);
   const homeMenu = page.getByRole('button', { name: 'Menu', exact: true });
@@ -17,7 +17,7 @@ test('theme persists between custom and documentation layouts and reloads', asyn
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   const selected = page.locator('.sidebar a[aria-current="page"]');
-  expect(await selected.evaluate(el => getComputedStyle(el).color)).toBe('rgb(16, 26, 42)');
+  expect(await selected.evaluate(el => getComputedStyle(el).color)).toBe('rgb(20, 23, 28)');
   await page.screenshot({ path: `test-results/${test.info().project.name}-docs-dark.png`, fullPage: true });
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible()) await menu.click();
@@ -27,7 +27,7 @@ test('theme persists between custom and documentation layouts and reloads', asyn
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(250, 247, 240)');
+  expect(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(245, 239, 227)');
   await page.locator('[data-theme-picker]:visible').first().selectOption('auto');
   await page.emulateMedia({ colorScheme: 'dark' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');

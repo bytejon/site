@@ -1,18 +1,18 @@
 :root {
   color-scheme: light;
-  --paper: #faf7f0; --surface: #f2eee5; --ink: #252c35; --muted: #60676b; --line: #dedbd3; --accent: #226c56; --code-inline: #ece8e0;
+  --paper: #f5efe3; --surface: #ece3d3; --ink: #252c35; --muted: #62665f; --line: #d8cdbb; --accent: #226c56; --code-inline: #e7decd;
   --sl-color-accent-low: #e5f0eb; --sl-color-accent: #226c56; --sl-color-accent-high: #164b3b;
   --sl-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --sl-content-width: 48rem; --sl-text-5xl: 2.4rem;
 }
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --paper: #101a2a; --surface: #172439; --ink: #e6edf8; --muted: #acbcd2; --line: #2b3d56; --accent: #79cbb0; --code-inline: #20324a;
+  --paper: #14171c; --surface: #1b1f26; --ink: #e8e9ed; --muted: #adb3bd; --line: #30363f; --accent: #79cbb0; --code-inline: #242a33;
   --sl-color-accent-low: #17382f; --sl-color-accent: #79cbb0; --sl-color-accent-high: #b8e2d0;
-  --sl-color-gray-1: #e6edf8; --sl-color-gray-2: #acbcd2; --sl-color-gray-3: #8da3bf; --sl-color-gray-4: #586f8e; --sl-color-gray-5: #2b3d56; --sl-color-gray-6: #172439;
+  --sl-color-gray-1: #e8e9ed; --sl-color-gray-2: #adb3bd; --sl-color-gray-3: #9199a6; --sl-color-gray-4: #59616e; --sl-color-gray-5: #30363f; --sl-color-gray-6: #1b1f26;
 }
 :root[data-theme='light'] {
-  --sl-color-gray-1: #252c35; --sl-color-gray-2: #3e4852; --sl-color-gray-3: #60676b; --sl-color-gray-4: #8b9194; --sl-color-gray-5: #d4d0c7; --sl-color-gray-6: #ece8e0; --sl-color-gray-7: #f2eee5;
+  --sl-color-gray-1: #252c35; --sl-color-gray-2: #3e4852; --sl-color-gray-3: #62665f; --sl-color-gray-4: #8b8e84; --sl-color-gray-5: #d8cdbb; --sl-color-gray-6: #e7decd; --sl-color-gray-7: #ece3d3;
 }
 :root[data-theme] {
   --sl-color-bg: var(--paper); --sl-color-bg-nav: var(--surface); --sl-color-bg-sidebar: var(--paper);
@@ -80,7 +80,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .skip-link { position: fixed; left: 1rem; top: -100px; background: var(--surface); padding: .5rem 1rem; z-index: 100; }
 .skip-link:focus { top: 1rem; }
 .expressive-code { margin-block: 1.5rem; }
-[data-theme='dark'] .expressive-code { --ec-codeBg: #172439; --ec-frm-edBg: #172439; }
+[data-theme='dark'] .expressive-code { --ec-codeBg: var(--surface); --ec-frm-edBg: var(--surface); }
 @media (max-width: 640px) {
   .site-header, .site-main, .site-footer { padding-inline: 22px; }
   .site-main { padding-block: 48px 65px; }
