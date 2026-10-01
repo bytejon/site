@@ -1,0 +1,29 @@
+---
+import SiteNav from '../components/SiteNav.astro';
+import { href } from '../lib/site';
+import '../styles/site.css';
+interface Props { title: string; description?: string }
+const { title, description = 'Writing, tutorials, and open-source projects by Jon.' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === 'Jon' ? title : `${title} · Jon`}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={href('favicon.svg')} type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="Jon's blog" href={href('rss.xml')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+  </head>
+  <body class="personal-site">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><SiteNav /></header>
+    <main id="main" class="site-main"><slot /></main>
+    <footer class="site-footer"><span>Jon / bytejon</span><div><a href={href('rss.xml')}>RSS</a><a href="https://github.com/bytejon">GitHub</a></div></footer>
+  </body>
+</html>

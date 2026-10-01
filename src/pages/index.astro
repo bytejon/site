@@ -1,0 +1,22 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { href, posts, formatDate } from '../lib/site';
+const latest = (await posts()).slice(0, 3);
+---
+<SiteLayout title="Jon">
+  <section class="hero">
+    <p class="eyebrow">Jon / bytejon</p>
+    <h1>A place for things<br />I’m working on.</h1>
+    <p class="lede">Writing, tutorials, and open-source projects. An index of interests, ideas, and things learned along the way.</p>
+  </section>
+  <section aria-labelledby="explore"><h2 id="explore">Explore</h2>
+    <ul class="section-list">
+      <li><a class="section-row" href={href('blog/')}><strong>Blog</strong><p>Posts about interests, work, and ideas.</p><span aria-hidden="true">↗</span></a></li>
+      <li><a class="section-row" href={href('tutorials/')}><strong>Tutorials</strong><p>Guides with room to work through the details.</p><span aria-hidden="true">↗</span></a></li>
+      <li><a class="section-row" href={href('projects/')}><strong>Projects</strong><p>Open-source code and its documentation.</p><span aria-hidden="true">↗</span></a></li>
+    </ul>
+  </section>
+  <section aria-labelledby="recent"><div class="section-heading"><h2 id="recent">Recent writing</h2><a href={href('blog/')}>All posts →</a></div>
+    {latest.length ? <ul class="section-list">{latest.map(post => <li><a class="section-row" href={href(`blog/${post.id}/`)}><strong>{post.data.title}</strong><p>{formatDate(post.data.date)} · {post.data.description}</p><span aria-hidden="true">→</span></a></li>)}</ul> : <p class="empty">No posts published yet.</p>}
+  </section>
+</SiteLayout>

@@ -1,0 +1,12 @@
+---
+import { href } from '../lib/site';
+const links = [['Blog', 'blog/'], ['Tutorials', 'tutorials/'], ['Projects', 'projects/'], ['About', 'about/']];
+const current = Astro.url.pathname;
+---
+<nav class="site-nav" aria-label="Site">
+  <a class="wordmark" href={href()}>Jon<span class="wordmark-dot" aria-hidden="true">.</span></a>
+  <div class="nav-links">
+    {links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? 'page' : undefined}>{label}</a>)}
+    <a class="github-link" href="https://github.com/bytejon" aria-label="Jon on GitHub">GitHub <span aria-hidden="true">↗</span></a>
+  </div>
+</nav>

@@ -1,0 +1,10 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { posts, href, formatDate } from '../../lib/site';
+const entries = await posts();
+const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
+---
+<SiteLayout title="Blog"><p class="eyebrow">Writing</p><h1>Blog</h1><p class="lede">Posts about interests, work, and ideas.</p>
+  {tags.length > 0 && <ul class="tags" aria-label="Tags">{tags.map(tag => <li><a href={href(`blog/tags/${encodeURIComponent(tag)}/`)}>{tag}</a></li>)}</ul>}
+  {entries.length ? <ul class="section-list">{entries.map(post => <li><a class="section-row" href={href(`blog/${post.id}/`)}><strong>{post.data.title}{post.data.draft ? ' (draft)' : ''}</strong><p>{formatDate(post.data.date)}<br />{post.data.description}</p><span aria-hidden="true">→</span></a></li>)}</ul> : <p class="empty">No posts published yet. New writing will appear here.</p>}
+</SiteLayout>

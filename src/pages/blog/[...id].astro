@@ -1,0 +1,16 @@
+---
+import { render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { posts, href, formatDate } from '../../lib/site';
+export async function getStaticPaths() { return (await posts()).map(post => ({ params: { id: post.id }, props: { post } })); }
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<SiteLayout title={post.data.title} description={post.data.description}>
+  <article class="prose"><p class="eyebrow"><a href={href('blog/')}>Blog</a></p><h1>{post.data.title}</h1>
+    <div class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></div>
+    {post.data.draft && <aside class="note"><strong>Unpublished authoring example</strong><p>This draft demonstrates the site’s features. It is not a published article by Jon.</p></aside>}
+    <Content />
+    {post.data.tags.length > 0 && <ul class="tags" aria-label="Tags">{post.data.tags.map(tag => <li><a href={href(`blog/tags/${encodeURIComponent(tag)}/`)}>{tag}</a></li>)}</ul>}
+  </article>
+</SiteLayout>

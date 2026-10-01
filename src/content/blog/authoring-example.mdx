@@ -1,0 +1,37 @@
+---
+title: Authoring example
+description: An unpublished demonstration of Markdown, MDX components, and Luau highlighting.
+date: 2026-10-01
+tags: [authoring]
+draft: true
+---
+
+import Note from '../../components/Note.astro';
+
+## Markdown first
+
+This is a draft for trying out the authoring workflow. Replace it with your own writing, or keep it as a reference. Ordinary `.md` files work too.
+
+<Note title="Custom component example">
+  MDX lets you import an Astro component and use it alongside Markdown.
+</Note>
+
+## Luau code
+
+The `luau` fence uses a dedicated Luau grammar, including types and string interpolation.
+
+```luau title="example.luau"
+--!strict
+export type Point = { x: number, y: number }
+
+local point: Point = { x = 3, y = 4 }
+local label = `Point: {point.x}, {point.y}`
+
+for index = 1, 5 do
+    if index == 2 then
+        continue
+    end
+
+    print(label, index)
+end
+```
