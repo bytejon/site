@@ -5,8 +5,8 @@ import { load } from 'cheerio';
 import { createHighlighter } from 'shiki';
 import { luau } from '../config/highlighting.mjs';
 
-const base = (process.env.SITE_BASE || '/site').replace(/\/$/, '');
-const origin = process.env.SITE_URL || 'https://bytejon.github.io';
+const base = (process.env.SITE_BASE || '/').replace(/\/$/, '');
+const origin = process.env.SITE_URL || 'https://jonbyte.com';
 const drafts = process.env.INCLUDE_DRAFTS === 'true';
 async function walk(dir) {
   const items = await readdir(dir, { withFileTypes: true });

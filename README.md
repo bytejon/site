@@ -2,7 +2,9 @@
 
 Astro + Starlight. The source repository is private; the deployed website is public.
 
-Live: https://bytejon.github.io/site/
+Canonical site: https://jonbyte.com/
+
+Initial deployment was verified at https://bytejon.github.io/site/ before the custom-domain migration. Once the domain is associated, GitHub redirects that URL to the custom domain.
 
 ## Run locally
 
@@ -13,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-Open the URL printed by Astro (normally `http://localhost:4321/site/`). Draft blog posts appear only in development. A production build excludes them from routes, home/blog lists, tags, and RSS.
+Open the URL printed by Astro (normally `http://localhost:4321/`). Draft blog posts appear only in development. A production build excludes them from routes, home/blog lists, tags, and RSS.
 
 ```sh
 npm run check
@@ -23,7 +25,7 @@ npm run verify
 
 ## Write a blog post
 
-Add `src/content/blog/my-post.md`. Its filename becomes `/site/blog/my-post/`.
+Add `src/content/blog/my-post.md`. Its filename becomes `/blog/my-post/`.
 
 ```md
 ---
@@ -37,7 +39,7 @@ draft: true
 Your writing starts here.
 ```
 
-Use `draft: false` when ready to publish. Missing `draft` defaults to **true**. Dates are displayed in UTC and posts are sorted newest first. Prefer lowercase, URL-friendly tags. Published tags get index pages automatically. RSS is at `/site/rss.xml` and always excludes drafts.
+Use `draft: false` when ready to publish. Missing `draft` defaults to **true**. Dates are displayed in UTC and posts are sorted newest first. Prefer lowercase, URL-friendly tags. Published tags get index pages automatically. RSS is at `/rss.xml` and always excludes drafts.
 
 The included `authoring-example.mdx` is an unpublished feature demonstration, not an article attributed to Jon. Keep it as a reference or delete it.
 
@@ -89,7 +91,7 @@ src/content/docs/
         api.md
 ```
 
-Each file needs at least `title` in its frontmatter. Add `description` for search results and `sidebar: { order: 1 }` to set chapter order. Use `.mdx` for custom components here too. Nested links should be relative, e.g. `./first-chapter/` from a guide's index. All absolute internal links must include the configured base (`/site/` on GitHub Pages).
+Each file needs at least `title` in its frontmatter. Add `description` for search results and `sidebar: { order: 1 }` to set chapter order. Use `.mdx` for custom components here too. Nested links should be relative, e.g. `./first-chapter/` from a guide's index. The custom-domain deployment uses base `/`; internal absolute links can start with `/blog/`, `/tutorials/`, or `/projects/`.
 
 Copy the starter folders from `examples/tutorials/` or `examples/projects/` into the corresponding published content folder, then replace their text before committing. Examples stay outside published content by default. For unpublished docs, keep them in `examples/` or another directory outside `src/content/docs/`; hiding a sidebar entry does not make a page private. Starlight also ignores filenames beginning with `_` (rename them to publish).
 
@@ -101,16 +103,16 @@ Commit and push to `main` in `bytejon/site`. `.github/workflows/deploy.yml` inst
 
 Do not set `INCLUDE_DRAFTS` in the deployment workflow. For a temporary local verification build only, `INCLUDE_DRAFTS=true npm run build` enables the draft routes; `npm run verify` rejects them under normal production settings.
 
-### Custom-domain migration: pending
+### Custom-domain setup
 
-As inspected on 2026-10-01, the existing `bytejon/website` Pages site owns `www.jonbyte.com`; its source must remain intact. This starter is deployed independently at the GitHub URL until migration is confirmed.
+As inspected before migration on 2026-10-01, `bytejon/website` owned `www.jonbyte.com`. Its source must remain intact. The new build is configured for `https://jonbyte.com` with root base `/`. GitHub Pages settings and DNS must agree with this configuration.
 
-1. Preserve the old repository; disable only its Pages deployment when ready to switch. Remove its Pages custom-domain binding as part of the coordinated switch. Do not delete its source.
-2. Configure the desired custom domain in `bytejon/site` Settings → Pages. Verification/security changes require the account owner's confirmation. For a `jonbyte.com` canonical site, change `site` to `https://jonbyte.com` and `base` to `/` in `astro.config.mjs`, commit, and deploy. GitHub Actions deployment requires the Pages setting; a CNAME file alone is insufficient.
+1. Preserve the old repository. During the coordinated switch, transfer its Pages custom-domain binding to the new repository; disable its `Deploy VitePress site to Pages` workflow and unpublish only the old Pages deployment. Do not delete its source.
+2. Configure `jonbyte.com` in `bytejon/site` Settings → Pages. GitHub Actions deployment requires the Pages setting; a CNAME file alone is insufficient. If GitHub requires a separate domain-ownership verification, obtain the account owner's confirmation before adding a verification record.
 3. At the DNS provider, update **only** `www` CNAME from `jonbyte2.github.io` to `bytejon.github.io`. The apex A records already match GitHub Pages: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`. Preserve the existing nameservers, MX, SPF, and all other mail/verification records. No nameserver change is needed. The observed TTL is 14400 seconds (4 hours).
 4. Wait for GitHub's DNS check and certificate issuance, enforce HTTPS, and verify both `https://jonbyte.com` and `https://www.jonbyte.com`, redirects, assets, and RSS before considering the migration complete.
 
-The deployment at the GitHub URL does not alter DNS or the old site. The public draft/demo examples must never be mistaken for finished writing.
+DNS must be updated at Squarespace by the domain owner. Do not consider the migration complete until both domain names and HTTPS have been verified. Draft/demo examples are excluded from the public production build.
 
 ## Verification
 

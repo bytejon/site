@@ -5,8 +5,8 @@ import expressiveCodeIntegration from 'astro-expressive-code';
 import { expressiveCode } from './config/highlighting.mjs';
 
 export default defineConfig({
-  site: process.env.SITE_URL || 'https://bytejon.github.io',
-  base: process.env.SITE_BASE || '/site',
+  site: process.env.SITE_URL || 'https://jonbyte.com',
+  base: process.env.SITE_BASE || '/',
   trailingSlash: 'always',
   integrations: [
     expressiveCodeIntegration(expressiveCode),
