@@ -15,5 +15,5 @@ export const expressiveCode = {
   useDarkModeMediaQuery: false,
   themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
   shiki: { langs: [luau] },
-  styleOverrides: { borderRadius: '8px', gutterBorderWidth: '0px', codeFontSize: '0.875rem', codeLineHeight: '1.75', codePaddingBlock: 'var(--space-4)', codePaddingInline: 'var(--space-4)', frames: { editorActiveTabIndicator: 'var(--accent)' } },
+  styleOverrides: { borderRadius: '8px', gutterBorderWidth: '0px', codeFontSize: '0.875rem', codeLineHeight: '1.55', codePaddingBlock: 'var(--space-3)', codePaddingInline: 'var(--space-4)', frames: { editorActiveTabIndicator: 'var(--accent)' }, textMarkers: { markBackground: 'color-mix(in srgb, var(--accent) 12%, var(--code-surface))', markBorderColor: 'transparent' } },
 };

@@ -5,8 +5,6 @@ function update(frame) {
     const number = Number(line.dataset.codeLine);
     line.hidden = collapsed.some(button => number > Number(button.dataset.foldStart) && number < Number(button.dataset.foldEnd));
   }
-  const expand = frame.querySelector('.expand-scopes');
-  if (expand) expand.disabled = collapsed.length === 0;
 }
 document.addEventListener('click', event => {
   const target = event.target instanceof Element ? event.target : null;
@@ -16,15 +14,6 @@ document.addEventListener('click', event => {
     fold.setAttribute('aria-expanded', String(expanded));
     fold.setAttribute('aria-label', `${expanded ? 'Collapse' : 'Expand'} ${fold.dataset.foldKind} scope at line ${fold.dataset.foldStart}`);
     update(fold.closest('[data-code-tools]'));
-  }
-  const expand = target?.closest('.expand-scopes');
-  if (expand) {
-    const frame = expand.closest('[data-code-tools]');
-    for (const button of frame.querySelectorAll('.scope-toggle')) {
-      button.setAttribute('aria-expanded','true');
-      button.setAttribute('aria-label',`Collapse ${button.dataset.foldKind} scope at line ${button.dataset.foldStart}`);
-    }
-    update(frame);
   }
 });
 document.querySelectorAll('[data-code-tools]').forEach(update);
@@ -57,5 +46,5 @@ document.addEventListener('click', async event => {
 
 for (const tabs of document.querySelectorAll('starlight-tabs')) {
   const panels = [...tabs.querySelectorAll(':scope > [role="tabpanel"]')];
-  if (panels.length > 1 && panels.every(panel => panel.querySelectorAll('[data-code-tools]').length === 1)) tabs.classList.add('code-tabset');
+  if (panels.length > 1 && panels.every(panel => panel.children.length === 1 && panel.firstElementChild.matches('.expressive-code') && panel.firstElementChild.querySelectorAll('[data-code-tools]').length === 1)) tabs.classList.add('code-tabset');
 }

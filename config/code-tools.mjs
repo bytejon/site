@@ -48,7 +48,6 @@ export function pluginCodeTools() {
         header.properties.className = [...(header.properties.className || []),'code-toolbar'];
         const language = h('span.code-language',{'aria-label':`Language: ${codeBlock.language}`},codeBlock.language);
         header.children.push(language);
-        if (data.folds.length) header.children.push(h('button.expand-scopes',{type:'button','aria-label':'Expand all code scopes'},'Expand all'));
         const copy = frame.children.find(node => node.type === 'element' && node.properties.className?.includes('copy'));
         if (copy) { frame.children = frame.children.filter(node => node !== copy); header.children.push(copy); }
       },
