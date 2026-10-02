@@ -13,6 +13,16 @@ async function walk(dir) {
   return (await Promise.all(items.map(item => item.isDirectory() ? walk(join(dir, item.name)) : join(dir, item.name)))).flat();
 }
 const files = await walk('dist');
+const searchManifest = await readFile('dist/pagefind/pagefind-entry.json', 'utf8');
+assert(searchManifest.trim(), 'Search manifest is empty');
+const searchEntry = JSON.parse(searchManifest);
+assert(searchEntry.languages?.en?.page_count > 0, 'Search index has no English pages');
+for (const language of Object.values(searchEntry.languages)) {
+  assert(language.hash && language.wasm, 'Search language metadata is incomplete');
+  for (const asset of [`pagefind.${language.hash}.pf_meta`, `wasm.${language.wasm}.pagefind`]) {
+    assert((await stat(join('dist/pagefind', asset))).size > 0, `Missing or empty search asset: ${asset}`);
+  }
+}
 const htmlFiles = files.filter(file => file.endsWith('.html'));
 assert(htmlFiles.length >= 6, 'Expected home, blog, about, docs, and 404 pages');
 for (const file of htmlFiles) {

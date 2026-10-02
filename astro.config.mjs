@@ -6,6 +6,7 @@ import expressiveCodeIntegration from 'astro-expressive-code';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { unified } from '@astrojs/markdown-remark';
+import { staticSearch } from './config/search.mjs';
 
 export default defineConfig({
   site: process.env.SITE_URL || 'https://jonbyte.com',
@@ -20,6 +21,8 @@ export default defineConfig({
   integrations: [
     expressiveCodeIntegration(),
     starlight({
+      // The shared Search dialog uses the index written by staticSearch below.
+      pagefind: false,
       title: 'Jon',
       favicon: '/favicon.svg',
       description: 'Articles, tutorials, and open-source projects by Jon.',
@@ -40,5 +43,6 @@ export default defineConfig({
     }),
     sitemap({ filter: page => !/\/(blog|tutorials|writing)(\/|$)/.test(new URL(page).pathname) }),
     mdx(),
+    staticSearch(),
   ],
 });

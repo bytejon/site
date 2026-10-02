@@ -45,6 +45,15 @@ test('article and project trees keep page links separate from keyboard disclosur
       await expect(toggle).toHaveAttribute('aria-expanded','true');
       const buttonBounds = (await toggle.boundingBox())!;
       const labelBounds = (await branch.locator(':scope > .branch-row > a, :scope > .branch-row > .branch-label').boundingBox())!;
+      const rowBounds = (await branch.locator(':scope > .branch-row').boundingBox())!;
+      const childBounds = (await branch.locator(':scope > .branch-children').boundingBox())!;
+      expect(childBounds.y - rowBounds.y - rowBounds.height).toBeGreaterThanOrEqual(7.9);
+      const rows = await nav.locator('.top-level > li').all();
+      for (let i = 1; i < rows.length; i++) {
+        const before = (await rows[i-1].boundingBox())!; const after = (await rows[i].boundingBox())!;
+        expect(after.y-before.y-before.height).toBeGreaterThanOrEqual(7.9);
+      }
+      await expect(branch.locator(':scope > .branch-row > a')).toHaveCSS('padding-top','10px');
       expect(buttonBounds.x + buttonBounds.width).toBeLessThanOrEqual(labelBounds.x);
       expect(buttonBounds.width).toBe(44); expect(buttonBounds.height).toBe(44);
       await expect(toggle).toHaveCSS('border-top-width','0px');
