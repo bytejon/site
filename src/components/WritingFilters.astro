@@ -1,11 +1,12 @@
 ---
 import { tagLabel } from '../lib/tags';
-import { IconAdjustmentsHorizontal } from '@tabler/icons-astro';
+import { IconAdjustmentsHorizontal, IconX } from '@tabler/icons-astro';
 interface Props { tags: string[] }
 const { tags } = Astro.props;
 const groups = [{ name: 'tag', label: 'Tags', options: [{ value: '', label: 'All tags' }, ...tags.map(tag => ({ value: tag, label: tagLabel(tag) }))] }];
 ---
 <form class="writing-filters" aria-label="Filter articles">
+  <template data-filter-remove-icon><IconX size={16} stroke={1.8} aria-hidden="true" focusable="false" /></template>
   <input type="hidden" name="tag" value="" />
   <div class="filter-toolbar">
     <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="writing-filter-options"><IconAdjustmentsHorizontal size={17} aria-hidden="true" />Filters</button>
@@ -48,10 +49,11 @@ const groups = [{ name: 'tag', label: 'Tags', options: [{ value: '', label: 'All
       for (const value of selected[name]) {
       const label = choices(name).find(option => option.dataset.value === value)!.textContent!;
       const button = document.createElement('button');
-      button.type = 'button'; button.className = 'entry-tag filter-chip'; button.dataset.filterRemove = name; button.dataset.value = value;
+      button.type = 'button'; button.className = 'filter-chip'; button.dataset.filterRemove = name; button.dataset.value = value;
       button.setAttribute('aria-label', `Remove ${name} filter: ${label}`);
-      button.textContent = label;
-      const x = document.createElement('span'); x.textContent = '×'; x.setAttribute('aria-hidden', 'true'); button.append(x);
+      const text = document.createElement('span'); text.className = 'filter-chip-label'; text.textContent = label;
+      const icon = document.querySelector<HTMLTemplateElement>('[data-filter-remove-icon]')!;
+      button.append(text, icon.content.cloneNode(true));
       active.append(button);
       }
     }
