@@ -27,7 +27,7 @@ toc: false
 Your writing starts here.
 ```
 
-Use `tags` for everything, for example `[article, luau]` or `[tutorial, tools]`; no separate type is required. Article and Tutorial display first when present. Tags are trimmed, lowercased, and deduplicated. Existing `type: article` or `type: tutorial` is accepted and normalized into the same tags array. Optional subpages depend on `parent` and `order`, independently of tags.
+Use `tags` for everything, for example `[article, luau]` or `[tutorial, tools]`; no separate type is required. article and tutorial display first when present. Tags are trimmed, lowercased, and deduplicated. Existing `type: article` or `type: tutorial` is accepted and normalized into the same tags array. Optional subpages depend on `parent` and `order`, independently of tags.
 
 A quiet Filters button reveals multi-select tag chips. Entries match any selected tag. Active tags can be removed individually; All tags and Clear all clear the selection. Links use repeated parameters such as `?tag=luau&tag=math`. Older `type`/`topic` URL values are accepted as tags with the same match-any semantics; changing filters writes the unified URL. Reload and browser Back/Forward preserve selection. Roots require a date and sort newest first; dates display in UTC. Set `draft: false` to publish; omitted draft defaults to true. RSS includes published roots only. Level-two and level-three headings automatically create an on-this-page outline; the older `toc` field remains accepted.
 
@@ -39,7 +39,7 @@ Article list, recent, and related entries are single links across the whole row,
 
 Clear all stays beside Filters and is disabled with no active selection. Selected removable tags appear below the whole filter disclosure, directly above results, and remain visible when options collapse. Article chapter and project documentation pagination share the same outlined directional component; unavailable directions are omitted.
 
-Returning from an article through Back to articles or its Articles breadcrumb restores the list URL and scroll position from that navigation. Browser Back/Forward keeps filters. A small session-only snapshot expires after 30 minutes; direct tag links, intentional list navigation, and anchors take precedence. Storage is optional; links still work if it is unavailable.
+Returning from an article through its Articles breadcrumb restores the list URL and scroll position from that navigation. Browser Back/Forward keeps filters. A small session-only snapshot expires after 30 minutes; direct tag links, intentional list navigation, and anchors take precedence. Storage is optional; links still work if it is unavailable.
 
 ### Optional child pages for any entry
 
@@ -173,3 +173,27 @@ Article entries generate a right-side heading outline for both Articles and Tuto
 The article and project sidebars are scoped page trees. Page links navigate independently of the adjacent 44px expand/collapse buttons; only branches have these controls. The current branch opens on each route, other branches start collapsed. Desktop articles have no outer navigation dropdown; the mobile Pages button reveals the tree. Project Overview is always first, and other pages sort by `sidebar.order`, then their label and ID. Overview is a first-level link alongside the other top-level pages, never a wrapper. Folders with no page of their own are flattened, so only real pages introduce expandable branches. Project pagination stays within the current project; breadcrumbs provide back navigation.
 
 The divider below the topbar spans the viewport while its contents remain centered at the same width. Article footers omit a separate return control; the breadcrumb returns to Articles with list context preserved, and pagination has extra separation from Related articles. Search is available on every page through the icon immediately left of the theme button, or Ctrl+K / Command+K. It uses the same Pagefind index and Starlight search dialog. `config/search.mjs` generates the index through the [Pagefind Node API](https://pagefind.app/docs/node-api/#indexgetfiles), awaiting every output write before closing the native service. Starlight's built-in index writer is disabled while its dialog is reused. Build and deployment checks reject empty/invalid manifests and missing metadata assets. The topbar menu handles site navigation on mobile, while Documentation opens only the current project's page tree.
+
+
+## Optional project sidebar sections
+
+Existing projects need no changes. Overview is always the first root link. Pages without `section` remain root siblings. Folder-only paths stay invisible; real parent pages keep their nested subpages.
+
+Declare optional sections on the project's root `index.md`:
+
+```yaml
+sections:
+  - id: guides
+    label: Guides
+    order: 10
+  - id: reference
+    label: Reference
+    order: 30
+    collapsed: false
+```
+
+Assign a root sibling page to a section with `section: guides` in that page's frontmatter. Its actual child pages inherit the group and do not need `section`. Order pages with `sidebar.order`; section `order` uses the same ordering among ungrouped root pages. Overview stays first regardless of those orders. Empty sections are omitted. Duplicate section IDs, unknown assignments, and conflicting nested assignments fail the build. Section labels are bold toggle buttons with a filled triangle; real page parents retain independent links and chevrons. The current section and page ancestors open automatically; `collapsed: false` starts an otherwise inactive section open.
+
+Filter selections use their own `.filter-chip` variant (44px target, blue background). Display tags use the small rounded `.entry-tag`/`.article-tags` variant. Hover-only feedback requires a hover-capable fine pointer and stops after touch input; actual mouse movement restores it on hybrid devices. Focus, active/selected states, and native scrolling remain independent.
+
+See [QA coverage](docs/qa-coverage.md) for the supported-feature matrix, local-only fixture setup, checks, and device limitations.

@@ -48,7 +48,7 @@ test('project title and description retain their link surface',async({page},info
   await page.goto(path);await choose(page,'Color theme',theme);const row=page.locator('.entry-row:has(.entry-description)').first(),title=row.locator('.entry-title-link'),description=row.locator('.entry-description');const destination=await title.getAttribute('href');
   await expect(title.locator('.entry-description')).toHaveCount(1);await expect(title).not.toHaveAttribute('tabindex','-1');await expect(row.locator('a:not(.tag-link)')).toHaveCount(1);await expect(row.locator('a a')).toHaveCount(0);await expect(title.locator('svg')).toBeVisible();
   await page.mouse.move(0,0);const initial=await title.evaluate(el=>getComputedStyle(el).backgroundColor);
-  await title.hover();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe(initial);
+  await title.hover();if(await page.evaluate(()=>matchMedia('(any-hover: hover) and (any-pointer: fine)').matches))await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe(initial);else await expect(title).toHaveCSS('background-color',initial);
   await page.mouse.move(0,0);await page.keyboard.press('Tab');await title.focus();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('solid');await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineWidth)).toBe('3px');
   await page.screenshot({path:`test-results/affordance-${path.slice(0,-1)}-${info.project.name}-${theme}-focus.png`});
   if(info.project.name==='mobile')await description.tap();else await description.click();await expect(page).toHaveURL(new RegExp(destination!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));

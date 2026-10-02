@@ -39,7 +39,7 @@ for (const path of ['', 'projects/']) {
 
 test('topbar has identical centered bounds across layout families', async ({ page }) => {
   const paths = ['', 'articles/', 'about/', 'projects/'];
-  if (process.env.TEST_AUTHORING === 'true') paths.push('articles/single-article/', 'articles/single-tutorial/', 'articles/series-article/chapter/', 'articles/series-tutorial/chapter/', 'projects/example-project/reference/api/');
+  if (process.env.TEST_DEMOS === 'true') paths.push('articles/demo-math-and-markdown/', 'articles/demo-component-tutorial/', 'articles/demo-article-series/first/', 'articles/demo-tutorial-series/first/', 'projects/demo-project/reference/api/');
   for (const width of [390, 700, 1440, 1920]) {
     await page.setViewportSize({ width, height: 1000 });
     let reference: { x: number; width: number; logoX: number; right: number; height: number; writingX: number; themeX: number } | undefined;

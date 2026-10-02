@@ -16,7 +16,7 @@ test('theme popover supports keyboard selection, Escape, and outside dismissal',
   await trigger.click(); await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-  await trigger.click(); await page.locator('h1').click();
+  await trigger.click(); await page.getByRole('heading',{name:'Explore',exact:true}).click();
   await expect(picker.getByRole('listbox')).toBeHidden();
   await page.reload(); await expect(picker).toHaveAttribute('data-value', 'dark');
 });
@@ -57,8 +57,8 @@ test('filter disclosure and toggle selection support keyboard and reduced motion
 });
 
 test('nested docs keep the shared theme popover and search', async ({ page }) => {
-  test.skip(process.env.TEST_AUTHORING !== 'true', 'Local unpublished project fixture');
-  await page.goto('projects/example-project/reference/api/');
+  test.skip(process.env.TEST_DEMOS !== 'true', 'Local unpublished project fixture');
+  await page.goto('projects/demo-project/reference/api/');
   await page.locator('header .theme-picker').click();
   await page.getByRole('listbox', { name: 'Color theme', exact: true }).getByRole('option', { name: 'Dark', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');

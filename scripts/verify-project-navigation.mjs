@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+const compiled=await build({entryPoints:['./src/lib/project-navigation.ts'],bundle:true,write:false,format:'esm',platform:'node',define:{'import.meta.env.BASE_URL':'"/"','import.meta.env.DEV':'false','import.meta.env.INCLUDE_DRAFTS':'"false"'},plugins:[{name:'content-test-context',setup(builder){builder.onResolve({filter:/^astro:content$/},()=>({path:'content',namespace:'test'}));builder.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export const getCollection = async () => [];',loader:'js'}));}}]});
+const {projectNavigation}=await import('data:text/javascript;base64,'+Buffer.from(compiled.outputFiles[0].text).toString('base64'));
+const root='projects/fixture';
+const doc=(id,title,extra={})=>({id,data:{title,draft:false,sections:[],sidebar:{attrs:{},hidden:false},...extra}});
+const definitions=[{id:'guides',label:'Guides',order:10,collapsed:true},{id:'empty',label:'Empty',order:20,collapsed:true}];
+const records=[doc(root,'Fixture',{sections:definitions}),doc(root+'/start','Start',{sidebar:{attrs:{},order:1}}),doc(root+'/folder/api','API',{section:'guides',sidebar:{attrs:{},order:1}}),doc(root+'/folder/api/child','Child'),doc(root+'/loose/sibling','Sibling',{sidebar:{attrs:{},order:30}}),doc(root+'/draft','Draft',{draft:true}),doc(root+'/hidden','Hidden',{sidebar:{attrs:{},hidden:true}}),doc('projects/other','Other'),doc('projects/other/page','Other page')];
+const tree=projectNavigation(records,root+'/folder/api/child');
+assert.deepEqual(tree.map(item=>item.label),['Overview','Start','Guides','Sibling']);assert.equal(tree[0].type,'link');
+assert.equal(tree[2].section,true);assert.equal(tree[2].entries[0].page.label,'API');assert.equal(tree[2].entries[0].entries[0].isCurrent,true);
+assert.deepEqual(projectNavigation([...records].reverse(),root+'/folder/api/child'),tree);
+assert.throws(()=>projectNavigation([doc(root,'Fixture',{sections:[...definitions,definitions[0]]})],root),/Duplicate project section/);
+assert.throws(()=>projectNavigation([doc(root,'Fixture'),doc(root+'/page','Page',{section:'missing'})],root),/Unknown project section/);
+assert.throws(()=>projectNavigation([...records,doc(root+'/folder/api/conflict','Conflict',{section:'empty'})],root),/must inherit the section/);
+assert.deepEqual(projectNavigation([doc(root,'Fixture'),doc(root+'/folder/plain','Plain')],root).map(item=>item.label),['Overview','Plain']);
+console.log('Verified optional sections, root siblings, ordering, real nesting, empty/hidden/draft exclusion, isolation, deterministic inputs, and invalid metadata errors.');

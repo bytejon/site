@@ -2,7 +2,9 @@ import { getCollection } from 'astro:content';
 import { writingPages, href } from '../lib/site';
 import type { APIContext } from 'astro';
 export async function GET(context: APIContext) {
-  const writing = (await writingPages()).filter(p => !p.data.draft);
+  const candidates = await writingPages();
+  const published = (page: (typeof candidates)[number]): boolean => !page.data.draft && (!page.data.parent || published(candidates.find(parent => parent.id === page.data.parent)!));
+  const writing = candidates.filter(published);
   const docs = await getCollection('docs');
   const paths = ['', 'articles/', 'about/', ...writing.map(p => `articles/${p.id}/`), ...docs.filter(p => p.id !== '404' && !p.data.draft).map(p => `${p.id.replace(/\/index$/, '')}/`)];
   const escape = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;');

@@ -36,6 +36,8 @@ export default defineConfig({
         Sidebar: './src/components/DocsSidebar.astro',
         MobileMenuToggle: './src/components/DocsMenuButton.astro',
         MobileMenuFooter: './src/components/DocsMobileFooter.astro',
+        TableOfContents: './src/components/DocsOutline.astro',
+        MobileTableOfContents: './src/components/DocsMobileOutline.astro',
       },
       sidebar: [
         { label: 'Projects', items: [{ autogenerate: { directory: 'projects' } }] },

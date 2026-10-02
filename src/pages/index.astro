@@ -7,10 +7,7 @@ import { href, posts } from '../lib/site';
 const latest = (await posts()).slice(0, 3);
 ---
 <SiteLayout title="Jon">
-  <section class="hero">
-    <h1>Jon</h1>
-    <p class="lede">Articles, tutorials, and open-source projects.</p>
-  </section>
+  <h1 class="page-label">Jon</h1>
   <section aria-labelledby="explore"><h2 id="explore">Explore</h2>
     <ul class="section-list">
       <li><a class="section-row" href={href('articles/')}><strong><IconPencil size={20} stroke={1.6} aria-hidden="true" focusable="false" />Articles</strong><p>Articles and tutorials about interests, work, and ideas.</p><Arrow /></a></li>
@@ -19,6 +16,6 @@ const latest = (await posts()).slice(0, 3);
     </ul>
   </section>
   <section aria-labelledby="recent"><div class="section-heading"><h2 id="recent">Recent articles</h2><a href={href('articles/')}>All articles <Arrow /></a></div>
-    {latest.length ? <ul class="section-list">{latest.map(post => <li><EntryRow url={href(`articles/${post.id}/`)} title={post.data.title} description={post.data.description} tags={post.data.tags} date={post.data.date} updated={post.data.updated} wholeLink /></li>)}</ul> : <p class="empty">No articles published yet.</p>}
+    {latest.length ? <ul class="section-list">{latest.map(post => <li><EntryRow url={href(`articles/${post.id}/`)} title={post.data.title} description={post.data.description} tags={post.data.tags} date={post.data.date} updated={post.data.updated} draft={post.data.draft} wholeLink /></li>)}</ul> : <p class="empty">No articles published yet.</p>}
   </section>
 </SiteLayout>

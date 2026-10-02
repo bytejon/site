@@ -4,21 +4,22 @@ import type { ProjectNavEntry as SidebarEntry } from '../lib/project-navigation'
 interface Props { entries: SidebarEntry[]; nested?: boolean; rootHref?: string }
 const { entries, nested = false } = Astro.props;
 const hasCurrent = (entry: SidebarEntry): boolean => entry.type === 'link' ? entry.isCurrent : Boolean(entry.page?.isCurrent || entry.entries.some(hasCurrent));
+const expanded = (entry: Extract<SidebarEntry,{type:'group'}>) => hasCurrent(entry) || (entry.section && !entry.collapsed);
 ---
 <ul class:list={['project-tree', { 'top-level': !nested }]}>
  {entries.map(entry => <li>
    {entry.type === 'link' ?
      <a {...entry.attrs} class:list={['tree-leaf', entry.attrs.class]} href={entry.href} aria-current={entry.isCurrent ? 'page' : undefined}>{entry.label}</a> :
-     <div class="tree-branch">
+     <div class:list={['tree-branch', { 'tree-section': entry.section }]}>
        <div class="branch-row">
-         <button type="button" class="branch-toggle" aria-label={`Toggle ${entry.label} subpages`} aria-expanded={hasCurrent(entry) ? 'true' : 'false'} data-tree-toggle>
-           <IconChevronRight size={16} aria-hidden="true" />
+         <button type="button" class:list={['branch-toggle', { 'section-toggle': entry.section }]} aria-label={`Toggle ${entry.label} ${entry.section ? 'section' : 'subpages'}`} aria-expanded={expanded(entry) ? 'true' : 'false'} data-tree-toggle>
+           {entry.section ? <><span class="section-icon"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1 10 6 3 11Z" fill="currentColor" /></svg></span><span class="branch-label">{entry.label}</span></> : <IconChevronRight size={16} aria-hidden="true" />}
          </button>
          {entry.page ?
            <a {...entry.page.attrs} href={entry.page.href} aria-current={entry.page.isCurrent ? 'page' : undefined}>{entry.page.label}</a> :
-           <span class="branch-label">{entry.label}</span>}
+           !entry.section && <span class="branch-label">{entry.label}</span>}
        </div>
-       <div class="branch-children" hidden={!hasCurrent(entry)}><Astro.self entries={entry.entries} nested /></div>
+       <div class="branch-children" hidden={!expanded(entry)}><Astro.self entries={entry.entries} nested /></div>
      </div>}
  </li>)}
 </ul>
@@ -35,15 +36,20 @@ const hasCurrent = (entry: SidebarEntry): boolean => entry.type === 'link' ? ent
  li + li { margin-top: 8px; }
  .project-tree a, .project-tree .branch-label { display: flex; align-items: center; min-height: 44px; padding: 10px 12px; line-height: 1.5; font-size: 14px; border-radius: 4px; text-decoration: none; }
  a { color: var(--muted); position: relative; overflow-wrap: anywhere; }
- a:hover { color: var(--ink); background: var(--surface); }
+ @media (any-hover: hover) and (any-pointer: fine) {
+ :global(:root:not([data-touch-input])) a:hover { color: var(--ink); background: var(--surface); } }
  a[aria-current='page'] { color: var(--accent); background: var(--surface); font-weight: 600; }
  a[aria-current='page']::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px; background: var(--accent); border-radius: 2px; }
  .branch-row { display: flex; align-items: center; }
  .branch-row > a, .branch-label { flex: 1; min-width: 0; }
  .project-tree > li > .tree-leaf { margin-left: 44px; }
  .branch-label { font-weight: 600; color: var(--ink); }
+ .section-toggle .branch-label { font-weight: 700; text-align: left; }
+ .branch-toggle.section-toggle { width: 100%; height: auto; justify-content: flex-start; padding: 0; }
+ .section-icon { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; }
  .branch-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; }
- .branch-toggle:hover { color: var(--accent); }
+ @media (any-hover: hover) and (any-pointer: fine) {
+ :global(:root:not([data-touch-input])) .branch-toggle:hover { color: var(--accent); } }
  .branch-toggle[aria-expanded='true'] svg { transform: rotate(90deg); }
  .branch-children { margin: 8px 0 0 12px; }
 </style>

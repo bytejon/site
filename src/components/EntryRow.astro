@@ -7,7 +7,7 @@ interface Props { url: string; title: string; description?: string; tags?: strin
 const { url, title, description, tags = [], date, updated, wholeLink = false, draft = false } = Astro.props;
 const labels = normalizeTags(tags);
 ---
-<div class:list={['section-row', 'entry-row', { 'article-entry': wholeLink }]}>
+<div class:list={['section-row', 'entry-row', { 'article-entry': wholeLink }]} data-pagefind-ignore={draft || undefined}>
   {wholeLink ? <a class="entry-title-link article-entry-link" href={url}>
     <strong class="entry-title">{title}{draft ? ' (draft)' : ''}<Arrow /></strong>
     {description && <p class="entry-description">{description}</p>}

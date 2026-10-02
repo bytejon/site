@@ -74,11 +74,15 @@ const id = `choices-${name || 'theme'}-${crypto.randomUUID()}`;
   button { font: inherit; color: var(--ink); cursor: pointer; }
   .choice-trigger { display: inline-flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
   .theme-picker { width: 44px; height: 44px; padding: 0; justify-content: center; background: transparent; border-color: transparent; color: var(--muted); }
-  .choice-trigger:hover, .choice-trigger[aria-expanded='true'] { background: var(--surface); border-color: var(--line); color: var(--ink); }
+  @media (any-hover: hover) and (any-pointer: fine) {
+  :global(:root:not([data-touch-input])) .choice-trigger:hover { background: var(--surface); border-color: var(--line); color: var(--ink); } }
+  .choice-trigger[aria-expanded='true'] { background: var(--surface); border-color: var(--line); color: var(--ink); }
   button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
   .choice-panel { position: fixed; inset: auto; margin: 0; padding: 8px; max-height: min(360px, 70vh); overflow: auto; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgb(0 0 0 / .12); }
   .choice-panel button { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 44px; padding: 12px; background: transparent; border: 0; border-radius: 5px; text-align: left; }
-  .choice-panel button:hover, .choice-panel button:focus-visible { background: var(--surface); }
+  @media (any-hover: hover) and (any-pointer: fine) {
+  :global(:root:not([data-touch-input])) .choice-panel button:hover { background: var(--surface); } }
+  .choice-panel button:focus-visible { background: var(--surface); }
   .choice-panel button[aria-selected='true'] { font-weight: 650; }
   .choice-panel button[aria-selected='false'] svg { visibility: hidden; }
 </style>

@@ -17,3 +17,19 @@ Astro.locals.t ??= useTranslations('en');
   <div class="nav-controls"><Search /><ThemeSelect /><MenuButton /></div>
 </nav>
 <div id="site-mobile-menu" class="mobile-nav-panel" popover="auto"><nav aria-label="Site menu">{links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? (current === href(path) ? 'page' : 'location') : undefined}>{label}</a>)}</nav></div>
+<script>
+  // Real mouse movement re-enables hover on hybrid devices after touch input.
+  const pointerMode = (event: PointerEvent) => {
+    if (event.pointerType === 'touch') document.documentElement.setAttribute('data-touch-input', '');
+    else if (event.pointerType === 'mouse' && (event.type === 'pointerdown' || event.movementX || event.movementY)) document.documentElement.removeAttribute('data-touch-input');
+  };
+  document.addEventListener('pointerdown', pointerMode, { capture: true, passive: true });
+  document.addEventListener('pointermove', pointerMode, { capture: true, passive: true });
+  document.querySelectorAll('site-search').forEach(search => {
+    search.addEventListener('click', event => {
+      if ((event.target as Element).closest('.pagefind-ui__search-clear')) {
+        queueMicrotask(() => search.querySelector<HTMLInputElement>('.pagefind-ui__search-input')?.focus());
+      }
+    });
+  });
+</script>

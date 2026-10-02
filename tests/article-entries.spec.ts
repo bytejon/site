@@ -11,7 +11,9 @@ test('whole article entries provide one native link and matching static chips', 
     expect(boxes.row).toEqual(boxes.link);
     const chip = row.locator('.entry-tag').first();
     const style = await chip.evaluate(el => { const c = getComputedStyle(el); return [c.fontSize,c.lineHeight,c.padding,c.borderRadius,c.backgroundColor,c.color,c.border]; });
-    await chip.hover(); await expect.poll(() => link.evaluate(el => getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
+    await chip.hover();
+    if(await page.evaluate(()=>matchMedia('(any-hover: hover) and (any-pointer: fine)').matches)) await expect.poll(() => link.evaluate(el => getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
+    else await expect(link).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
     await page.keyboard.press('Tab'); await link.focus(); await expect(link).toBeFocused();
     await expect.poll(() => link.evaluate(el => getComputedStyle(el).outlineStyle)).toBe('solid');
     await page.keyboard.press('Tab'); await expect(link).not.toBeFocused(); await expect(chip).not.toBeFocused();

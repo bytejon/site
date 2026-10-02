@@ -36,8 +36,8 @@ test('theme persists between custom and documentation layouts and reloads', asyn
 });
 
 test('Luau code follows the selected theme', async ({ page }) => {
-  test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for local draft verification');
-  await page.goto('articles/authoring-example/');
+  test.skip(process.env.TEST_DEMOS !== 'true', 'Only for local draft verification');
+  await page.goto('articles/demo-component-tutorial/');
   await choose(page, 'Color theme', 'dark');
   const token = page.locator('pre[data-language="luau"] span[style]').first();
   const darkColor = await token.evaluate(el => getComputedStyle(el).color);
@@ -45,5 +45,5 @@ test('Luau code follows the selected theme', async ({ page }) => {
   await choose(page, 'Color theme', 'light');
   const lightColor = await token.evaluate(el => getComputedStyle(el).color);
   expect(lightColor).not.toBe(darkColor);
-  await expect(page.getByRole('complementary', { name: 'Custom component example' })).toBeVisible();
+  await expect(page.getByRole('complementary', { name: 'Demo component' })).toBeVisible();
 });

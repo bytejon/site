@@ -30,9 +30,9 @@ test('landing headings remain accessible while Projects omits generic intro text
 });
 
 test('draft MDX and nested docs authoring fixtures', async ({ page }) => {
-  test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for a local authoring fixture build');
-  await page.goto('articles/authoring-example/');
-  await expect(page.getByRole('complementary', { name: 'Custom component example' })).toBeVisible();
+  test.skip(process.env.TEST_DEMOS !== 'true', 'Only for a local authoring fixture build');
+  await page.goto('articles/demo-component-tutorial/');
+  await expect(page.getByRole('complementary', { name: 'Demo component' })).toBeVisible();
   await expect(page.locator('pre[data-language="luau"]')).toBeVisible();
   const code = page.locator('pre[data-language="luau"]');
   if (await code.evaluate(el => el.scrollWidth > el.clientWidth)) {
@@ -40,10 +40,10 @@ test('draft MDX and nested docs authoring fixtures', async ({ page }) => {
     await code.focus();
     await expect(code).toBeFocused();
   }
-  await page.goto('projects/example-project/reference/api/');
-  await expect(page.locator('h1')).toHaveText('API reference');
-  const menu = page.getByRole('button', { name: 'Menu', exact: true });
-  if (await menu.isVisible()) await menu.click();
-  await expect(page.locator('nav.sidebar').getByRole('link', { name: 'API reference', exact: true })).toBeVisible();
+  await page.goto('projects/demo-project/reference/api/');
+  await expect(page.locator('h1')).toContainText('API reference');
+  const reveal = page.getByRole('button', { name: 'Documentation', exact: true });
+  if (await reveal.isVisible()) await reveal.click();
+  await expect(page.getByRole('navigation',{name:'Documentation',exact:true}).getByRole('link', { name: 'API reference', exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

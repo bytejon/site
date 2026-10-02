@@ -4,6 +4,7 @@ import DefaultPageTitle from '@astrojs/starlight/components/PageTitle.astro';
 import ProjectOverview from './ProjectOverview.astro';
 import Breadcrumb from './Breadcrumb.astro';
 import MenuButton from './MenuButton.astro';
+import DocsOutline from './DocsOutline.astro';
 import { href } from '../lib/site';
 const { entry } = Astro.locals.starlightRoute;
 const docs = await getCollection('docs');
@@ -15,3 +16,14 @@ items.push({ label: entry.data.sidebar.label || entry.data.title, href: undefine
 {entry.id.startsWith('projects/') && <><MenuButton controls="starlight__sidebar" docs label="Documentation" /><Breadcrumb items={items} /></>}
 <DefaultPageTitle />
 {/^projects\/[^/]+$/.test(entry.id) && <ProjectOverview description={entry.data.description} overview={entry.data.overview} />}
+<div class="docs-outline-mobile"><DocsOutline mobile /></div>
+<style>
+  .docs-outline-mobile { margin-top: 20px; }
+  @media (min-width: 72rem) { .docs-outline-mobile { display: none; } }
+  @media (max-width: 71.999rem) {
+    .docs-outline-mobile :global(details) { position: static; max-height: none; }
+    .docs-outline-mobile :global(summary) { cursor: pointer; min-height: 44px; list-style: disclosure-closed; }
+    .docs-outline-mobile :global(details[open] > summary) { list-style: disclosure-open; }
+    .docs-outline-mobile :global(.reader-outline a) { min-height: 44px; }
+  }
+</style>

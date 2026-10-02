@@ -1,0 +1,10 @@
+---
+import PageOutline from './PageOutline.astro';
+interface Props { mobile?: boolean }
+const { toc } = Astro.locals.starlightRoute;
+type Item = NonNullable<typeof toc>['items'][number];
+function flatten(items: Item[]): {depth:number;slug:string;text:string}[] {
+  return items.flatMap(item => [...(item.slug !== '_top' ? [{depth:item.depth,slug:item.slug,text:item.text}] : []), ...flatten(item.children)]);
+}
+---
+{toc && <PageOutline headings={flatten(toc.items)} collapseAt={Astro.props.mobile ? 1151 : 1099} />}
