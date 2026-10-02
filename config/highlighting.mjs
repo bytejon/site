@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import { codeThemes } from './code-themes.mjs';
@@ -5,7 +6,7 @@ import { pluginCodeTools } from './code-tools.mjs';
 
 // Dedicated Luau grammar: source.luau, never an alias to Lua.
 export const luau = {
-  ...JSON.parse(readFileSync(new URL('../vendor/luau/Luau.tmLanguage.json', import.meta.url), 'utf8')),
+  ...JSON.parse(readFileSync(resolve(process.cwd(), 'vendor/luau/Luau.tmLanguage.json'), 'utf8')),
   name: 'luau',
 };
 

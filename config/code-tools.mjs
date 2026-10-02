@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { h } from '@expressive-code/core/hast';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -10,7 +11,7 @@ function find(node, predicate) {
 export function pluginCodeTools() {
   return {
     name: 'Jon code tools',
-    jsModules: [readFileSync(new URL('./code-tools-browser.js',import.meta.url),'utf8')],
+    jsModules: [readFileSync(resolve(process.cwd(), 'config/code-tools-browser.js'),'utf8')],
     hooks: {
       preprocessMetadata: ({ codeBlock, addGutterElement }) => {
         if (codeBlock.language !== 'luau') return;

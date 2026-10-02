@@ -1,0 +1,49 @@
+---
+import { href } from '../lib/site';
+---
+<span data-articles-list-path={href('articles/')} hidden></span>
+<script>
+  const listPath = document.querySelector<HTMLElement>('[data-articles-list-path]')!.dataset.articlesListPath!;
+  const key = 'jon-articles-return', restoreKey = 'jon-articles-restore';
+  type Snapshot = { url: string; y: number; at: number };
+  const current = () => location.pathname + location.search + location.hash;
+  function read(name: string): Snapshot | undefined {
+    try { const value = JSON.parse(sessionStorage.getItem(name) || 'null');
+      const url = value && new URL(value.url, location.origin);
+      if (url && url.origin === location.origin && url.pathname === listPath && Number.isFinite(value.y) && value.y >= 0 && Number.isFinite(value.at) && Date.now()-value.at < 30*60*1000) return value;
+    } catch { /* Navigation works normally without session storage. */ }
+  }
+  function write(name: string, value: Snapshot) { try { sessionStorage.setItem(name, JSON.stringify(value)); } catch { /* Optional return-state enhancement. */ } }
+  if (location.pathname === listPath) {
+    document.addEventListener('click', event => {
+      const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
+      if (!link || (event as MouseEvent).button !== 0 || (event as MouseEvent).metaKey || (event as MouseEvent).ctrlKey || (event as MouseEvent).shiftKey || link.target === '_blank') return;
+      const url = new URL(link.href);
+      if (url.origin !== location.origin || !url.pathname.startsWith(listPath) || url.pathname === listPath) return;
+      const value = { url: current(), y: scrollY, at: Date.now() };
+      history.replaceState({ ...history.state, articleList: value }, '', location.href);
+      write(key, value);
+    });
+    function restore() {
+      const explicit = read(restoreKey);
+      try { sessionStorage.removeItem(restoreKey); } catch { /* Optional state. */ }
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const value = explicit || (navigation?.type === 'back_forward' ? history.state?.articleList : undefined);
+      if (value?.url === current() && !location.hash) requestAnimationFrame(() => requestAnimationFrame(() => scrollTo(0, value.y)));
+    }
+    window.addEventListener('pageshow', restore);
+  } else if (location.pathname.startsWith(listPath)) {
+    const saved = read(key);
+    let referrer: URL | undefined; try { if (document.referrer) referrer = new URL(document.referrer); } catch { /* No usable referrer. */ }
+    let value: Snapshot | undefined = history.state?.articleReturn;
+    if (!value && saved && referrer?.origin === location.origin && (referrer.pathname === listPath && referrer.pathname+referrer.search === saved.url.split('#')[0] || referrer.pathname.startsWith(listPath) && referrer.pathname !== listPath)) {
+      value = saved; history.replaceState({ ...history.state, articleReturn: value }, '', location.href);
+    }
+    if (!value && referrer?.origin === location.origin && referrer.pathname === listPath) value = { url: referrer.pathname+referrer.search, y: 0, at: Date.now() };
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-return-articles]')) {
+      if (!value) continue;
+      link.href = value.url;
+      link.addEventListener('click', event => { if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) write(restoreKey, value!); });
+    }
+  }
+</script>

@@ -3,7 +3,6 @@ import starlight from '@astrojs/starlight';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import expressiveCodeIntegration from 'astro-expressive-code';
-import { expressiveCode } from './config/highlighting.mjs';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { unified } from '@astrojs/markdown-remark';
@@ -19,7 +18,7 @@ export default defineConfig({
     }),
   },
   integrations: [
-    expressiveCodeIntegration(expressiveCode),
+    expressiveCodeIntegration(),
     starlight({
       title: 'Jon',
       favicon: '/favicon.svg',
@@ -37,7 +36,6 @@ export default defineConfig({
       sidebar: [
         { label: 'Projects', items: [{ autogenerate: { directory: 'projects' } }] },
       ],
-      editLink: { baseUrl: 'https://github.com/bytejon/site/edit/main/' },
     }),
     sitemap({ filter: page => !/\/(blog|tutorials|writing)(\/|$)/.test(new URL(page).pathname) }),
     mdx(),

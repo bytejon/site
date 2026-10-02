@@ -1,5 +1,7 @@
 ---
 import { render } from 'astro:content';
+import EntryRow from '../../components/EntryRow.astro';
+import { relatedEntries } from '../../lib/related';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { tagLabel } from '../../lib/tags';
 import Breadcrumb from '../../components/Breadcrumb.astro';
@@ -13,6 +15,9 @@ export async function getStaticPaths() {
 const { post, pages } = Astro.props;
 const root = rootOf(post, pages);
 const chapters = chapterTree(root, pages);
+const related = relatedEntries(root, pages, import.meta.env.INCLUDE_DEMOS === 'true');
+const updated = post.data.updated || root.data.updated;
+const changed = updated && updated > root.data.date!;
 const index = chapters.findIndex(item => item.page.id === post.id);
 const previous = chapters[index - 1]?.page;
 const next = chapters[index + 1]?.page;
@@ -33,13 +38,15 @@ const breadcrumb = [{ label: 'Articles', href: href('articles/') }, ...ancestry.
     </aside>}
     <PageOutline headings={outline} />
     <article class="prose">
-      <Breadcrumb items={breadcrumb} />
+      <Breadcrumb items={breadcrumb} returnArticles />
       <h1>{post.data.title}</h1>
-      <div class="post-meta"><time datetime={root.data.date!.toISOString()}>{formatDate(root.data.date!)}</time></div>
+      <div class="post-meta"><time datetime={root.data.date!.toISOString()}>{formatDate(root.data.date!)}</time>{changed && <span class="updated-date">Updated <time datetime={updated!.toISOString()}>{formatDate(updated!)}</time></span>}</div>
       {post.data.draft && <aside class="note" data-pagefind-ignore><strong>Unpublished authoring example</strong><p>This draft demonstrates the site's features. It is not published writing by Jon.</p></aside>}
       <Content />
       {root.data.tags.length > 0 && <ul class="tags" aria-label="Tags">{root.data.tags.map(tag => <li><a href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a></li>)}</ul>}
       {chapters.length > 1 && <nav class="chapter-pagination" aria-label="Chapter navigation" data-pagefind-ignore>{previous ? <a rel="prev" href={href(`articles/${previous.id}/`)}>← {previous.data.title}</a> : <span />}{next && <a rel="next" href={href(`articles/${next.id}/`)}>{next.data.title} →</a>}</nav>}
+      <p class="article-return"><a href={href('articles/')} data-return-articles>Back to articles</a></p>
+      {related.length > 0 && <section class="related-articles" aria-labelledby="related-articles"><h2 id="related-articles">Related articles</h2><ul class="section-list">{related.map(entry => <li><EntryRow url={href(`articles/${entry.id}/`)} title={entry.data.title} description={entry.data.description} tags={entry.data.tags} date={entry.data.date} updated={entry.data.updated} tagLinks /></li>)}</ul></section>}
     </article>
   </div>
 </SiteLayout>

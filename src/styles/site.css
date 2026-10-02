@@ -65,7 +65,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .section-row strong { display: flex; gap: .65rem; align-items: center; }
 .section-row strong svg { color: var(--accent); flex-shrink: 0; }
 .section-row p { color: var(--muted); margin: 0; font-size: .96rem; }
-.section-row:hover strong { color: var(--accent); }
+.section-row:not(.entry-row):hover strong, .entry-title-link:hover strong, .entry-title-link:focus-visible strong { color: var(--accent); }
 .empty { color: var(--muted); padding-block: 20px; border-block: 1px solid var(--line); }
 .prose { max-width: 720px; margin-inline: auto; }
 .prose h2 { margin-top: 2.2rem; }
@@ -123,7 +123,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .prose h2 { line-height: 1.35; }
 .prose > p { margin-block: 1.2rem; }
 .section-row { align-items: center; }
-.section-row:hover .arrow-icon { transform: translateX(3px); }
+.section-row:not(.entry-row):hover .arrow-icon, .entry-title-link:hover .arrow-icon, .entry-title-link:focus-visible .arrow-icon { transform: translateX(3px); }
 .accounts a { border-radius: 3px; }
 .accounts a:hover { background: var(--surface); }
 @media (prefers-reduced-motion: no-preference) {
@@ -156,7 +156,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .entry-tag { display: inline-block; padding: 2px 8px; border: 1px solid #739de5; border-radius: 4px; background: #173565; color: #e5efff; overflow-wrap: anywhere; }
 .entry-row .entry-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; color: var(--muted); font-size: .85rem; line-height: 1.5; }
 .section-row.entry-row .entry-description { margin-top: 8px; line-height: 1.6; padding-right: 32px; }
-.section-row.entry-row > .arrow-icon { position: absolute; top: 28px; right: 16px; }
+.section-row.entry-row .entry-title-link > .arrow-icon { position: absolute; top: 28px; right: 16px; }
 .note { padding: var(--space-4) var(--space-5); }
 .prose > ul:not(.tags), .prose > ol { padding-inline-start: var(--space-6); }
 .prose blockquote { padding: var(--space-2) var(--space-5); }
@@ -261,3 +261,27 @@ starlight-tabs.code-tabset > [role='tabpanel'] > .expressive-code .frame.has-too
 }
 
 .expressive-code .ec-line .gutter ~ .code { padding-inline-start: calc(var(--ecIndent, 0ch) + 6px); }
+
+.entry-title-link { display: block; min-height: 44px; text-decoration: none; }
+.personal-site .entry-title-link { color: var(--ink); }
+.entry-title-link:hover strong { color: var(--accent); }
+.personal-site a.entry-tag { color: #e5efff; text-decoration: none; }
+.tag-link { display: inline-flex; align-items: center; min-height: 32px; }
+.tag-link:hover { background: #21467e; text-decoration: underline !important; }
+.updated-date { display: inline-flex; gap: 4px; }
+.post-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.related-articles { margin-top: 32px; }
+.related-articles .section-list { margin-top: 16px; }
+.related-articles .section-row { padding: 16px; }
+.article-return { margin-top: 24px; }
+.article-return a { display: inline-flex; align-items: center; min-height: 44px; }
+.project-overview { padding: 16px 0; margin: 8px 0 24px; border-bottom: 1px solid var(--line); }
+.project-overview > p { margin: 0 0 12px; color: var(--muted); }
+.project-overview-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; }
+.project-overview-links a { display: inline-flex; align-items: center; min-height: 44px; }
+
+.personal-site .tags a { min-height: 32px; padding: 4px 8px; border: 1px solid #739de5; border-radius: 4px; background: #173565; color: #e5efff; text-decoration: none; }
+.personal-site .tags a:hover { background: #21467e; text-decoration: underline; }
+
+.article-return a, .project-overview-links a { gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: transparent; text-decoration: none; font-size: .9rem; }
+.article-return a:hover, .project-overview-links a:hover { color: var(--accent); background: var(--surface); }

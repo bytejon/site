@@ -9,7 +9,7 @@ const includeDemos = import.meta.env.INCLUDE_DEMOS === 'true';
 const pattern = includeDemos ? '**/[^_]*.{md,mdx}' : ['**/[^_]*.{md,mdx}', '!**/demo-*', '!**/demo-*/**'];
 
 export const collections = {
-  docs: defineCollection({ loader: glob({ pattern, base: './src/content/docs' }), schema: docsSchema({ extend: z.object({ tags: z.array(z.string()).default([]), date: z.coerce.date().optional() }) }) }),
+  docs: defineCollection({ loader: glob({ pattern, base: './src/content/docs' }), schema: docsSchema({ extend: z.object({ tags: z.array(z.string()).default([]), date: z.coerce.date().optional(), overview: z.object({ summary: z.string().optional(), installation: z.string().optional(), source: z.url().refine(value => /^https?:/.test(value), 'Use an HTTP(S) source URL').optional(), docs: z.string().refine(value => /^\/(?!\/)|^https?:\/\//.test(value), 'Use a site path or HTTP(S) docs URL').optional() }).optional() }) }) }),
   writing: defineCollection({
     loader: glob({ pattern, base: './src/content/writing' }),
     schema: z.object({
@@ -17,6 +17,7 @@ export const collections = {
       navTitle: z.string().optional(),
       description: z.string(),
       date: z.coerce.date().optional(),
+      updated: z.coerce.date().optional(),
       type: z.enum(['article', 'tutorial']).optional(),
       parent: z.string().optional(),
       order: z.number().default(0),

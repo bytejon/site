@@ -1,10 +1,11 @@
+import { resolve } from 'node:path';
 import { Parser, Language } from 'web-tree-sitter';
 import { readFileSync } from 'node:fs';
 let ready;
 async function language() {
   ready ||= (async () => {
     await Parser.init();
-    return Language.load(readFileSync(new URL('../vendor/luau-folding/tree-sitter-luau.wasm', import.meta.url)));
+    return Language.load(readFileSync(resolve(process.cwd(), 'vendor/luau-folding/tree-sitter-luau.wasm')));
   })();
   return ready;
 }

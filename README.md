@@ -31,6 +31,14 @@ Use `tags` for everything, for example `[article, luau]` or `[tutorial, tools]`;
 
 A quiet Filters button reveals multi-select tag chips. Entries match any selected tag. Active tags can be removed individually; All tags and Clear all clear the selection. Links use repeated parameters such as `?tag=luau&tag=math`. Older `type`/`topic` URL values are accepted as tags with the same match-any semantics; changing filters writes the unified URL. Reload and browser Back/Forward preserve selection. Roots require a date and sort newest first; dates display in UTC. Set `draft: false` to publish; omitted draft defaults to true. RSS includes published roots only. Level-two and level-three headings automatically create an on-this-page outline; the older `toc` field remains accepted.
 
+### Updated dates and related articles
+
+For a material revision, optionally add `updated: 2026-10-02` alongside the original `date`. The site shows Updated separately only when it is later than publication. Builds never create or change these dates. Chapter pages may supply their own updated date; otherwise they use the root's date.
+
+Article tags are clickable links to the matching filter. Related articles show up to three published roots ranked by shared tags, ignoring Article/Tutorial as matching signals; self, drafts, and child chapters are excluded. Nothing appears without a useful shared tag. Labeled demo candidates are allowed only in the explicitly enabled local demo build; production excludes them.
+
+Returning from an article through Back to articles or its Articles breadcrumb restores the list URL and scroll position from that navigation. Browser Back/Forward keeps filters. A small session-only snapshot expires after 30 minutes; direct tag links, intentional list navigation, and anchors take precedence. Storage is optional; links still work if it is unavailable.
+
 ### Optional child pages for any entry
 
 Add `src/content/writing/my-entry/first-chapter.md`:
@@ -76,6 +84,16 @@ Articles and Starlight projects share Expressive Code's theme-aware syntax color
 ## Projects
 
 Project docs remain in `src/content/docs/projects/`, with Starlight nested navigation, search, and on-this-page navigation. Copy `examples/projects/example-project/` there and replace its text. `sidebar: { order: 1 }` sets order. Project root frontmatter can optionally include `tags: [luau, tools]` and `date: 2026-10-02`; omit them when they do not apply. Article and project entries show a full-width wrapping title, followed by tags, description, and the date at the bottom. Article and Tutorial tags appear first; repeated tags are omitted from display without changing frontmatter or filters. Keep unpublished docs outside `src/content/docs`; sidebar hiding is not privacy.
+
+Project roots may optionally set `overview` frontmatter. Its `summary` explains what the project does (otherwise the existing description is used); `installation` is your actual command, `source` is your real HTTP(S) repository URL, and `docs` is an existing site path or HTTP(S) URL. Every field is optional, and no overview appears without author-provided metadata. Source and external docs links open in a new tab. Installation commands are displayed for copying, never executed.
+
+```yaml
+overview:
+  summary: A short explanation of your project.
+  # installation: your actual installation command
+  # source: your actual repository URL
+  # docs: an existing documentation URL or /site/path/
+```
 
 ## Navigation and appearance
 

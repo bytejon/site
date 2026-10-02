@@ -6,7 +6,7 @@ for (const path of ['articles/', 'projects/', '']) {
     await page.goto(path);
     const row = page.locator('.entry-row').first();
     await expect(row).toBeVisible();
-    const url = await row.getAttribute('href');
+    const url = await row.locator('.entry-title-link').getAttribute('href');
     const labels = await row.locator('.entry-tag').allTextContents();
     expect(new Set(labels.map(label => label.toLowerCase())).size).toBe(labels.length);
     if (path !== 'projects/') expect(labels[0]).toMatch(/^(Article|Tutorial)$/);
@@ -39,7 +39,7 @@ for (const path of ['articles/', 'projects/', '']) {
     }
     await row.evaluate(el => el.querySelectorAll('.entry-topics,.entry-meta').forEach(child => child.remove()));
     await expect(row.locator('.entry-description')).toBeVisible();
-    await row.click();
+    await row.locator('.entry-title-link').click();
     await expect(page).toHaveURL(new RegExp(url!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'));
   });
 }

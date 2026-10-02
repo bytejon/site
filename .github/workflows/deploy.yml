@@ -22,6 +22,7 @@ jobs:
       - run: npm run build
       - run: npm run verify
       - run: npm run verify:production
+      - run: node scripts/verify-related.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

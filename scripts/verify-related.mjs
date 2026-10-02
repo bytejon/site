@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { relatedEntries } from '../src/lib/related.ts';
+const entry=(id,tags,extra={})=>({id,data:{tags,date:new Date('2026-10-01'),draft:false,...extra}});
+const root=entry('current',['article','luau','math']);
+const both=entry('both',['tutorial','luau','math']);const one=entry('one',['luau']);
+const excluded=[root,entry('generic',['article']),entry('draft',['luau','math'],{draft:true}),entry('chapter',['luau'],{parent:'one'}),entry('demo-local',['luau','math'])];
+assert.deepEqual(relatedEntries(root,[...excluded,one,both]).map(p=>p.id),['both','one']);
+assert.deepEqual(relatedEntries(entry('generic',['article']),[both,one]),[]);
+assert.equal(relatedEntries(root,[...excluded,one,both],true).some(p=>p.id==='demo-local'),true);
+assert.equal(relatedEntries(root,[one,both,entry('third',['luau']),entry('fourth',['math'])]).length,3);
+console.log('Related roots: useful-tag ranking, generic/self/draft/chapter/demo exclusion, empty state and limit passed');

@@ -1,12 +1,12 @@
 ---
 import { IconChevronRight } from '@tabler/icons-astro';
-interface Props { items: { label: string; href?: string }[] }
-const { items } = Astro.props;
+interface Props { returnArticles?: boolean; items: { label: string; href?: string }[] }
+const { items, returnArticles = false } = Astro.props;
 ---
 <nav class="breadcrumbs" aria-label="Breadcrumb" data-pagefind-ignore>
   <ol>{items.map((item, index) => <li>
     {index > 0 && <IconChevronRight size={14} stroke={1.5} aria-hidden="true" />}
-    {index === items.length - 1 ? <span aria-current="page">{item.label}</span> : item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>}
+    {index === items.length - 1 ? <span aria-current="page">{item.label}</span> : item.href ? <a href={item.href} data-return-articles={returnArticles && index === 0 || undefined}>{item.label}</a> : <span>{item.label}</span>}
   </li>)}</ol>
 </nav>
 <style>

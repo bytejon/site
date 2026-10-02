@@ -2,15 +2,17 @@
 import Arrow from './Arrow.astro';
 import Tag from './Tag.astro';
 import { normalizeTags, tagLabel } from '../lib/tags';
-import { formatDate } from '../lib/site';
-interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; draft?: boolean }
-const { url, title, description, tags = [], date, draft = false } = Astro.props;
-const labels = normalizeTags(tags).map(tagLabel);
+import { href, formatDate } from '../lib/site';
+interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; updated?: Date; tagLinks?: boolean; draft?: boolean }
+const { url, title, description, tags = [], date, updated, tagLinks = false, draft = false } = Astro.props;
+const labels = normalizeTags(tags);
+const changed = date && updated && updated > date;
 ---
-<a class="section-row entry-row" href={url}>
-  <strong class="entry-title">{title}{draft ? ' (draft)' : ''}</strong>
-  {labels.length > 0 && <span class="entry-topics" aria-label="Tags">{labels.map(label => <Tag label={label} />)}</span>}
+<div class="section-row entry-row">
+  <a class="entry-title-link" href={url}>
+  <strong class="entry-title">{title}{draft ? ' (draft)' : ''}</strong><Arrow />
+  </a>
+  {labels.length > 0 && <span class="entry-topics" aria-label="Tags">{labels.map(tag => tagLinks ? <a class="entry-tag tag-link" href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a> : <Tag label={tagLabel(tag)} />)}</span>}
   {description && <p class="entry-description">{description}</p>}
-  {date && <span class="entry-meta"><time datetime={date.toISOString()}>{formatDate(date)}</time></span>}
-  <Arrow />
-</a>
+  {date && <span class="entry-meta"><time datetime={date.toISOString()}>{formatDate(date)}</time>{changed && <span class="updated-date">Updated <time datetime={updated!.toISOString()}>{formatDate(updated!)}</time></span>}</span>}
+</div>

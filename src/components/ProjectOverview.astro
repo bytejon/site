@@ -1,0 +1,13 @@
+---
+import { Code } from '@astrojs/starlight/components';
+import { href } from '../lib/site';
+interface Props { description?: string; overview?: { summary?: string; installation?: string; source?: string; docs?: string } }
+const { description, overview } = Astro.props;
+const summary = overview?.summary || description;
+const docs = overview?.docs?.startsWith('/') ? href(overview.docs) : overview?.docs;
+---
+{overview && (summary || overview.installation || overview.source || docs) && <section class="project-overview" aria-label="Project overview">
+  {summary && <p>{summary}</p>}
+  {overview.installation && <Code code={overview.installation} lang="bash" title="Installation" />}
+  {(overview.source || docs) && <div class="project-overview-links">{overview.source && <a href={overview.source} target="_blank" rel="noopener noreferrer">Source</a>}{docs && <a href={docs} target={docs.startsWith('http') ? '_blank' : undefined} rel={docs.startsWith('http') ? 'noopener noreferrer' : undefined}>Documentation</a>}</div>}
+</section>}
