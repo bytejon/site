@@ -48,11 +48,17 @@ test('article and project trees keep page links separate from keyboard disclosur
       expect(buttonBounds.x + buttonBounds.width).toBeLessThanOrEqual(labelBounds.x);
       expect(buttonBounds.width).toBe(44); expect(buttonBounds.height).toBe(44);
       await expect(toggle).toHaveCSS('border-top-width','0px');
-      const url = page.url(); await toggle.focus(); await page.keyboard.press('Space');
+      await toggle.hover();
+      await expect(toggle).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
+      await expect(toggle).toHaveCSS('outline-style','none');
+      const url = page.url(); await toggle.focus();
+      await page.keyboard.press('Tab'); await page.keyboard.press('Shift+Tab');
+      await expect(toggle).toBeFocused(); await page.keyboard.press('Space');
       await expect(toggle).toHaveAttribute('aria-expanded','false'); expect(page.url()).toBe(url);
       await expect(branch.locator(':scope > .branch-children')).toBeHidden();
       await page.keyboard.press('Enter'); await expect(toggle).toHaveAttribute('aria-expanded','true');
       await expect(toggle).toBeFocused();
+      await expect(toggle).toHaveCSS('outline-style','solid');
       await expect(nav.locator('a[aria-current="page"]')).toHaveCount(1);
       const leaf = nav.locator('a').filter({hasText: project ? 'Getting started' : 'Nested details'}).last();
       await leaf.click();
