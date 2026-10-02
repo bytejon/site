@@ -7,6 +7,7 @@ for (const path of ['', 'articles/', 'about/', 'projects/']) {
     const response = await page.goto(path);
     expect(response?.status()).toBe(200);
     await expect(page.locator('h1')).toBeVisible();
+    if(path) {await expect(page.locator('h1')).toHaveClass(/\bpage-label\b/);expect((await page.locator('h1').boundingBox())!.height).toBe(1);}
     await expect(page.getByRole('navigation', { name: 'Site', exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect(errors).toEqual([]);
@@ -22,6 +23,10 @@ test('home navigation opens Articles and return link works', async ({ page }) =>
   await expect(page.locator('h1')).toHaveText('Articles');
   await page.getByRole('link', { name: 'Jon', exact: true }).click();
   await expect(page.locator('h1')).toHaveText('Jon');
+});
+test('landing headings remain accessible while Projects omits generic intro text',async({page})=>{
+ for(const path of ['articles/','projects/','about/']) {await page.goto(path);await expect(page.getByRole('heading',{level:1})).toHaveCount(1);await expect(page).toHaveTitle(new RegExp(path.slice(0,-1),'i'));}
+ await page.goto('projects/');await expect(page.locator('.project-intro')).toHaveCount(0);await expect(page.getByText('Open-source projects and their documentation will live here.')).toHaveCount(0);
 });
 
 test('draft MDX and nested docs authoring fixtures', async ({ page }) => {

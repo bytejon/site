@@ -13,7 +13,7 @@ const accounts = [
 ---
 <SiteLayout title="About">
   <article class="about-page">
-    <h1>About</h1>
+    <h1 class="page-label">About</h1>
     <ul class="accounts">
       {accounts.map(({ label, handle, href, icon: Icon }) => <li>
         {href ? <a href={href} target="_blank" rel="noopener noreferrer" aria-description="Opens in a new tab" aria-label={`${label}: ${handle}`}><Icon size={22} stroke={1.6} aria-hidden="true" /><span>{label}</span><span class="handle">{handle}</span></a>
@@ -23,7 +23,7 @@ const accounts = [
   </article>
 </SiteLayout>
 <style>
-  .accounts { list-style: none; padding: 0; margin: 32px 0 0; border-top: 1px solid var(--line); }
+  .accounts { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
   .accounts li { border-bottom: 1px solid var(--line); }
   .accounts a, .accounts div { display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: var(--space-4); padding: var(--space-5) var(--space-4); color: var(--ink); text-decoration: none; }
   .accounts svg { color: var(--accent); }

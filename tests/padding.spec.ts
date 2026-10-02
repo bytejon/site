@@ -16,9 +16,9 @@ test('controls and list interiors have comfortable spacing', async ({ page }) =>
     await comfortable(page.getByRole('navigation', { name: 'Site menu', exact: true }).getByRole('link').first(), 16);
     await page.keyboard.press('Escape');
   } else await comfortable(page.locator('header .nav-links a').first(), 16);
-  const homeX = (await page.locator('h1').boundingBox())!.x;
+  const homeX = (await page.locator('main').boundingBox())!.x;
   await page.goto('about/');
-  expect((await page.locator('h1').boundingBox())!.x).toBe(homeX);
+  expect((await page.locator('main').boundingBox())!.x).toBe(homeX);
   await comfortable(page.locator('.accounts a').first(), 16);
   await page.goto('articles/');
   await comfortable(page.locator('.writing-filters .filter-toggle'), 12);
