@@ -14,7 +14,23 @@ import { href } from '../lib/site';
     } catch { /* Navigation works normally without session storage. */ }
   }
   function write(name: string, value: Snapshot) { try { sessionStorage.setItem(name, JSON.stringify(value)); } catch { /* Optional return-state enhancement. */ } }
+  function tagLinks(context?: string) {
+    const target = new URL(context || listPath, location.origin);
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('a.tag-link, .tags a')) {
+      const clicked = link.dataset.articleTag || new URL(link.href).searchParams.get('tag');
+      if (!clicked) continue;
+      link.dataset.articleTag = clicked;
+      const url = new URL(target);
+      const tags = new Set([...url.searchParams.getAll('tag'), ...url.searchParams.getAll('type'), ...url.searchParams.getAll('topic'), clicked].map(tag => tag.trim().toLowerCase()).filter(Boolean));
+      url.searchParams.delete('tag'); url.searchParams.delete('type'); url.searchParams.delete('topic');
+      for (const tag of tags) url.searchParams.append('tag', tag);
+      link.href = url.pathname + url.search + url.hash;
+    }
+  }
   if (location.pathname === listPath) {
+    tagLinks(current());
+    document.addEventListener('articles:filterschange', () => tagLinks(current()));
+    window.addEventListener('popstate', () => tagLinks(current()));
     document.addEventListener('click', event => {
       const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
       if (!link || (event as MouseEvent).button !== 0 || (event as MouseEvent).metaKey || (event as MouseEvent).ctrlKey || (event as MouseEvent).shiftKey || link.target === '_blank') return;
@@ -40,6 +56,7 @@ import { href } from '../lib/site';
       value = saved; history.replaceState({ ...history.state, articleReturn: value }, '', location.href);
     }
     if (!value && referrer?.origin === location.origin && referrer.pathname === listPath) value = { url: referrer.pathname+referrer.search, y: 0, at: Date.now() };
+    tagLinks(value?.url);
     for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-return-articles]')) {
       if (!value) continue;
       link.href = value.url;

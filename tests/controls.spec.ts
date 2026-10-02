@@ -48,6 +48,8 @@ test('filter disclosure and toggle selection support keyboard and reduced motion
   await expect(page.locator('.filter-options')).toBeHidden();
   await expect(trigger).toBeFocused();
   await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Clear all', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Remove tag filter: Tutorial' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(trigger).toBeFocused();

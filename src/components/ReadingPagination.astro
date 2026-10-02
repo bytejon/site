@@ -1,0 +1,10 @@
+---
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-astro';
+interface Link { href: string; label: string }
+interface Props { previous?: Link; next?: Link; label?: string; class?: string }
+const { previous, next, label = 'Page navigation', class: extraClass } = Astro.props;
+---
+{(previous || next) && <nav class:list={['reading-pagination', extraClass]} aria-label={label} data-pagefind-ignore>
+  {previous && <a href={previous.href} rel="prev"><IconArrowLeft size={20} aria-hidden="true" /><span><span class="direction-label">Previous</span>{' '}<span class="link-title">{previous.label}</span></span></a>}
+  {next && <a href={next.href} rel="next"><span><span class="direction-label">Next</span>{' '}<span class="link-title">{next.label}</span></span><IconArrowRight size={20} aria-hidden="true" /></a>}
+</nav>}

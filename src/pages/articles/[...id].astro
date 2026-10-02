@@ -1,5 +1,6 @@
 ---
 import { render } from 'astro:content';
+import ReadingPagination from '../../components/ReadingPagination.astro';
 import EntryRow from '../../components/EntryRow.astro';
 import { relatedEntries } from '../../lib/related';
 import SiteLayout from '../../layouts/SiteLayout.astro';
@@ -44,7 +45,7 @@ const breadcrumb = [{ label: 'Articles', href: href('articles/') }, ...ancestry.
       {post.data.draft && <aside class="note" data-pagefind-ignore><strong>Unpublished authoring example</strong><p>This draft demonstrates the site's features. It is not published writing by Jon.</p></aside>}
       <Content />
       {root.data.tags.length > 0 && <ul class="tags" aria-label="Tags">{root.data.tags.map(tag => <li><a href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a></li>)}</ul>}
-      {chapters.length > 1 && <nav class="chapter-pagination" aria-label="Chapter navigation" data-pagefind-ignore>{previous ? <a rel="prev" href={href(`articles/${previous.id}/`)}>← {previous.data.title}</a> : <span />}{next && <a rel="next" href={href(`articles/${next.id}/`)}>{next.data.title} →</a>}</nav>}
+      {chapters.length > 1 && <ReadingPagination class="chapter-pagination" label="Chapter navigation" previous={previous && { href: href(`articles/${previous.id}/`), label: previous.data.navTitle || previous.data.title }} next={next && { href: href(`articles/${next.id}/`), label: next.data.navTitle || next.data.title }} />}
       <p class="article-return"><a href={href('articles/')} data-return-articles>Back to articles</a></p>
       {related.length > 0 && <section class="related-articles" aria-labelledby="related-articles"><h2 id="related-articles">Related articles</h2><ul class="section-list">{related.map(entry => <li><EntryRow url={href(`articles/${entry.id}/`)} title={entry.data.title} description={entry.data.description} tags={entry.data.tags} date={entry.data.date} updated={entry.data.updated} tagLinks /></li>)}</ul></section>}
     </article>
@@ -68,10 +69,6 @@ const breadcrumb = [{ label: 'Articles', href: href('articles/') }, ...ancestry.
   .chapter-sidebar a { display: block; min-height: var(--control-size); padding: 10px 12px; line-height: 1.5; color: var(--muted); text-decoration: none; border-radius: 4px; position: relative; }
   .chapter-sidebar a[aria-current='page'] { color: var(--accent); background: var(--surface); font-weight: 600; }
   .chapter-sidebar a[aria-current='page']::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px; background: var(--accent); }
-  .chapter-pagination { display: flex; justify-content: space-between; gap: 32px; border-top: 1px solid var(--line); margin-top: 48px; padding-top: 24px; }
-  .chapter-pagination > * { flex: 1; min-width: 0; }
-  .chapter-pagination a { padding: 16px 20px; font-size: .95rem; line-height: 1.5; text-decoration: none; }
-  .chapter-pagination a[rel='next'] { text-align: right; }
   .page-outline { padding-block: 16px; margin-bottom: 32px; font-size: .9rem; }
   .page-outline ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 4px; list-style: none; margin-block: 12px 0; padding: 0; }
   .page-outline li { padding-left: calc(var(--outline-depth) * 16px); }
@@ -79,5 +76,5 @@ const breadcrumb = [{ label: 'Articles', href: href('articles/') }, ...ancestry.
   .page-outline a:hover { text-decoration: underline; }
   @media (max-width: 1099px) { .has-outline, .has-chapters.has-outline { display: block; } .chapter-sidebar { margin-bottom: 24px; } .chapter-sidebar details { position: static; } }
   @media (max-width: 799px) { .has-chapters { display: block; } }
-  @media (max-width: 479px) { .page-outline ul { grid-template-columns: 1fr; } .chapter-pagination { gap: 16px; } .chapter-pagination a { padding-inline: 8px; } }
+  @media (max-width: 479px) { .page-outline ul { grid-template-columns: 1fr; } }
 </style>

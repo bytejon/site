@@ -9,18 +9,20 @@ const groups = [{ name: 'tag', label: 'Tags', options: [{ value: '', label: 'All
   <input type="hidden" name="tag" value="" />
   <div class="filter-toolbar">
     <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="writing-filter-options"><IconAdjustmentsHorizontal size={17} aria-hidden="true" />Filters</button>
+    <button class="filter-reset" type="button" disabled>Clear all</button>
     <p class="filter-count" role="status"></p>
   </div>
-  <div class="active-filters" hidden></div>
   <div id="writing-filter-options" class="filter-options" hidden>
     {groups.map(group => <fieldset><legend>{group.label}</legend><div class="filter-choices">{group.options.map(option => <button type="button" class="filter-choice" data-group={group.name} data-value={option.value} aria-pressed={option.value === '' ? 'true' : 'false'}>{option.label}</button>)}</div></fieldset>)}
   </div>
+  <div class="active-filters" aria-label="Selected tags" hidden></div>
 </form>
 <script>
   const form = document.querySelector<HTMLFormElement>('.writing-filters')!;
   const trigger = form.querySelector<HTMLButtonElement>('.filter-toggle')!;
   const panel = form.querySelector<HTMLElement>('.filter-options')!;
   const active = form.querySelector<HTMLElement>('.active-filters')!;
+  const reset = form.querySelector<HTMLButtonElement>('.filter-reset')!;
   const fields = ['tag'] as const;
   const values = Object.fromEntries(fields.map(name => [name, form.elements.namedItem(name) as HTMLInputElement])) as Record<typeof fields[number], HTMLInputElement>;
   const choices = (name: string) => [...form.querySelectorAll<HTMLButtonElement>(`.filter-choice[data-group="${name}"]`)];
@@ -54,9 +56,8 @@ const groups = [{ name: 'tag', label: 'Tags', options: [{ value: '', label: 'All
       }
     }
     active.hidden = !active.childElementCount;
-    if (!active.hidden) {
-      const reset = document.createElement('button'); reset.type = 'button'; reset.className = 'filter-reset'; reset.dataset.filterReset = ''; reset.textContent = 'Clear all'; active.append(reset);
-    }
+    reset.disabled = selected.tag.size === 0;
+    document.dispatchEvent(new Event('articles:filterschange'));
   }
   function apply() {
     const params = new URLSearchParams(location.search);
@@ -89,22 +90,22 @@ const groups = [{ name: 'tag', label: 'Tags', options: [{ value: '', label: 'All
   active.addEventListener('click', event => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button');
     if (!button) return;
-    if ('filterReset' in button.dataset) fields.forEach(name => setValue(name, []));
-    else { const name = button.dataset.filterRemove as typeof fields[number]; setValue(name, [...selected[name]].filter(value => value !== button.dataset.value)); }
+    const name = button.dataset.filterRemove as typeof fields[number]; setValue(name, [...selected[name]].filter(value => value !== button.dataset.value));
     apply();
     (active.querySelector<HTMLButtonElement>('button') || trigger).focus();
   });
+  reset.addEventListener('click', () => { fields.forEach(name => setValue(name, [])); apply(); trigger.focus(); });
   form.addEventListener('submit', event => event.preventDefault());
   window.addEventListener('popstate', restore);
   restore();
 </script>
 <style>
   .writing-filters { margin: 24px 0 20px; }
-  .filter-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .filter-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
   .filter-toggle { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--muted); font: inherit; font-size: .85rem; cursor: pointer; }
   .filter-toggle:hover, .filter-toggle[aria-expanded='true'] { background: var(--surface); color: var(--ink); border-color: var(--line); }
-  .filter-count { margin: 0; font-size: .82rem; color: var(--muted); }
-  .active-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; align-items: center; }
+  .filter-count { margin: 0 0 0 auto; font-size: .82rem; color: var(--muted); }
+  .active-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
   .active-filters[hidden], .filter-options[hidden] { display: none; }
   .filter-options { margin-top: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 4px; }
   fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }

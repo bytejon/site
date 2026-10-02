@@ -35,7 +35,9 @@ A quiet Filters button reveals multi-select tag chips. Entries match any selecte
 
 For a material revision, optionally add `updated: 2026-10-02` alongside the original `date`. The site shows Updated separately only when it is later than publication. Builds never create or change these dates. Chapter pages may supply their own updated date; otherwise they use the root's date.
 
-Article tags are clickable links to the matching filter. Related articles show up to three published roots ranked by shared tags, ignoring Article/Tutorial as matching signals; self, drafts, and child chapters are excluded. Nothing appears without a useful shared tag. Labeled demo candidates are allowed only in the explicitly enabled local demo build; production excludes them.
+Article tag links add to the current list selection, including from a reader reached through that list. Repeated clicks keep a tag selected; filter toggles and removable chips intentionally deselect it. Direct reader loads start a fresh tag-link context. Real link destinations preserve repeated tags and unrelated list parameters for modified clicks too. Related articles show up to three published roots ranked by shared tags, ignoring Article/Tutorial as matching signals; self, drafts, and child chapters are excluded. Nothing appears without a useful shared tag. Labeled demo candidates are allowed only in the explicitly enabled local demo build; production excludes them.
+
+Clear all stays beside Filters and is disabled with no active selection. Selected removable tags appear below the whole filter disclosure, directly above results, and remain visible when options collapse. Article chapter and project documentation pagination share the same outlined directional component; unavailable directions are omitted.
 
 Returning from an article through Back to articles or its Articles breadcrumb restores the list URL and scroll position from that navigation. Browser Back/Forward keeps filters. A small session-only snapshot expires after 30 minutes; direct tag links, intentional list navigation, and anchors take precedence. Storage is optional; links still work if it is unavailable.
 

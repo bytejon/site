@@ -53,7 +53,7 @@ test('single entries and article/tutorial chapter trees have appropriate navigat
     await page.locator('a[rel="next"]').click();
     await expect(page.locator('h1')).toHaveText(`Test ${kind}: final chapter`);
     await expect(page.locator('a[rel="next"]')).toHaveCount(0);
-    await expect(page.locator('a[rel="prev"]')).toContainText('nested details');
+    await expect(page.locator('a[rel="prev"]')).toContainText(/nested details/i);
   }
 });
 

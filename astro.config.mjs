@@ -28,6 +28,7 @@ export default defineConfig({
       components: {
         Header: './src/components/DocsHeader.astro',
         PageTitle: './src/components/DocsPageTitle.astro',
+        Pagination: './src/components/DocsPagination.astro',
         ThemeSelect: './src/components/ThemeSelect.astro',
         Sidebar: './src/components/DocsSidebar.astro',
         MobileMenuToggle: './src/components/DocsMenuButton.astro',

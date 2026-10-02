@@ -1,0 +1,5 @@
+---
+import ReadingPagination from './ReadingPagination.astro';
+const { prev, next } = Astro.locals.starlightRoute.pagination;
+---
+<ReadingPagination previous={prev} next={next} class="pagination-links print:hidden" />
