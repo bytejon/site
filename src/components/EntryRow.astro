@@ -10,9 +10,9 @@ const changed = date && updated && updated > date;
 ---
 <div class="section-row entry-row">
   <a class="entry-title-link" href={url}>
-  <strong class="entry-title">{title}{draft ? ' (draft)' : ''}</strong><Arrow />
+  <strong class="entry-title">{title}{draft ? ' (draft)' : ''}<Arrow /></strong>
   </a>
   {labels.length > 0 && <span class="entry-topics" aria-label="Tags">{labels.map(tag => tagLinks ? <a class="entry-tag tag-link" href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a> : <Tag label={tagLabel(tag)} />)}</span>}
-  {description && <p class="entry-description">{description}</p>}
+  {description && <a class="entry-description-link" href={url} tabindex="-1"><p class="entry-description">{description}</p></a>}
   {date && <span class="entry-meta"><time datetime={date.toISOString()}>{formatDate(date)}</time>{changed && <span class="updated-date">Updated <time datetime={updated!.toISOString()}>{formatDate(updated!)}</time></span>}</span>}
 </div>
