@@ -1,9 +1,9 @@
 import { type Page } from '@playwright/test';
 export async function choose(page: Page, label: string, value: string) {
-  if (label === 'Type' || label === 'Topic') {
+  if (label === 'Tags') {
     const toggle = page.getByRole('button', { name: 'Filters', exact: true });
     if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
-    const group = page.getByRole('group', {name:label,exact:true});
+    const group = page.getByRole('group', {name:'Tags',exact:true});
     await group.locator('.filter-choice[data-value=""]').click();
     if (value) {
       for (const option of await group.locator('.filter-choice').all()) {

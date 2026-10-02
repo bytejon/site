@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { tagLabel } from '../../lib/tags';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import PageOutline from '../../components/PageOutline.astro';
 import type { Writing } from '../../lib/site';
@@ -34,10 +35,10 @@ const breadcrumb = [{ label: 'Writing', href: href('writing/') }, ...ancestry.ma
     <article class="prose">
       <Breadcrumb items={breadcrumb} />
       <h1>{post.data.title}</h1>
-      <div class="post-meta"><span>{root.data.type === 'article' ? 'Article' : 'Tutorial'}</span> · <time datetime={root.data.date!.toISOString()}>{formatDate(root.data.date!)}</time></div>
+      <div class="post-meta"><time datetime={root.data.date!.toISOString()}>{formatDate(root.data.date!)}</time></div>
       {post.data.draft && <aside class="note" data-pagefind-ignore><strong>Unpublished authoring example</strong><p>This draft demonstrates the site's features. It is not published writing by Jon.</p></aside>}
       <Content />
-      {root.data.tags.length > 0 && <ul class="tags" aria-label="Topics">{root.data.tags.map(tag => <li><a href={href(`writing/?topic=${encodeURIComponent(tag)}`)}>{tag}</a></li>)}</ul>}
+      {root.data.tags.length > 0 && <ul class="tags" aria-label="Tags">{root.data.tags.map(tag => <li><a href={href(`writing/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a></li>)}</ul>}
       {chapters.length > 1 && <nav class="chapter-pagination" aria-label="Chapter navigation" data-pagefind-ignore>{previous ? <a rel="prev" href={href(`writing/${previous.id}/`)}>← {previous.data.title}</a> : <span />}{next && <a rel="next" href={href(`writing/${next.id}/`)}>{next.data.title} →</a>}</nav>}
     </article>
   </div>

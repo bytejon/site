@@ -2,10 +2,10 @@ import { choose } from './choices';
 import { test, expect } from '@playwright/test';
 test('legacy index URLs lead to Writing with the tutorial filter', async ({ page }) => {
   await page.goto('blog/'); await expect(page).toHaveURL(/\/writing\/$/);
-  await page.goto('tutorials/'); await expect(page).toHaveURL(/\/writing\/\?type=tutorial$/);
-  await expect(page.locator('[name="type"]')).toHaveValue('tutorial');
+  await page.goto('tutorials/'); await expect(page).toHaveURL(/\/writing\/\?tag=tutorial$/);
+  await expect(page.locator('[name="tag"]')).toHaveValue('tutorial');
 });
-test('single and multi-page entries adapt to hierarchy, not type', async ({ page }) => {
+test('single and multi-page entries adapt to hierarchy independently of tags', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Local unpublished authoring fixtures');
   for (const type of ['article', 'tutorial']) {
     await page.goto(`writing/single-${type}/`);
@@ -33,22 +33,6 @@ test('single and multi-page entries adapt to hierarchy, not type', async ({ page
     await page.screenshot({ path: `test-results/${test.info().project.name}-series-${type}.png`, fullPage: true });
   }
 });
-test('Writing type and topic filters compose and survive reload', async ({ page }) => {
-  test.skip(process.env.TEST_AUTHORING !== 'true', 'Local unpublished authoring fixtures');
-  await page.goto('writing/');
-  await choose(page, 'Type', 'tutorial');
-  await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
-  await choose(page, 'Topic', 'article');
-  await expect(page.locator('.writing-list > li:visible')).toHaveCount(0);
-  await expect(page.locator('[data-empty]')).toBeVisible();
-  await choose(page, 'Topic', 'tutorial'); await page.reload();
-  await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
-  await expect(page.locator('[name="type"]')).toHaveValue('tutorial');
-  await expect(page.locator('[name="topic"]')).toHaveValue('tutorial');
-  await page.goto('blog/authoring-example/');
-  await expect(page).toHaveURL(/\/writing\/authoring-example\/$/);
-});
-
 test('Pagefind indexes new Writing routes', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Local authoring search fixture');
   await page.goto('projects/');

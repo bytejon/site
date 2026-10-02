@@ -1,16 +1,11 @@
 ---
 import Arrow from './Arrow.astro';
 import Tag from './Tag.astro';
+import { normalizeTags, tagLabel } from '../lib/tags';
 import { formatDate } from '../lib/site';
-interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; kind?: string; draft?: boolean }
-const { url, title, description, tags = [], date, kind, draft = false } = Astro.props;
-const seen = new Set<string>();
-const labels = [kind, ...tags].filter((tag): tag is string => Boolean(tag?.trim())).map(tag => tag.trim()).filter(tag => {
-  const key = tag.toLocaleLowerCase('en-US');
-  if (seen.has(key)) return false;
-  seen.add(key);
-  return true;
-});
+interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; draft?: boolean }
+const { url, title, description, tags = [], date, draft = false } = Astro.props;
+const labels = normalizeTags(tags).map(tagLabel);
 ---
 <a class="section-row entry-row" href={url}>
   <strong class="entry-title">{title}{draft ? ' (draft)' : ''}</strong>

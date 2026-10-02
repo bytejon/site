@@ -1,7 +1,6 @@
 ---
 title: Example series article
 description: Unpublished authoring fixture; replace before publishing.
-type: article
 date: 2026-10-01
 tags: [authoring, article]
 draft: true

@@ -45,8 +45,6 @@ test('authoring components retain internal padding', async ({ page }) => {
   await page.goto('writing/series-article/chapter/');
   await comfortable(page.getByRole('navigation', { name: 'Chapters', exact: true }).getByRole('link').first(), 16);
   await page.goto('writing/');
-  await choose(page, 'Type', 'tutorial');
-  await choose(page, 'Topic', 'article');
-  await expect(page.locator('.writing-list')).toBeHidden();
-  await expect(page.locator('[data-empty]')).toBeVisible();
+  await choose(page, 'Tags', 'article');
+  await expect(page.locator('.writing-list')).toBeVisible();
 });

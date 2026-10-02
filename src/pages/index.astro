@@ -19,6 +19,6 @@ const latest = (await posts()).slice(0, 3);
     </ul>
   </section>
   <section aria-labelledby="recent"><div class="section-heading"><h2 id="recent">Recent writing</h2><a href={href('writing/')}>All writing <Arrow /></a></div>
-    {latest.length ? <ul class="section-list">{latest.map(post => <li><EntryRow url={href(`writing/${post.id}/`)} title={post.data.title} description={post.data.description} tags={post.data.tags} date={post.data.date} kind={post.data.type === 'tutorial' ? 'Tutorial' : 'Article'} /></li>)}</ul> : <p class="empty">No posts published yet.</p>}
+    {latest.length ? <ul class="section-list">{latest.map(post => <li><EntryRow url={href(`writing/${post.id}/`)} title={post.data.title} description={post.data.description} tags={post.data.tags} date={post.data.date} /></li>)}</ul> : <p class="empty">No posts published yet.</p>}
   </section>
 </SiteLayout>

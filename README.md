@@ -16,9 +16,8 @@ Add `src/content/writing/my-entry.md` to create `/writing/my-entry/`:
 ---
 title: Your title
 description: A short summary.
-type: article
 date: 2026-10-01
-tags: [luau, programming]
+tags: [article, luau, programming]
 draft: true
 toc: false
 ---
@@ -26,9 +25,11 @@ toc: false
 Your writing starts here.
 ```
 
-`type` is `article` or `tutorial`; it is separate from topic `tags` and does not select a different layout. Roots require a date. Writing filters by type and topic with shareable URL parameters. A quiet Filters button reveals multi-select toggle chips; active filters have removable blue tags and Clear all. Selections within each group match any value (OR); Type and Topic combine (AND). Repeated URL parameters preserve multiple selections, and older single-value links still work. Filter changes support browser Back/Forward and reload. Dates display in UTC; roots sort newest first. Set `draft: false` to publish; omitted `draft` defaults to true. RSS includes published roots only. Level-two and level-three headings automatically create an on-this-page outline for Articles and Tutorials; the older `toc` field is accepted for existing files.
+Use `tags` for everything, for example `[article, luau]` or `[tutorial, tools]`; no separate type is required. Article and Tutorial display first when present. Tags are trimmed, lowercased, and deduplicated. Existing `type: article` or `type: tutorial` is accepted and normalized into the same tags array. Optional subpages depend on `parent` and `order`, independently of tags.
 
-### Optional child pages for either type
+A quiet Filters button reveals multi-select tag chips. Entries match any selected tag. Active tags can be removed individually; All tags and Clear all clear the selection. Links use repeated parameters such as `?tag=luau&tag=math`. Older `type`/`topic` URL values are accepted as tags with the same match-any semantics; changing filters writes the unified URL. Reload and browser Back/Forward preserve selection. Roots require a date and sort newest first; dates display in UTC. Set `draft: false` to publish; omitted draft defaults to true. RSS includes published roots only. Level-two and level-three headings automatically create an on-this-page outline; the older `toc` field remains accepted.
+
+### Optional child pages for any entry
 
 Add `src/content/writing/my-entry/first-chapter.md`:
 
@@ -46,7 +47,7 @@ Chapter content.
 
 Use the parent's collection ID (filename without extension); folders alone do not imply hierarchy. Nested children can use `parent: my-entry/first-chapter`. Visible descendants add a chapter sidebar and previous/next links in depth-first order. Single pages retain the clean reading view, regardless of type. Children inherit root type, topics, and date in the interface. Publish each page explicitly; draft ancestors keep descendants out of production. Missing parents or cycles fail the build. Only roots appear in lists/RSS; children are searchable and appear in sitemap.
 
-Copy examples from `examples/writing/` to try single Articles/Tutorials and nested entries of either type. These clearly marked authoring demos stay outside published content. `authoring-example.mdx` remains a draft demonstration, not Jon's writing.
+Copy examples from `examples/writing/` to try single entries and nested entries, with any tags. These clearly marked authoring demos stay outside published content. `authoring-example.mdx` remains a draft demonstration, not Jon's writing.
 
 ### MDX components and Luau
 
@@ -72,7 +73,7 @@ Writing and Starlight projects share Expressive Code's theme-aware syntax colors
 
 ## Projects
 
-Project docs remain in `src/content/docs/projects/`, with Starlight nested navigation, search, and on-this-page navigation. Copy `examples/projects/example-project/` there and replace its text. `sidebar: { order: 1 }` sets order. Project root frontmatter can optionally include `tags: [luau, tools]` and `date: 2026-10-02`; omit them when they do not apply. Writing and project entries show a full-width wrapping title, followed by tags, description, and the date at the bottom. The Writing category is the first tag; repeated tags are omitted from display without changing frontmatter or filters. Keep unpublished docs outside `src/content/docs`; sidebar hiding is not privacy.
+Project docs remain in `src/content/docs/projects/`, with Starlight nested navigation, search, and on-this-page navigation. Copy `examples/projects/example-project/` there and replace its text. `sidebar: { order: 1 }` sets order. Project root frontmatter can optionally include `tags: [luau, tools]` and `date: 2026-10-02`; omit them when they do not apply. Writing and project entries show a full-width wrapping title, followed by tags, description, and the date at the bottom. Article and Tutorial tags appear first; repeated tags are omitted from display without changing frontmatter or filters. Keep unpublished docs outside `src/content/docs`; sidebar hiding is not privacy.
 
 ## Navigation and appearance
 

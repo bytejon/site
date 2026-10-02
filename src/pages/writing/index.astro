@@ -2,13 +2,14 @@
 import WritingFilters from '../../components/WritingFilters.astro';
 import EntryRow from '../../components/EntryRow.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { normalizeTags } from '../../lib/tags';
 import { posts, href } from '../../lib/site';
 const entries = await posts();
-const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
+const tags = normalizeTags([...new Set(entries.flatMap(p => p.data.tags))].sort());
 ---
 <SiteLayout title="Writing">
   <h1>Writing</h1>
   <WritingFilters tags={tags} />
-  {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-type={post.data.type} data-tags={JSON.stringify(post.data.tags)}><EntryRow url={href(`writing/${post.id}/`)} title={post.data.title} tags={post.data.tags} date={post.data.date} kind={post.data.type === 'article' ? 'Article' : 'Tutorial'} description={post.data.description} draft={post.data.draft} /></li>)}</ul>}
+  {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-tags={JSON.stringify(post.data.tags)}><EntryRow url={href(`writing/${post.id}/`)} title={post.data.title} tags={post.data.tags} date={post.data.date} description={post.data.description} draft={post.data.draft} /></li>)}</ul>}
   <p class="empty" data-empty hidden={entries.length > 0}>No writing to show.</p>
 </SiteLayout>

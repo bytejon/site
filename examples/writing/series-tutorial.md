@@ -1,7 +1,6 @@
 ---
 title: Example series tutorial
 description: Unpublished authoring fixture; replace before publishing.
-type: tutorial
 date: 2026-10-01
 tags: [authoring, tutorial]
 draft: true

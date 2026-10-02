@@ -60,12 +60,11 @@ test('single entries and article/tutorial chapter trees have appropriate navigat
 test('demo filters compose, survive reload, and root dates and RSS remain correct', async ({ page }) => {
   await page.goto('writing/');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(5);
-  await choose(page,'Type','tutorial'); await choose(page,'Topic','math');
-  await expect(page.locator('[data-empty]')).toBeVisible();
-  await choose(page,'Topic','components'); await page.reload();
+  await choose(page,'Tags','math');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(1);
-  await expect(page.locator('[name="type"]')).toHaveValue('tutorial');
-  await expect(page.locator('[name="topic"]')).toHaveValue('components');
+  await choose(page,'Tags','components'); await page.reload();
+  await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
+  await expect(page.locator('[name="tag"]')).toHaveValue('components');
   await page.goto('writing/demo-article-series/details/');
   await expect(page.locator('time')).toHaveAttribute('datetime','2026-10-01T00:00:00.000Z');
   const rss=await (await page.request.get('rss.xml')).text();

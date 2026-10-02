@@ -231,8 +231,8 @@ html { scroll-padding-top: calc(var(--sl-nav-height) + 16px); }
 .expressive-code .code-toolbar .copy button[data-copy-state='error']::after { mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v9m0 4v1' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 :root[data-theme] .project-navigation a[aria-current='page'] { background: var(--surface); color: var(--accent); }
 .expressive-code .ec-line .gutter { display: flex; align-items: center; }
-.expressive-code .gutter .ln { padding-inline: 12px 8px; color: var(--muted); user-select: none; }
-.expressive-code .scope-toggle, .expressive-code .scope-placeholder { display: inline-flex; justify-content: center; align-items: center; width: 24px; height: 22px; min-height: 22px; flex-shrink: 0; }
+.expressive-code .ec-line .gutter > .ln { display: block; box-sizing: content-box; width: var(--lnWidth, 2ch); min-width: var(--lnWidth, 2ch); text-align: right; flex-shrink: 0; padding-inline: 12px 2px; color: var(--muted); user-select: none; }
+.expressive-code .scope-toggle, .expressive-code .scope-placeholder { display: inline-flex; justify-content: center; align-items: center; width: 18px; height: 22px; min-height: 22px; flex-shrink: 0; }
 .expressive-code .scope-toggle { border: 0; padding: 0; background: transparent; color: var(--muted); cursor: pointer; }
 .expressive-code .scope-toggle:hover { color: var(--accent); }
 .expressive-code .ec-line .gutter > button.scope-toggle { pointer-events: auto; }
@@ -259,3 +259,5 @@ starlight-tabs.code-tabset > [role='tabpanel'] > .expressive-code .frame.has-too
   .page .sidebar-content { padding-inline: 22px; }
   .page .pagination-links { gap: 16px; }
 }
+
+.expressive-code .ec-line .gutter ~ .code { padding-inline-start: calc(var(--ecIndent, 0ch) + 6px); }

@@ -1,14 +1,12 @@
 ---
+import { tagLabel } from '../lib/tags';
 import { IconAdjustmentsHorizontal } from '@tabler/icons-astro';
 interface Props { tags: string[] }
 const { tags } = Astro.props;
-const groups = [
-  { name: 'type', label: 'Type', options: [{ value: '', label: 'All types' }, { value: 'article', label: 'Article' }, { value: 'tutorial', label: 'Tutorial' }] },
-  { name: 'topic', label: 'Topic', options: [{ value: '', label: 'All topics' }, ...tags.map(tag => ({ value: tag, label: tag }))] },
-];
+const groups = [{ name: 'tag', label: 'Tags', options: [{ value: '', label: 'All tags' }, ...tags.map(tag => ({ value: tag, label: tagLabel(tag) }))] }];
 ---
 <form class="writing-filters" aria-label="Filter writing">
-  <input type="hidden" name="type" value="" /><input type="hidden" name="topic" value="" />
+  <input type="hidden" name="tag" value="" />
   <div class="filter-toolbar">
     <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="writing-filter-options"><IconAdjustmentsHorizontal size={17} aria-hidden="true" />Filters</button>
     <p class="filter-count" role="status"></p>
@@ -23,10 +21,10 @@ const groups = [
   const trigger = form.querySelector<HTMLButtonElement>('.filter-toggle')!;
   const panel = form.querySelector<HTMLElement>('.filter-options')!;
   const active = form.querySelector<HTMLElement>('.active-filters')!;
-  const fields = ['type', 'topic'] as const;
+  const fields = ['tag'] as const;
   const values = Object.fromEntries(fields.map(name => [name, form.elements.namedItem(name) as HTMLInputElement])) as Record<typeof fields[number], HTMLInputElement>;
   const choices = (name: string) => [...form.querySelectorAll<HTMLButtonElement>(`.filter-choice[data-group="${name}"]`)];
-  const selected = { type: new Set<string>(), topic: new Set<string>() };
+  const selected = { tag: new Set<string>() };
   function setValue(name: typeof fields[number], incoming: string[]) {
     const allowed = choices(name).map(option => option.dataset.value!).filter(Boolean);
     selected[name] = new Set(allowed.filter(value => incoming.includes(value)));
@@ -36,7 +34,7 @@ const groups = [
   function update() {
     let count = 0;
     document.querySelectorAll<HTMLElement>('.writing-list > li').forEach(row => {
-      row.hidden = Boolean((selected.type.size && !selected.type.has(row.dataset.type!)) || (selected.topic.size && !JSON.parse(row.dataset.tags!).some((tag: string) => selected.topic.has(tag))));
+      row.hidden = Boolean(selected.tag.size && !JSON.parse(row.dataset.tags!).some((tag: string) => selected.tag.has(tag)));
       if (!row.hidden) count++;
     });
     const list = document.querySelector<HTMLElement>('.writing-list');
@@ -62,6 +60,7 @@ const groups = [
   }
   function apply() {
     const params = new URLSearchParams(location.search);
+    params.delete('type'); params.delete('topic');
     for (const name of fields) {
       params.delete(name);
       for (const value of selected[name]) params.append(name, value);
@@ -72,7 +71,7 @@ const groups = [
   }
   function restore() {
     const params = new URLSearchParams(location.search);
-    for (const name of fields) setValue(name, params.getAll(name));
+    setValue('tag', [...params.getAll('tag'), ...params.getAll('type'), ...params.getAll('topic')].map(tag => tag.trim().toLowerCase()));
     update();
   }
   function open(value: boolean) { panel.hidden = !value; trigger.setAttribute('aria-expanded', String(value)); }

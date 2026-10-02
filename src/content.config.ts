@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
+import { normalizeTags } from './lib/tags';
 import { docsSchema } from '@astrojs/starlight/schema';
 
 // Demo fixtures are opt-in even during development. Never enable this in CI.
@@ -16,12 +17,12 @@ export const collections = {
       navTitle: z.string().optional(),
       description: z.string(),
       date: z.coerce.date().optional(),
-      type: z.enum(['article', 'tutorial']).default('article'),
+      type: z.enum(['article', 'tutorial']).optional(),
       parent: z.string().optional(),
       order: z.number().default(0),
       toc: z.boolean().default(false),
       tags: z.array(z.string()).default([]),
       draft: z.boolean().default(true),
-    }),
+    }).transform(data => ({ ...data, tags: normalizeTags(data.tags, data.type) })),
   }),
 };
