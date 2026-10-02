@@ -152,7 +152,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .section-row { padding: var(--space-6) var(--space-4); }
 .section-row.entry-row { display: block; position: relative; }
 .section-row.entry-row .entry-title { display: block; padding-right: 32px; font-size: 1.1rem; line-height: 1.5; overflow-wrap: anywhere; }
-.entry-row .entry-topics { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+.entry-row .entry-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; font-size: .78rem; line-height: 1.5; }
+.entry-tag { display: inline-block; padding: 2px 8px; border: 1px solid #739de5; border-radius: 4px; background: #173565; color: #e5efff; overflow-wrap: anywhere; }
 .entry-row .entry-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; color: var(--muted); font-size: .85rem; line-height: 1.5; }
 .section-row.entry-row .entry-description { margin-top: 8px; line-height: 1.6; padding-right: 32px; }
 .section-row.entry-row > .arrow-icon { position: absolute; top: 28px; right: 16px; }

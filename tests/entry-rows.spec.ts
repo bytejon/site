@@ -7,6 +7,18 @@ for (const path of ['writing/', 'projects/', '']) {
     const row = page.locator('.entry-row').first();
     await expect(row).toBeVisible();
     const url = await row.getAttribute('href');
+    const labels = await row.locator('.entry-tag').allTextContents();
+    expect(new Set(labels.map(label => label.toLowerCase())).size).toBe(labels.length);
+    if (path !== 'projects/') expect(labels[0]).toMatch(/^(Article|Tutorial)$/);
+    expect(await row.evaluate(el => {
+      const topics = el.querySelector('.entry-topics');
+      const description = el.querySelector('.entry-description');
+      const date = el.querySelector('.entry-meta');
+      return (!topics || Boolean(topics.compareDocumentPosition(description!) & Node.DOCUMENT_POSITION_FOLLOWING)) &&
+        (!date || Boolean(description!.compareDocumentPosition(date) & Node.DOCUMENT_POSITION_FOLLOWING)) &&
+        !el.querySelector('.entry-meta span');
+    })).toBe(true);
+
     // Stress existing rendered entries without creating or publishing invented content.
     await row.locator('.entry-title').evaluate(el => el.textContent = 'A longer title about building useful tools and documenting the decisions behind them '.repeat(4));
     for (const theme of ['light', 'dark']) {

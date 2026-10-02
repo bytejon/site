@@ -72,7 +72,7 @@ Writing and Starlight projects share Expressive Code's theme-aware syntax colors
 
 ## Projects
 
-Project docs remain in `src/content/docs/projects/`, with Starlight nested navigation, search, and on-this-page navigation. Copy `examples/projects/example-project/` there and replace its text. `sidebar: { order: 1 }` sets order. Project root frontmatter can optionally include `tags: [luau, tools]` and `date: 2026-10-02`; omit them when they do not apply. Writing and project entries show a full-width wrapping title, followed by available tags, type/date, and description. Keep unpublished docs outside `src/content/docs`; sidebar hiding is not privacy.
+Project docs remain in `src/content/docs/projects/`, with Starlight nested navigation, search, and on-this-page navigation. Copy `examples/projects/example-project/` there and replace its text. `sidebar: { order: 1 }` sets order. Project root frontmatter can optionally include `tags: [luau, tools]` and `date: 2026-10-02`; omit them when they do not apply. Writing and project entries show a full-width wrapping title, followed by tags, description, and the date at the bottom. The Writing category is the first tag; repeated tags are omitted from display without changing frontmatter or filters. Keep unpublished docs outside `src/content/docs`; sidebar hiding is not privacy.
 
 ## Navigation and appearance
 
