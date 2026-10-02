@@ -1,8 +1,8 @@
 ---
 import ChoicePicker from '../../components/ChoicePicker.astro';
-import Arrow from '../../components/Arrow.astro';
+import EntryRow from '../../components/EntryRow.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { posts, href, formatDate } from '../../lib/site';
+import { posts, href } from '../../lib/site';
 const entries = await posts();
 const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
 ---
@@ -13,7 +13,7 @@ const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
     <div class="filter-field"><span>Topic</span><ChoicePicker label="Topic" name="topic" options={[{value:"",label:"All topics"},...tags.map(tag => ({value:tag,label:tag}))]} /></div>
   </form>
   <p class="filter-count" aria-live="polite"></p>
-  {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-type={post.data.type} data-tags={JSON.stringify(post.data.tags)}><a class="section-row" href={href(`writing/${post.id}/`)}><strong>{post.data.title}{post.data.draft ? ' (draft)' : ''}</strong><p>{post.data.type === 'article' ? 'Article' : 'Tutorial'} · {formatDate(post.data.date!)}<br />{post.data.description}</p><Arrow /></a></li>)}</ul>}
+  {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-type={post.data.type} data-tags={JSON.stringify(post.data.tags)}><EntryRow url={href(`writing/${post.id}/`)} title={post.data.title} tags={post.data.tags} date={post.data.date} kind={post.data.type === 'article' ? 'Article' : 'Tutorial'} description={post.data.description} draft={post.data.draft} /></li>)}</ul>}
   <p class="empty" data-empty hidden={entries.length > 0}>No writing to show.</p>
 </SiteLayout>
 <script>

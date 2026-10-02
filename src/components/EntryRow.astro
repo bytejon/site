@@ -1,0 +1,13 @@
+---
+import Arrow from './Arrow.astro';
+import { formatDate } from '../lib/site';
+interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; kind?: string; draft?: boolean }
+const { url, title, description, tags = [], date, kind, draft = false } = Astro.props;
+---
+<a class="section-row entry-row" href={url}>
+  <strong class="entry-title">{title}{draft ? ' (draft)' : ''}</strong>
+  {tags.length > 0 && <span class="entry-topics" aria-label="Topics">{tags.map(tag => <span>{tag}</span>)}</span>}
+  {(kind || date) && <span class="entry-meta">{kind && <span>{kind}</span>}{kind && date && <span aria-hidden="true">·</span>}{date && <time datetime={date.toISOString()}>{formatDate(date)}</time>}</span>}
+  {description && <p class="entry-description">{description}</p>}
+  <Arrow />
+</a>

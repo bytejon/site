@@ -1,6 +1,7 @@
 ---
 import { getEntry, getCollection, render } from 'astro:content';
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import EntryRow from '../../components/EntryRow.astro';
 import { href } from '../../lib/site';
 const entry = await getEntry('docs', 'projects');
 const { Content } = await render(entry!);
@@ -9,5 +10,5 @@ const projects = (await getCollection('docs')).filter(entry => /^projects\/[^/]+
 <SiteLayout title="Projects" description={entry!.data.description}>
   <h1>Projects</h1>
   <div class="project-intro"><Content /></div>
-  {projects.length > 0 && <ul class="section-list">{projects.map(project => <li><a class="section-row" href={href(`${project.id}/`)}><strong>{project.data.title}</strong><p>{project.data.description}</p></a></li>)}</ul>}
+  {projects.length > 0 && <ul class="section-list">{projects.map(project => <li><EntryRow url={href(`${project.id}/`)} title={project.data.title} description={project.data.description} tags={project.data.tags} date={project.data.date} /></li>)}</ul>}
 </SiteLayout>

@@ -8,7 +8,7 @@ const includeDemos = import.meta.env.INCLUDE_DEMOS === 'true';
 const pattern = includeDemos ? '**/[^_]*.{md,mdx}' : ['**/[^_]*.{md,mdx}', '!**/demo-*', '!**/demo-*/**'];
 
 export const collections = {
-  docs: defineCollection({ loader: glob({ pattern, base: './src/content/docs' }), schema: docsSchema() }),
+  docs: defineCollection({ loader: glob({ pattern, base: './src/content/docs' }), schema: docsSchema({ extend: z.object({ tags: z.array(z.string()).default([]), date: z.coerce.date().optional() }) }) }),
   writing: defineCollection({
     loader: glob({ pattern, base: './src/content/writing' }),
     schema: z.object({
