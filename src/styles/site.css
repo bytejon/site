@@ -157,12 +157,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .entry-row .entry-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; color: var(--muted); font-size: .85rem; line-height: 1.5; }
 .section-row.entry-row .entry-description { margin-top: 8px; line-height: 1.6; }
 .section-row.entry-row .entry-title .arrow-icon { margin-left: 8px; opacity: .7; }
-.entry-description-link { display: block; text-decoration: none; min-height: 44px; }
-.entry-row:has(> .entry-title-link:hover, > .entry-description-link:hover) { background: var(--surface); }
-.entry-row:has(> .entry-description-link:hover) strong { color: var(--accent); }
-.entry-row:has(> .entry-title-link:focus-visible, > .entry-description-link:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; background: var(--surface); }
-.entry-row > .entry-title-link:focus-visible, .entry-row > .entry-description-link:focus-visible { outline: none; }
-@media (prefers-reduced-motion: no-preference) { .entry-row { transition: background-color 140ms ease; } }
+.entry-row > .entry-title-link:hover { background: var(--surface); }
+.entry-row > .entry-title-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; background: var(--surface); }
+.entry-row > .entry-title-link { padding: 8px; margin: -8px -8px 0; border-radius: 6px; }
+@media (prefers-reduced-motion: no-preference) { .entry-title-link { transition: background-color 140ms ease; } }
 .note { padding: var(--space-4) var(--space-5); }
 .prose > ul:not(.tags), .prose > ol { padding-inline-start: var(--space-6); }
 .prose blockquote { padding: var(--space-2) var(--space-5); }

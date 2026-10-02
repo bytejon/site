@@ -14,7 +14,7 @@ for (const path of ['articles/', 'projects/', '']) {
       const topics = el.querySelector('.entry-topics');
       const description = el.querySelector('.entry-description');
       const date = el.querySelector('.entry-meta');
-      return (!topics || Boolean(topics.compareDocumentPosition(description!) & Node.DOCUMENT_POSITION_FOLLOWING)) &&
+      return (!topics || Boolean(description!.compareDocumentPosition(topics) & Node.DOCUMENT_POSITION_FOLLOWING)) &&
         (!date || Boolean(description!.compareDocumentPosition(date) & Node.DOCUMENT_POSITION_FOLLOWING)) &&
         Boolean(el.querySelector('.entry-title-link'));
     })).toBe(true);
@@ -45,14 +45,19 @@ for (const path of ['articles/', 'projects/', '']) {
 }
 test('entry title and description link surfaces stay separate from tags',async({page},info)=>{
  for(const theme of ['light','dark'])for(const path of ['articles/','projects/']) {
-  await page.goto(path);await choose(page,'Color theme',theme);const row=page.locator('.entry-row:has(.entry-description-link)').first(),title=row.locator('.entry-title-link'),description=row.locator('.entry-description-link');const destination=await title.getAttribute('href');
-  await expect(description).toHaveAttribute('href',destination!);await expect(description).toHaveAttribute('tabindex','-1');await expect(row.locator('a a')).toHaveCount(0);await expect(title.locator('svg')).toBeVisible();
-  await page.mouse.move(0,0);const initial=await row.evaluate(el=>getComputedStyle(el).backgroundColor);
-  await title.hover();await expect.poll(()=>row.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe(initial);
-  await page.mouse.move(0,0);await page.keyboard.press('Tab');await title.focus();await expect.poll(()=>row.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('solid');await expect.poll(()=>row.evaluate(el=>getComputedStyle(el).outlineWidth)).toBe('3px');
+  await page.goto(path);await choose(page,'Color theme',theme);const row=page.locator('.entry-row:has(.entry-description)').first(),title=row.locator('.entry-title-link'),description=row.locator('.entry-description');const destination=await title.getAttribute('href');
+  await expect(title.locator('.entry-description')).toHaveCount(1);await expect(title).not.toHaveAttribute('tabindex','-1');await expect(row.locator('a:not(.tag-link)')).toHaveCount(1);await expect(row.locator('a a')).toHaveCount(0);await expect(title.locator('svg')).toBeVisible();
+  await page.mouse.move(0,0);const initial=await title.evaluate(el=>getComputedStyle(el).backgroundColor);
+  await title.hover();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe(initial);
+  await page.mouse.move(0,0);await page.keyboard.press('Tab');await title.focus();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('solid');await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineWidth)).toBe('3px');
   await page.screenshot({path:`test-results/affordance-${path.slice(0,-1)}-${info.project.name}-${theme}-focus.png`});
-  if(path==='articles/') {await page.keyboard.press('Tab');await expect(row.locator('.tag-link').first()).toBeFocused();await expect.poll(()=>row.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('none');await row.locator('.tag-link').first().hover();await expect.poll(()=>row.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(initial);}
+  if(path==='articles/') {await page.keyboard.press('Tab');await expect(row.locator('.tag-link').first()).toBeFocused();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('none');await row.locator('.tag-link').first().hover();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(initial);}
   if(info.project.name==='mobile')await description.tap();else await description.click();await expect(page).toHaveURL(new RegExp(destination!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
-  await page.goto(path);await page.locator('.entry-row:has(.entry-description-link)').first().locator('.entry-title-link').focus();await page.keyboard.press('Enter');await expect(page).toHaveURL(new RegExp(destination!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
+  await page.goto(path);await page.locator('.entry-row:has(.entry-description)').first().locator('.entry-title-link').focus();await page.keyboard.press('Enter');await expect(page).toHaveURL(new RegExp(destination!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
  }
+});
+test('entries with no optional metadata retain one usable title link',async({page})=>{
+ await page.goto('projects/');const row=page.locator('.entry-row').filter({hasText:'Test project: minimal entry'});
+ await expect(row.locator('.entry-description,.entry-topics,.entry-meta')).toHaveCount(0);await expect(row.locator('a')).toHaveCount(1);await expect(row.locator('svg')).toBeVisible();
+ expect((await row.locator('a').boundingBox())!.height).toBeGreaterThanOrEqual(44);await row.locator('a').focus();await page.keyboard.press('Enter');await expect(page).toHaveURL(/projects\/demo-zz-minimal\/$/);
 });
