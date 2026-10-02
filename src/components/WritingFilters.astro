@@ -15,7 +15,7 @@ const groups = [
   </div>
   <div class="active-filters" hidden></div>
   <div id="writing-filter-options" class="filter-options" hidden>
-    {groups.map(group => <fieldset><legend>{group.label}</legend><div class="filter-choices">{group.options.map(option => <label><input type="radio" name={`filter-${group.name}`} value={option.value} checked={option.value === ''} /><span>{option.label}</span></label>)}</div></fieldset>)}
+    {groups.map(group => <fieldset><legend>{group.label}</legend><div class="filter-choices">{group.options.map(option => <button type="button" class="filter-choice" data-group={group.name} data-value={option.value} aria-pressed={option.value === '' ? 'true' : 'false'}>{option.label}</button>)}</div></fieldset>)}
   </div>
 </form>
 <script>
@@ -25,17 +25,18 @@ const groups = [
   const active = form.querySelector<HTMLElement>('.active-filters')!;
   const fields = ['type', 'topic'] as const;
   const values = Object.fromEntries(fields.map(name => [name, form.elements.namedItem(name) as HTMLInputElement])) as Record<typeof fields[number], HTMLInputElement>;
-  const choices = (name: string) => [...form.querySelectorAll<HTMLInputElement>(`input[name="filter-${name}"]`)];
-  function setValue(name: typeof fields[number], value: string) {
-    const options = choices(name);
-    const selected = options.find(option => option.value === value) || options[0];
-    selected.checked = true;
-    values[name].value = selected.value;
+  const choices = (name: string) => [...form.querySelectorAll<HTMLButtonElement>(`.filter-choice[data-group="${name}"]`)];
+  const selected = { type: new Set<string>(), topic: new Set<string>() };
+  function setValue(name: typeof fields[number], incoming: string[]) {
+    const allowed = choices(name).map(option => option.dataset.value!).filter(Boolean);
+    selected[name] = new Set(allowed.filter(value => incoming.includes(value)));
+    values[name].value = [...selected[name]].join(',');
+    choices(name).forEach(option => option.setAttribute('aria-pressed', String(option.dataset.value ? selected[name].has(option.dataset.value) : selected[name].size === 0)));
   }
   function update() {
     let count = 0;
     document.querySelectorAll<HTMLElement>('.writing-list > li').forEach(row => {
-      row.hidden = Boolean((values.type.value && row.dataset.type !== values.type.value) || (values.topic.value && !JSON.parse(row.dataset.tags!).includes(values.topic.value)));
+      row.hidden = Boolean((selected.type.size && !selected.type.has(row.dataset.type!)) || (selected.topic.size && !JSON.parse(row.dataset.tags!).some((tag: string) => selected.topic.has(tag))));
       if (!row.hidden) count++;
     });
     const list = document.querySelector<HTMLElement>('.writing-list');
@@ -44,14 +45,15 @@ const groups = [
     form.querySelector('.filter-count')!.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
     active.replaceChildren();
     for (const name of fields) {
-      if (!values[name].value) continue;
-      const label = choices(name).find(option => option.checked)!.nextElementSibling!.textContent!;
+      for (const value of selected[name]) {
+      const label = choices(name).find(option => option.dataset.value === value)!.textContent!;
       const button = document.createElement('button');
-      button.type = 'button'; button.className = 'entry-tag filter-chip'; button.dataset.filterRemove = name;
+      button.type = 'button'; button.className = 'entry-tag filter-chip'; button.dataset.filterRemove = name; button.dataset.value = value;
       button.setAttribute('aria-label', `Remove ${name} filter: ${label}`);
       button.textContent = label;
       const x = document.createElement('span'); x.textContent = '×'; x.setAttribute('aria-hidden', 'true'); button.append(x);
       active.append(button);
+      }
     }
     active.hidden = !active.childElementCount;
     if (!active.hidden) {
@@ -61,7 +63,8 @@ const groups = [
   function apply() {
     const params = new URLSearchParams(location.search);
     for (const name of fields) {
-      if (values[name].value) params.set(name, values[name].value); else params.delete(name);
+      params.delete(name);
+      for (const value of selected[name]) params.append(name, value);
     }
     const url = `${location.pathname}${params.size ? '?' + params : ''}${location.hash}`;
     if (url !== `${location.pathname}${location.search}${location.hash}`) history.pushState(null, '', url);
@@ -69,22 +72,26 @@ const groups = [
   }
   function restore() {
     const params = new URLSearchParams(location.search);
-    for (const name of fields) setValue(name, params.get(name) || '');
+    for (const name of fields) setValue(name, params.getAll(name));
     update();
   }
   function open(value: boolean) { panel.hidden = !value; trigger.setAttribute('aria-expanded', String(value)); }
   trigger.addEventListener('click', () => open(Boolean(panel.hidden)));
   form.addEventListener('keydown', event => { if (event.key === 'Escape' && !panel.hidden) { open(false); trigger.focus(); event.preventDefault(); } });
-  form.addEventListener('change', event => {
-    const input = event.target as HTMLInputElement;
-    const name = input.name.slice('filter-'.length) as typeof fields[number];
-    if (fields.includes(name)) { setValue(name, input.value); apply(); }
+  panel.addEventListener('click', event => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('.filter-choice');
+    if (!button) return;
+    const name = button.dataset.group as typeof fields[number];
+    const value = button.dataset.value!;
+    const next = new Set(selected[name]);
+    if (!value) next.clear(); else if (next.has(value)) next.delete(value); else next.add(value);
+    setValue(name, [...next]); apply();
   });
   active.addEventListener('click', event => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button');
     if (!button) return;
-    if ('filterReset' in button.dataset) fields.forEach(name => setValue(name, ''));
-    else setValue(button.dataset.filterRemove as typeof fields[number], '');
+    if ('filterReset' in button.dataset) fields.forEach(name => setValue(name, []));
+    else { const name = button.dataset.filterRemove as typeof fields[number]; setValue(name, [...selected[name]].filter(value => value !== button.dataset.value)); }
     apply();
     (active.querySelector<HTMLButtonElement>('button') || trigger).focus();
   });
@@ -105,9 +112,7 @@ const groups = [
   fieldset + fieldset { margin-top: 16px; }
   legend { padding: 0; margin-bottom: 8px; color: var(--muted); font-size: .82rem; }
   .filter-choices { display: flex; flex-wrap: wrap; gap: 8px; }
-  .filter-choices label { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; font-size: .85rem; }
-  .filter-choices label:has(:checked) { background: #173565; color: #e5efff; border-color: #739de5; }
-  .filter-choices label:focus-within { outline: 3px solid var(--accent); outline-offset: 3px; }
-  input[type='radio'] { margin: 0; accent-color: var(--accent); flex-shrink: 0; }
-  .filter-choices span { overflow-wrap: anywhere; }
+  .filter-choice { min-height: 44px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; font: inherit; font-size: .85rem; overflow-wrap: anywhere; }
+  .filter-choice:hover { background: var(--surface); }
+  .filter-choice[aria-pressed='true'] { background: #173565; color: #e5efff; border-color: #739de5; }
 </style>

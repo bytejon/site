@@ -32,7 +32,7 @@ test('About contains six requested accounts and no invented bio', async ({ page 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('filter disclosure and native radio selection support keyboard and reduced motion', async ({ page }) => {
+test('filter disclosure and toggle selection support keyboard and reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('writing/');
   const trigger = page.getByRole('button', { name: 'Filters', exact: true });
@@ -40,9 +40,9 @@ test('filter disclosure and native radio selection support keyboard and reduced 
   await trigger.focus(); await page.keyboard.press('Enter');
   await expect(page.locator('.filter-options')).toBeVisible();
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('radio', { name: 'All types', exact: true })).toBeFocused();
-  await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight');
-  await expect(page.getByRole('radio', { name: 'Tutorial', exact: true })).toBeChecked();
+  await expect(page.getByRole('button', { name: 'All types', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab'); await page.keyboard.press('Tab'); await page.keyboard.press('Space');
+  await expect(page.getByRole('button', { name: 'Tutorial', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(page).toHaveURL(/\?type=tutorial$/);
   await page.keyboard.press('Escape');
   await expect(page.locator('.filter-options')).toBeHidden();

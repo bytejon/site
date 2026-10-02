@@ -26,7 +26,7 @@ toc: false
 Your writing starts here.
 ```
 
-`type` is `article` or `tutorial`; it is separate from topic `tags` and does not select a different layout. Roots require a date. Writing filters by type and topic with shareable URL parameters. A quiet Filters button reveals native radio options; active filters have removable blue tags and Clear all. Filter changes support browser Back/Forward and reload. Dates display in UTC; roots sort newest first. Set `draft: false` to publish; omitted `draft` defaults to true. RSS includes published roots only. Level-two and level-three headings automatically create an on-this-page outline for Articles and Tutorials; the older `toc` field is accepted for existing files.
+`type` is `article` or `tutorial`; it is separate from topic `tags` and does not select a different layout. Roots require a date. Writing filters by type and topic with shareable URL parameters. A quiet Filters button reveals multi-select toggle chips; active filters have removable blue tags and Clear all. Selections within each group match any value (OR); Type and Topic combine (AND). Repeated URL parameters preserve multiple selections, and older single-value links still work. Filter changes support browser Back/Forward and reload. Dates display in UTC; roots sort newest first. Set `draft: false` to publish; omitted `draft` defaults to true. RSS includes published roots only. Level-two and level-three headings automatically create an on-this-page outline for Articles and Tutorials; the older `toc` field is accepted for existing files.
 
 ### Optional child pages for either type
 

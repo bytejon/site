@@ -3,11 +3,15 @@ export async function choose(page: Page, label: string, value: string) {
   if (label === 'Type' || label === 'Topic') {
     const toggle = page.getByRole('button', { name: 'Filters', exact: true });
     if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
-    const options = page.locator(`input[name="filter-${label.toLowerCase()}"]`);
-    for (const option of await options.all()) {
-      if (await option.getAttribute('value') === value) { await option.check(); return; }
+    const group = page.getByRole('group', {name:label,exact:true});
+    await group.locator('.filter-choice[data-value=""]').click();
+    if (value) {
+      for (const option of await group.locator('.filter-choice').all()) {
+        if (await option.getAttribute('data-value') === value) { await option.click(); return; }
+      }
+      throw new Error('Missing filter choice');
     }
-    throw new Error('Missing filter choice');
+    return;
   }
   const trigger = page.getByRole('button', { name: label, exact: true }).first();
   await trigger.click();
