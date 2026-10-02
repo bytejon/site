@@ -19,10 +19,10 @@ test('returning restores filters and scroll without overriding tag links/direct 
   await page.goto('articles/');await choose(page,'Color theme',theme);await choose(page,'Tags','testing');await page.keyboard.press('Escape');
   const target=page.locator('.writing-list > li:visible').last().locator('.entry-title-link');await target.scrollIntoViewIfNeeded();
   const y=await page.evaluate(()=>scrollY);const listURL=page.url();await target.click();
-  await page.getByRole('link',{name:'Back to articles',exact:true}).click();await expect(page).toHaveURL(listURL);
+  await page.getByRole('navigation',{name:'Breadcrumb',exact:true}).getByRole('link',{name:'Articles',exact:true}).click();await expect(page).toHaveURL(listURL);
   await expect(page.locator('.filter-chip')).toHaveCount(1);await expect.poll(()=>page.evaluate(()=>scrollY)).toBeCloseTo(y,0);
   await target.click();await page.goBack();await expect(page).toHaveURL(listURL);await expect.poll(()=>page.evaluate(()=>scrollY)).toBeCloseTo(y,0);
-  await target.click();await page.goBack();await page.goForward();await page.getByRole('link',{name:'Back to articles',exact:true}).click();
+  await target.click();await page.goBack();await page.goForward();await page.getByRole('navigation',{name:'Breadcrumb',exact:true}).getByRole('link',{name:'Articles',exact:true}).click();
   await page.goto('articles/demo-math-and-markdown/');await page.locator('.tags').getByRole('link',{name:'math',exact:true}).click();await expect(page).toHaveURL(/tag=math/);
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(process.env.TEST_FEATURE_DRAFTS==='true'?2:1);expect(await page.evaluate(()=>scrollY)).toBeLessThan(100);
   await page.goto('articles/#main');await expect(page.locator('.filter-chip')).toHaveCount(0);expect(await page.evaluate(()=>location.hash)).toBe('#main');
@@ -44,6 +44,22 @@ test('project overview renders only supplied metadata with copyable installation
 test('generic tags and earlier updated dates show no related or Updated section',async({page})=>{
  test.skip(process.env.TEST_FEATURE_DRAFTS!=='true','Explicit local draft edge-case build');
  await page.goto('articles/demo-reader-edge/');await expect(page.getByRole('region',{name:'Related articles',exact:true})).toHaveCount(0);await expect(page.locator('.post-meta .updated-date')).toHaveCount(0);
+});
+
+test('article footers omit the return control and separate pagination from related entries',async({page})=>{
+ for(const theme of ['light','dark']) {
+  for(const path of ['articles/demo-math-and-markdown/','articles/demo-article-series/first/']) {
+   await page.goto(path);await choose(page,'Color theme',theme);
+   await expect(page.getByRole('link',{name:'Back to articles',exact:true})).toHaveCount(0);
+   await expect(page.locator('.article-return')).toHaveCount(0);
+   const related=page.locator('.related-articles');await expect(related).toBeVisible();
+   const pagination=page.locator('.chapter-pagination');
+   if(path.includes('/first/')) {
+    const nav=(await pagination.boundingBox())!;const section=(await related.boundingBox())!;
+    expect(section.y-nav.y-nav.height).toBeGreaterThanOrEqual(55);
+   } else {await expect(pagination).toHaveCount(0);await expect(related).toHaveCSS('margin-top','32px');}
+  }
+ }
 });
 test('tag hover and keyboard focus do not highlight or activate entry titles; edit links are absent',async({page})=>{
  for(const theme of ['light','dark']) for(const path of ['articles/','articles/demo-math-and-markdown/','']) {

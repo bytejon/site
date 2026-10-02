@@ -65,6 +65,23 @@ test('topbar has identical centered bounds across layout families', async ({ pag
   }
 });
 
+test('only the subtle header divider spans the viewport', async ({ page }) => {
+  for (const path of ['', 'articles/', 'projects/', 'about/', ...(process.env.TEST_DEMOS === 'true' ? ['projects/demo-project/'] : [])]) {
+    await page.goto(path);
+    const header = page.locator('body.personal-site > header, .page > header');
+    const bounds = (await header.boundingBox())!;
+    expect(bounds.width).toBe(Math.min(page.viewportSize()!.width,896));
+    const divider = await header.evaluate(el => {
+      const line = getComputedStyle(el,'::after');
+      return {width:parseFloat(line.width),height:parseFloat(line.height),color:line.backgroundColor,border:getComputedStyle(el).borderBottomColor};
+    });
+    expect(divider.width).toBe(page.viewportSize()!.width); expect(divider.height).toBe(1);
+    expect(divider.border).toBe('rgba(0, 0, 0, 0)');
+    expect(divider.color).not.toBe('rgba(0, 0, 0, 0)');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});
+
 test('active navigation uses a contrasting blue rectangle', async ({ page }) => {
   for (const theme of ['light', 'dark']) {
     for (const section of ['Articles', 'Projects']) {

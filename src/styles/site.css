@@ -273,8 +273,6 @@ starlight-tabs.code-tabset > [role='tabpanel'] > .expressive-code .frame.has-too
 .related-articles { margin-top: 32px; }
 .related-articles .section-list { margin-top: 16px; }
 .related-articles .section-row { padding: 16px; }
-.article-return { margin-top: 24px; }
-.article-return a { display: inline-flex; align-items: center; min-height: 44px; }
 .project-overview { padding: 16px 0; margin: 8px 0 24px; border-bottom: 1px solid var(--line); }
 .project-overview > p { margin: 0 0 12px; color: var(--muted); }
 .project-overview-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; }
@@ -283,8 +281,9 @@ starlight-tabs.code-tabset > [role='tabpanel'] > .expressive-code .frame.has-too
 .personal-site .tags a { min-height: 32px; padding: 4px 8px; border: 1px solid #739de5; border-radius: 4px; background: #173565; color: #e5efff; text-decoration: none; }
 .personal-site .tags a:hover { background: #21467e; text-decoration: underline; }
 
-.article-return a, .project-overview-links a { gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: transparent; text-decoration: none; font-size: .9rem; }
-.article-return a:hover, .project-overview-links a:hover { color: var(--accent); background: var(--surface); }
+.project-overview-links a { gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: transparent; text-decoration: none; font-size: .9rem; }
+.project-overview-links a:hover { color: var(--accent); background: var(--surface); }
+.chapter-pagination + .related-articles { margin-top: 56px; }
 
 .reading-pagination { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; border-top: 1px solid var(--line); margin-top: 48px; padding-top: 24px; }
 .reading-pagination a { display: flex; align-items: center; gap: 12px; min-height: 44px; min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
@@ -309,3 +308,6 @@ starlight-tabs.code-tabset > [role='tabpanel'] > .expressive-code .frame.has-too
 .personal-site .accounts a { color: var(--ink); border-radius: 6px; }
 .page .sl-markdown-content h2 { font-size: 1.4rem; line-height: 1.35; font-weight: 600; letter-spacing: -.025em; }
 .starlight-aside--note { background: var(--surface); border-color: var(--accent); --sl-color-asides-text-accent: var(--accent); }
+/* Only the divider spans the viewport; the header keeps its existing bounds. */
+.site-header, .page > .header { border-bottom: 1px solid transparent; }
+.site-header::after, .page > .header::after { content: ''; position: absolute; bottom: -1px; left: 50%; width: 100vw; height: 1px; transform: translateX(-50%); background: var(--line); pointer-events: none; }

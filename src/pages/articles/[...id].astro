@@ -54,7 +54,6 @@ const breadcrumb = [{ label: 'Articles', href: href('articles/') }, ...ancestry.
       <Content />
       {root.data.tags.length > 0 && <ul class="tags" aria-label="Tags">{root.data.tags.map(tag => <li><a href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a></li>)}</ul>}
       {chapters.length > 1 && <ReadingPagination class="chapter-pagination" label="Page navigation" previous={previous && { href: href(`articles/${previous.id}/`), label: previous.data.navTitle || previous.data.title }} next={next && { href: href(`articles/${next.id}/`), label: next.data.navTitle || next.data.title }} />}
-      <p class="article-return"><a href={href('articles/')} data-return-articles>Back to articles</a></p>
       {related.length > 0 && <section class="related-articles" aria-labelledby="related-articles"><h2 id="related-articles">Related articles</h2><ul class="section-list">{related.map(entry => <li><EntryRow url={href(`articles/${entry.id}/`)} title={entry.data.title} description={entry.data.description} tags={entry.data.tags} date={entry.data.date} updated={entry.data.updated} tagLinks /></li>)}</ul></section>}
     </article>
   </div>
