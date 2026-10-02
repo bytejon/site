@@ -32,26 +32,26 @@ test('About contains six requested accounts and no invented bio', async ({ page 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('filter popovers support keyboard selection, Tab and reduced motion', async ({ page }) => {
+test('filter disclosure and native radio selection support keyboard and reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('writing/');
-  const trigger = page.getByRole('button', { name: 'Type', exact: true });
+  const trigger = page.getByRole('button', { name: 'Filters', exact: true });
+  await expect(page.locator('.filter-options')).toBeHidden();
   await trigger.focus(); await page.keyboard.press('Enter');
-  const panel = page.getByRole('listbox', { name: 'Type', exact: true });
-  await expect(panel).toBeVisible();
-  await expect(panel.getByRole('option', { name: 'All types', exact: true })).toBeFocused();
-  const anchor = (await trigger.boundingBox())!;
-  const popup = (await panel.boundingBox())!;
-  expect(popup.y).toBeGreaterThanOrEqual(anchor.y + anchor.height);
-  expect(Math.abs(popup.x - anchor.x)).toBeLessThan(1);
-  await page.keyboard.press('End'); await page.keyboard.press('Enter');
-  await expect(page.locator('[name="type"]')).toHaveValue('tutorial');
-  await expect(page).toHaveURL(/\?type=tutorial$/);
-  await trigger.click();
-  await expect(panel.getByRole('option', { name: 'Tutorial', exact: true })).toBeFocused();
+  await expect(page.locator('.filter-options')).toBeVisible();
   await page.keyboard.press('Tab');
-  await expect(panel).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Topic', exact: true })).toBeFocused();
+  await expect(page.getByRole('radio', { name: 'All types', exact: true })).toBeFocused();
+  await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight');
+  await expect(page.getByRole('radio', { name: 'Tutorial', exact: true })).toBeChecked();
+  await expect(page).toHaveURL(/\?type=tutorial$/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.filter-options')).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Remove type filter: Tutorial' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(trigger).toBeFocused();
+  await expect(page).toHaveURL(/\/writing\/$/);
 });
 
 test('nested docs keep the shared theme popover and search', async ({ page }) => {

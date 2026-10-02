@@ -1,0 +1,113 @@
+---
+import { IconAdjustmentsHorizontal } from '@tabler/icons-astro';
+interface Props { tags: string[] }
+const { tags } = Astro.props;
+const groups = [
+  { name: 'type', label: 'Type', options: [{ value: '', label: 'All types' }, { value: 'article', label: 'Article' }, { value: 'tutorial', label: 'Tutorial' }] },
+  { name: 'topic', label: 'Topic', options: [{ value: '', label: 'All topics' }, ...tags.map(tag => ({ value: tag, label: tag }))] },
+];
+---
+<form class="writing-filters" aria-label="Filter writing">
+  <input type="hidden" name="type" value="" /><input type="hidden" name="topic" value="" />
+  <div class="filter-toolbar">
+    <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="writing-filter-options"><IconAdjustmentsHorizontal size={17} aria-hidden="true" />Filters</button>
+    <p class="filter-count" role="status"></p>
+  </div>
+  <div class="active-filters" hidden></div>
+  <div id="writing-filter-options" class="filter-options" hidden>
+    {groups.map(group => <fieldset><legend>{group.label}</legend><div class="filter-choices">{group.options.map(option => <label><input type="radio" name={`filter-${group.name}`} value={option.value} checked={option.value === ''} /><span>{option.label}</span></label>)}</div></fieldset>)}
+  </div>
+</form>
+<script>
+  const form = document.querySelector<HTMLFormElement>('.writing-filters')!;
+  const trigger = form.querySelector<HTMLButtonElement>('.filter-toggle')!;
+  const panel = form.querySelector<HTMLElement>('.filter-options')!;
+  const active = form.querySelector<HTMLElement>('.active-filters')!;
+  const fields = ['type', 'topic'] as const;
+  const values = Object.fromEntries(fields.map(name => [name, form.elements.namedItem(name) as HTMLInputElement])) as Record<typeof fields[number], HTMLInputElement>;
+  const choices = (name: string) => [...form.querySelectorAll<HTMLInputElement>(`input[name="filter-${name}"]`)];
+  function setValue(name: typeof fields[number], value: string) {
+    const options = choices(name);
+    const selected = options.find(option => option.value === value) || options[0];
+    selected.checked = true;
+    values[name].value = selected.value;
+  }
+  function update() {
+    let count = 0;
+    document.querySelectorAll<HTMLElement>('.writing-list > li').forEach(row => {
+      row.hidden = Boolean((values.type.value && row.dataset.type !== values.type.value) || (values.topic.value && !JSON.parse(row.dataset.tags!).includes(values.topic.value)));
+      if (!row.hidden) count++;
+    });
+    const list = document.querySelector<HTMLElement>('.writing-list');
+    if (list) list.hidden = count === 0;
+    document.querySelector<HTMLElement>('[data-empty]')!.hidden = count > 0;
+    form.querySelector('.filter-count')!.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
+    active.replaceChildren();
+    for (const name of fields) {
+      if (!values[name].value) continue;
+      const label = choices(name).find(option => option.checked)!.nextElementSibling!.textContent!;
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'entry-tag filter-chip'; button.dataset.filterRemove = name;
+      button.setAttribute('aria-label', `Remove ${name} filter: ${label}`);
+      button.textContent = label;
+      const x = document.createElement('span'); x.textContent = '×'; x.setAttribute('aria-hidden', 'true'); button.append(x);
+      active.append(button);
+    }
+    active.hidden = !active.childElementCount;
+    if (!active.hidden) {
+      const reset = document.createElement('button'); reset.type = 'button'; reset.className = 'filter-reset'; reset.dataset.filterReset = ''; reset.textContent = 'Clear all'; active.append(reset);
+    }
+  }
+  function apply() {
+    const params = new URLSearchParams(location.search);
+    for (const name of fields) {
+      if (values[name].value) params.set(name, values[name].value); else params.delete(name);
+    }
+    const url = `${location.pathname}${params.size ? '?' + params : ''}${location.hash}`;
+    if (url !== `${location.pathname}${location.search}${location.hash}`) history.pushState(null, '', url);
+    update();
+  }
+  function restore() {
+    const params = new URLSearchParams(location.search);
+    for (const name of fields) setValue(name, params.get(name) || '');
+    update();
+  }
+  function open(value: boolean) { panel.hidden = !value; trigger.setAttribute('aria-expanded', String(value)); }
+  trigger.addEventListener('click', () => open(Boolean(panel.hidden)));
+  form.addEventListener('keydown', event => { if (event.key === 'Escape' && !panel.hidden) { open(false); trigger.focus(); event.preventDefault(); } });
+  form.addEventListener('change', event => {
+    const input = event.target as HTMLInputElement;
+    const name = input.name.slice('filter-'.length) as typeof fields[number];
+    if (fields.includes(name)) { setValue(name, input.value); apply(); }
+  });
+  active.addEventListener('click', event => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button');
+    if (!button) return;
+    if ('filterReset' in button.dataset) fields.forEach(name => setValue(name, ''));
+    else setValue(button.dataset.filterRemove as typeof fields[number], '');
+    apply();
+    (active.querySelector<HTMLButtonElement>('button') || trigger).focus();
+  });
+  form.addEventListener('submit', event => event.preventDefault());
+  window.addEventListener('popstate', restore);
+  restore();
+</script>
+<style>
+  .writing-filters { margin: 24px 0 20px; }
+  .filter-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .filter-toggle { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--muted); font: inherit; font-size: .85rem; cursor: pointer; }
+  .filter-toggle:hover, .filter-toggle[aria-expanded='true'] { background: var(--surface); color: var(--ink); border-color: var(--line); }
+  .filter-count { margin: 0; font-size: .82rem; color: var(--muted); }
+  .active-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; align-items: center; }
+  .active-filters[hidden], .filter-options[hidden] { display: none; }
+  .filter-options { margin-top: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 4px; }
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  fieldset + fieldset { margin-top: 16px; }
+  legend { padding: 0; margin-bottom: 8px; color: var(--muted); font-size: .82rem; }
+  .filter-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-choices label { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; font-size: .85rem; }
+  .filter-choices label:has(:checked) { background: #173565; color: #e5efff; border-color: #739de5; }
+  .filter-choices label:focus-within { outline: 3px solid var(--accent); outline-offset: 3px; }
+  input[type='radio'] { margin: 0; accent-color: var(--accent); flex-shrink: 0; }
+  .filter-choices span { overflow-wrap: anywhere; }
+</style>

@@ -1,5 +1,5 @@
 ---
-import ChoicePicker from '../../components/ChoicePicker.astro';
+import WritingFilters from '../../components/WritingFilters.astro';
 import EntryRow from '../../components/EntryRow.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { posts, href } from '../../lib/site';
@@ -8,46 +8,7 @@ const tags = [...new Set(entries.flatMap(p => p.data.tags))].sort();
 ---
 <SiteLayout title="Writing">
   <h1>Writing</h1>
-  <form class="writing-filters" aria-label="Filter writing">
-    <div class="filter-field"><span>Type</span><ChoicePicker label="Type" name="type" options={[{value:"",label:"All types"},{value:"article",label:"Article"},{value:"tutorial",label:"Tutorial"}]} /></div>
-    <div class="filter-field"><span>Topic</span><ChoicePicker label="Topic" name="topic" options={[{value:"",label:"All topics"},...tags.map(tag => ({value:tag,label:tag}))]} /></div>
-  </form>
-  <p class="filter-count" aria-live="polite"></p>
+  <WritingFilters tags={tags} />
   {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-type={post.data.type} data-tags={JSON.stringify(post.data.tags)}><EntryRow url={href(`writing/${post.id}/`)} title={post.data.title} tags={post.data.tags} date={post.data.date} kind={post.data.type === 'article' ? 'Article' : 'Tutorial'} description={post.data.description} draft={post.data.draft} /></li>)}</ul>}
   <p class="empty" data-empty hidden={entries.length > 0}>No writing to show.</p>
 </SiteLayout>
-<script>
-  const form = document.querySelector<HTMLFormElement>('.writing-filters')!;
-  const type = form.elements.namedItem('type') as HTMLInputElement;
-  const topic = form.elements.namedItem('topic') as HTMLInputElement;
-  function filter() {
-    let count = 0;
-    document.querySelectorAll<HTMLElement>('.writing-list > li').forEach(row => {
-      row.hidden = Boolean((type.value && row.dataset.type !== type.value) || (topic.value && !JSON.parse(row.dataset.tags!).includes(topic.value)));
-      if (!row.hidden) count++;
-    });
-    const list = document.querySelector<HTMLElement>('.writing-list');
-    if (list) list.hidden = count === 0;
-    document.querySelector<HTMLElement>('[data-empty]')!.hidden = count > 0;
-    document.querySelector('.filter-count')!.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
-  }
-  function restore() {
-    const params = new URLSearchParams(location.search);
-    for (const input of [type, topic]) input.closest('choice-picker')!.dispatchEvent(new CustomEvent('choice:set', { detail: params.get(input.name) || '' }));
-    filter();
-  }
-  form.addEventListener('change', () => {
-    const params = new URLSearchParams();
-    if (type.value) params.set('type', type.value);
-    if (topic.value) params.set('topic', topic.value);
-    history.replaceState(null, '', `${location.pathname}${params.size ? '?' + params : ''}`);
-    filter();
-  });
-  form.addEventListener('submit', event => event.preventDefault());
-  window.addEventListener('popstate', restore); customElements.whenDefined('choice-picker').then(restore);
-</script>
-<style>
-  .writing-filters { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: 32px; }
-  .filter-field { display: flex; align-items: center; gap: 10px; font-size: .9rem; }
-  .filter-count { font-size: .85rem; color: var(--muted); }
-</style>

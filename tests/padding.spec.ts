@@ -21,7 +21,7 @@ test('controls and list interiors have comfortable spacing', async ({ page }) =>
   expect((await page.locator('h1').boundingBox())!.x).toBe(homeX);
   await comfortable(page.locator('.accounts a').first(), 16);
   await page.goto('writing/');
-  await comfortable(page.locator('.writing-filters .choice-trigger').first(), 12);
+  await comfortable(page.locator('.writing-filters .filter-toggle'), 12);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   if (process.env.TEST_AUTHORING !== 'true') return;
   await page.goto('projects/example-project/reference/api/');
