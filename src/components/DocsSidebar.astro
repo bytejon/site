@@ -1,50 +1,10 @@
 ---
-import Search from '@astrojs/starlight/components/Search.astro';
-import DefaultSidebar from '@astrojs/starlight/components/Sidebar.astro';
+import { getCollection } from 'astro:content';
 import ProjectNavList from './ProjectNavList.astro';
-import DocsMobileFooter from './DocsMobileFooter.astro';
+import { projectNavigation } from '../lib/project-navigation';
 import { href } from '../lib/site';
-const current = Astro.url.pathname;
-const links = [['Articles', 'articles/'], ['Projects', 'projects/'], ['About', 'about/']];
-type Entry = (typeof Astro.locals.starlightRoute.sidebar)[number];
-const directory = Astro.locals.starlightRoute.entry.id.split('/').slice(0, 2).join('/');
-function projectEntries(entries: Entry[]): Entry[] | undefined {
-  for (const entry of entries) if (entry.type === 'group') {
-    if (entry.entries.some(child => child.type === 'link' && child.href === href(`${directory}/`))) return entry.entries;
-    const children = projectEntries(entry.entries);
-    if (children) return children;
-  }
-}
-const contextual = directory.startsWith('projects/') ? projectEntries(Astro.locals.starlightRoute.sidebar) : undefined;
+const current = Astro.locals.starlightRoute.entry.id;
+const directory = current.split('/').slice(0, 2).join('/');
+const contextual = directory.startsWith('projects/') ? projectNavigation(await getCollection('docs'), current) : [];
 ---
-<div class="docs-search"><Search /></div>
-<nav class="docs-primary-menu" aria-label="Site menu">
-  {links.map(([label, path]) => <a href={href(path)} aria-current={current.startsWith(href(path)) ? (current === href(path) ? 'page' : 'location') : undefined}>{label}</a>)}
-</nav>
-{contextual ? <>
-  <nav class="project-navigation" aria-label="Documentation"><p class="navigation-label">Documentation</p><ProjectNavList entries={contextual} rootHref={href(`${directory}/`)} /></nav>
-  <div class="md:sl-hidden"><DocsMobileFooter /></div>
-</> : <DefaultSidebar />}
-<style>
-  .docs-search { margin-bottom: 24px; }
-  .navigation-label { font-size: 12px; color: var(--muted); font-weight: 500; margin: 0 12px 12px; }
-  .docs-search :global(site-search > button) { width: 100%; }
-  .docs-primary-menu { display: none; }
-  @media (max-width: 49.999rem) {
-    .docs-primary-menu { display: grid; gap: 8px; padding-bottom: 24px; }
-    a { display: block; min-height: var(--control-size); padding: var(--space-3); text-decoration: none; color: var(--ink); font-weight: 550; }
-    a:hover { background: var(--surface); color: var(--accent); }
-  }
-</style>
-
-<script>
-  // Keep the native search dialog usable when the mobile sidebar popover is closed.
-  customElements.whenDefined('site-search').then(() => {
-    const dialog = document.querySelector<HTMLDialogElement>('.docs-search dialog');
-    if (!dialog) return;
-    document.body.append(dialog);
-    dialog.addEventListener('toggle', event => {
-      if ((event as ToggleEvent).newState === 'open') dialog.querySelector<HTMLInputElement>('input')?.focus();
-    });
-  });
-</script>
+{contextual.length > 0 && <nav class="project-navigation" aria-label="Documentation"><ProjectNavList entries={contextual} rootHref={href(`${directory}/`)} /></nav>}

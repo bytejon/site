@@ -294,3 +294,18 @@ starlight-tabs.code-tabset > [role='tabpanel'] > .expressive-code .frame.has-too
 .reading-pagination .direction-label { display: block; color: var(--muted); font-size: .8rem; margin-bottom: 4px; }
 .reading-pagination .link-title { display: block; font-size: .95rem; line-height: 1.5; font-weight: 550; }
 @media (max-width: 479px) { .reading-pagination { grid-template-columns: 1fr; } .reading-pagination a[rel='next'] { grid-column: auto; } }
+/* Shared navigation controls and reader polish. */
+.site-nav site-search { display: flex; align-items: center; }
+.site-nav site-search > button[data-open-modal] { width: 44px; height: 44px; min-width: 44px; padding: 0; justify-content: center; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); }
+.site-nav site-search > button[data-open-modal] > span, .site-nav site-search > button[data-open-modal] > kbd { display: none !important; }
+.site-nav site-search > button[data-open-modal] svg { width: 20px; height: 20px; }
+.site-nav site-search dialog { margin: 0; }
+@media (min-width: 50rem) { .site-nav site-search dialog { margin: 4rem auto auto; } }
+.section-row:not(.entry-row) { border-radius: 6px; }
+.section-row:not(.entry-row):hover, .section-row:not(.entry-row):focus-visible { background: var(--surface); }
+.section-heading { align-items: center; flex-wrap: wrap; }
+.section-heading > a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; text-decoration: none; }
+.section-heading > a:hover { background: var(--surface); }
+.personal-site .accounts a { color: var(--ink); border-radius: 6px; }
+.page .sl-markdown-content h2 { font-size: 1.4rem; line-height: 1.35; font-weight: 600; letter-spacing: -.025em; }
+.starlight-aside--note { background: var(--surface); border-color: var(--accent); --sl-color-asides-text-accent: var(--accent); }

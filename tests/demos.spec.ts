@@ -40,12 +40,12 @@ test('Luau copy, Markdown anchors, tables, tasks, and footnotes work', async ({ 
 
 test('single entries and article/tutorial chapter trees have appropriate navigation', async ({ page }) => {
   await page.goto('articles/demo-component-tutorial/');
-  await expect(page.getByRole('navigation',{name:'Chapters',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('navigation',{name:'Article pages',exact:true})).toHaveCount(0);
   await expect(page.getByRole('complementary',{name:'Demo component',exact:true})).toBeVisible();
   for (const kind of ['article','tutorial']) {
     await page.goto(`articles/demo-${kind}-series/`);
-    const chapters=page.getByRole('navigation',{name:'Chapters',exact:true});
-    await expect(chapters.getByRole('link')).toHaveCount(4);
+    const chapters=page.getByRole('navigation',{name:'Article pages',exact:true});
+    const reveal=page.getByRole('button',{name:'Pages',exact:true}); if(await reveal.isVisible()) await reveal.click(); await expect(chapters.locator('a')).toHaveCount(4);
     await page.locator('a[rel="next"]').click();
     await expect(page.locator('h1')).toHaveText(`Test ${kind}: first chapter`);
     await page.locator('a[rel="next"]').click();
@@ -76,7 +76,7 @@ test('demo filters compose, survive reload, and root dates and RSS remain correc
 test('project nested navigation, MDX tabs, and search work; draft sentinels stay absent', async ({ page }) => {
   await page.goto('projects/');
   await page.getByRole('link',{name:/Test project: documentation playground/}).click();
-  const menu=page.getByRole('button',{name:'Menu',exact:true});if(await menu.isVisible())await menu.click();
+  const menu=page.getByRole('button',{name:'Documentation',exact:true});if(await menu.isVisible())await menu.click();
   await page.getByRole('navigation',{name:'Documentation',exact:true}).getByRole('link',{name:'Components',exact:true}).click();
   await expect(page.getByRole('complementary',{name:'Project MDX component',exact:true})).toBeVisible();
   await expect(page.locator('.pagination-links a').first()).toHaveAttribute('href','/projects/demo-project/getting-started/');

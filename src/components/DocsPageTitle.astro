@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import DefaultPageTitle from '@astrojs/starlight/components/PageTitle.astro';
 import ProjectOverview from './ProjectOverview.astro';
 import Breadcrumb from './Breadcrumb.astro';
+import MenuButton from './MenuButton.astro';
 import { href } from '../lib/site';
 const { entry } = Astro.locals.starlightRoute;
 const docs = await getCollection('docs');
@@ -11,6 +12,6 @@ const ancestors = parts.slice(0, -1).map((_, index) => docs.find(doc => doc.id =
 const items: { label: string; href?: string }[] = ancestors.map(doc => ({ label: doc!.data.sidebar.label || doc!.data.title, href: href(`${doc!.id}/`) }));
 items.push({ label: entry.data.sidebar.label || entry.data.title, href: undefined });
 ---
-{entry.id.startsWith('projects/') && <Breadcrumb items={items} />}
+{entry.id.startsWith('projects/') && <><MenuButton controls="starlight__sidebar" docs label="Documentation" /><Breadcrumb items={items} /></>}
 <DefaultPageTitle />
 {/^projects\/[^/]+$/.test(entry.id) && <ProjectOverview description={entry.data.description} overview={entry.data.overview} />}

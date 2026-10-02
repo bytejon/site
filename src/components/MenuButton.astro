@@ -1,10 +1,11 @@
 ---
-interface Props { controls?: string; docs?: boolean }
+interface Props { controls?: string; docs?: boolean; label?: string }
 import { IconMenu2 } from '@tabler/icons-astro';
-const { controls = 'site-mobile-menu', docs = false } = Astro.props;
+const { controls = 'site-mobile-menu', docs = false, label = 'Menu' } = Astro.props;
 ---
-<button class:list={['mobile-menu-button', { 'docs-menu-button': docs }]} type="button" popovertarget={controls} aria-label="Menu" aria-controls={controls} aria-expanded="false" data-nav-toggle>
+<button class:list={['mobile-menu-button', { 'docs-menu-button': docs }]} type="button" popovertarget={controls} aria-label={label} aria-controls={controls} aria-expanded="false" data-nav-toggle>
   <IconMenu2 size={20} stroke={1.6} aria-hidden="true" focusable="false" />
+  {docs && <span>{label}</span>}
 </button>
 <script>
   const desktop = matchMedia('(min-width: 50rem)');
@@ -25,6 +26,6 @@ const { controls = 'site-mobile-menu', docs = false } = Astro.props;
   .mobile-menu-button { display: none; align-items: center; justify-content: center; width: var(--control-size); height: var(--control-size); border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); cursor: pointer; padding: var(--space-2); }
   @media (max-width: 49.999rem) {
     .mobile-menu-button { display: inline-flex; }
-    .docs-menu-button { position: fixed; top: calc((var(--sl-nav-height) - var(--control-size)) / 2); right: var(--sl-nav-pad-x); z-index: var(--sl-z-index-navbar); }
+    .docs-menu-button { width: auto; gap: 8px; padding-inline: 12px; margin-bottom: 16px; }
   }
 </style>

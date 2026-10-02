@@ -9,12 +9,12 @@ test('single and multi-page entries adapt to hierarchy independently of tags', a
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Local unpublished authoring fixtures');
   for (const type of ['article', 'tutorial']) {
     await page.goto(`articles/single-${type}/`);
-    await expect(page.getByRole('navigation', { name: 'Chapters', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('navigation', { name: 'Article pages', exact: true })).toHaveCount(0);
     await expect(page.getByRole('navigation', { name: 'On this page', exact: true })).toBeVisible();
     await expect(page.locator('pre[data-language="luau"]')).toBeVisible();
     await page.goto(`articles/series-${type}/`);
-    const chapters = page.getByRole('navigation', { name: 'Chapters', exact: true });
-    await expect(chapters.getByRole('link')).toHaveCount(4);
+    const chapters = page.getByRole('navigation', { name: 'Article pages', exact: true });
+    const reveal=page.getByRole('button',{name:'Pages',exact:true}); if(await reveal.isVisible()) await reveal.click(); await expect(chapters.locator('a')).toHaveCount(4);
     await chapters.getByRole('link', { name: `Example ${type} chapter`, exact: true }).click();
     await expect(page.locator('a[rel="prev"]')).toContainText(`Example series ${type}`);
     await page.locator('a[rel="next"]').click();

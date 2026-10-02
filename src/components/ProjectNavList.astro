@@ -1,27 +1,49 @@
 ---
 import { IconChevronRight } from '@tabler/icons-astro';
-type SidebarEntry = (typeof Astro.locals.starlightRoute.sidebar)[number];
-interface Props { entries: SidebarEntry[]; nested?: boolean; rootHref: string }
-const { entries, nested = false, rootHref } = Astro.props;
-const label = (value: string) => value.replaceAll('-', ' ').replace(/^\w/, c => c.toUpperCase());
-const hasCurrent = (entry: SidebarEntry): boolean => entry.type === 'link' ? entry.isCurrent : entry.entries.some(hasCurrent);
+import type { ProjectNavEntry as SidebarEntry } from '../lib/project-navigation';
+interface Props { entries: SidebarEntry[]; nested?: boolean; rootHref?: string }
+const { entries, nested = false } = Astro.props;
+const hasCurrent = (entry: SidebarEntry): boolean => entry.type === 'link' ? entry.isCurrent : Boolean(entry.page?.isCurrent || entry.entries.some(hasCurrent));
 ---
 <ul class:list={['project-tree', { 'top-level': !nested }]}>
-  {entries.map(entry => <li>{entry.type === 'link' ? <a {...entry.attrs} href={entry.href} aria-current={entry.isCurrent ? 'page' : undefined}>{entry.href === rootHref ? 'Overview' : entry.label}</a> : <details open={hasCurrent(entry) || !entry.collapsed}><summary><span>{label(entry.label)}</span><IconChevronRight size={14} aria-hidden="true" /></summary><Astro.self entries={entry.entries} nested rootHref={rootHref} /></details>}</li>)}
+ {entries.map(entry => <li>
+   {entry.type === 'link' ?
+     <a {...entry.attrs} class:list={['tree-leaf', entry.attrs.class]} href={entry.href} aria-current={entry.isCurrent ? 'page' : undefined}>{entry.label}</a> :
+     <div class="tree-branch">
+       <div class="branch-row">
+         <button type="button" class="branch-toggle" aria-label={`Toggle ${entry.label} subpages`} aria-expanded={hasCurrent(entry) ? 'true' : 'false'} data-tree-toggle>
+           <IconChevronRight size={16} aria-hidden="true" />
+         </button>
+         {entry.page ?
+           <a {...entry.page.attrs} href={entry.page.href} aria-current={entry.page.isCurrent ? 'page' : undefined}>{entry.page.label}</a> :
+           <span class="branch-label">{entry.label}</span>}
+       </div>
+       <div class="branch-children" hidden={!hasCurrent(entry)}><Astro.self entries={entry.entries} nested /></div>
+     </div>}
+ </li>)}
 </ul>
+<script>
+ document.querySelectorAll<HTMLButtonElement>('[data-tree-toggle]').forEach(button => {
+  const children = button.closest('.tree-branch')!.querySelector<HTMLElement>(':scope > .branch-children')!;
+  children.id ||= `page-tree-${Math.random().toString(36).slice(2)}`;
+  button.setAttribute('aria-controls', children.id);
+  button.addEventListener('click', () => { const expanded = button.getAttribute('aria-expanded') !== 'true'; button.setAttribute('aria-expanded', String(expanded)); children.hidden = !expanded; });
+ });
+</script>
 <style>
-  ul { list-style: none; padding: 0; margin: 0; }
-  .top-level > li + li { margin-top: 4px; }
-  .top-level > li:has(details) { margin-top: 20px; }
-  a, summary { display: flex; align-items: center; min-height: 40px; padding: 8px 12px; line-height: 1.5; font-size: 14px; border-radius: 4px; text-decoration: none; }
-  a { color: var(--muted); position: relative; }
-  a:hover { color: var(--ink); background: var(--surface); }
-  a[aria-current='page'] { color: var(--accent); background: var(--surface); font-weight: 600; }
-  a[aria-current='page']::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px; background: var(--accent); border-radius: 2px; }
-  summary { justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; list-style: none; }
-  summary::-webkit-details-marker { display: none; }
-  summary svg { color: var(--muted); transition: transform .15s; }
-  details[open] > summary svg { transform: rotate(90deg); }
-  details > ul { margin-left: 12px; }
-  @media(max-width: 799px) { a, summary { min-height: 44px; } }
+ ul { list-style: none; padding: 0; margin: 0; }
+ li + li { margin-top: 4px; }
+ a, .branch-label { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; line-height: 1.5; font-size: 14px; border-radius: 4px; text-decoration: none; }
+ a { color: var(--muted); position: relative; overflow-wrap: anywhere; }
+ a:hover { color: var(--ink); background: var(--surface); }
+ a[aria-current='page'] { color: var(--accent); background: var(--surface); font-weight: 600; }
+ a[aria-current='page']::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px; background: var(--accent); border-radius: 2px; }
+ .branch-row { display: flex; align-items: center; }
+ .branch-row > a, .branch-label { flex: 1; min-width: 0; }
+ .project-tree > li > .tree-leaf { margin-left: 44px; }
+ .branch-label { font-weight: 600; color: var(--ink); }
+ .branch-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; }
+ .branch-toggle:hover { background: var(--surface); color: var(--accent); }
+ .branch-toggle[aria-expanded='true'] svg { transform: rotate(90deg); }
+ .branch-children { margin-left: 12px; }
 </style>

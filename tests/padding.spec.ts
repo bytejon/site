@@ -43,7 +43,7 @@ test('authoring components retain internal padding', async ({ page }) => {
   expect(padding).toEqual(['16px', '20px']);
   await comfortable(page.locator('.expressive-code button').first());
   await page.goto('articles/series-article/chapter/');
-  await comfortable(page.getByRole('navigation', { name: 'Chapters', exact: true }).getByRole('link').first(), 16);
+  await comfortable(page.getByRole('navigation', { name: 'Article pages', exact: true }).getByRole('link').first(), 16);
   await page.goto('articles/');
   await choose(page, 'Tags', 'article');
   await expect(page.locator('.writing-list')).toBeVisible();

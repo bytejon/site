@@ -8,9 +8,9 @@ test('context breadcrumbs and spacious sibling navigation work in both themes',a
   await expect(crumbs.locator('[aria-current="page"]')).toHaveText('Components');
   await expect(crumbs.getByRole('link')).toHaveCount(2);
   await expect(crumbs.getByRole('link',{name:'Projects',exact:true})).toHaveAttribute('href','/projects/');
-  const menu=page.getByRole('button',{name:'Menu',exact:true});if(await menu.isVisible())await menu.click();
+  const menu=page.getByRole('button',{name:'Documentation',exact:true});if(await menu.isVisible())await menu.click();
   await expect(page.locator('.project-navigation')).toBeVisible();
-  await expect(page.locator('.project-navigation .top-level > li')).toHaveCount(4);
+  await expect(page.locator('.project-navigation .top-level > li')).toHaveCount(5);
   await expect(page.locator('.project-navigation')).not.toContainText('demo-project');
   await expect(page.locator('.project-navigation a').first()).toHaveText('Overview');
   await expect(page.locator('.project-navigation a').first()).toHaveCSS('padding-left','12px');
@@ -19,7 +19,7 @@ test('context breadcrumbs and spacious sibling navigation work in both themes',a
   await page.goto('articles/demo-article-series/details/');
   await expect(page.getByRole('navigation',{name:'Breadcrumb',exact:true}).getByRole('link')).toHaveCount(3);
   await expect(page.getByRole('navigation',{name:'Breadcrumb',exact:true}).locator('[aria-current]')).toHaveText('Nested details');
-  await expect(page.getByRole('navigation',{name:'Chapters',exact:true}).getByRole('link')).toHaveCount(4);
+  await expect(page.locator('#article-pages a')).toHaveCount(4);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }
 });

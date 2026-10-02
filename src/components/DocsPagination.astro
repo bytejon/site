@@ -1,5 +1,25 @@
 ---
 import ReadingPagination from './ReadingPagination.astro';
+import { href } from '../lib/site';
+import { getCollection } from 'astro:content';
+import { projectNavigation, type ProjectNavEntry } from '../lib/project-navigation';
 const { prev, next } = Astro.locals.starlightRoute.pagination;
+const { entry } = Astro.locals.starlightRoute;
+const root = entry.id.split('/').slice(0, 2).join('/');
+const scoped = (link: typeof prev) => link?.href.startsWith(href(`${root}/`)) ? link : undefined;
+function flatten(entries: ProjectNavEntry[]): {href: string; label: string}[] {
+  return entries.flatMap(item => item.type === 'link' ? [item] : [...(item.page ? [item.page] : []), ...flatten(item.entries)]);
+}
+const pages = flatten(root.startsWith('projects/') ? projectNavigation(await getCollection('docs'), entry.id) : []);
+const index = pages.findIndex(page => page.href === href(`${entry.id}/`));
+function configured(value: typeof entry.data.prev, fallback: (typeof pages)[number] | undefined, generated: typeof prev) {
+  if (value === false) return undefined;
+  if (typeof value === 'string') return fallback && { ...fallback, label: value };
+  if (typeof value === 'object' && value.link) return scoped(generated);
+  if (typeof value === 'object' && value.label) return fallback && { ...fallback, label: value.label };
+  return fallback;
+}
+const previous = configured(entry.data.prev, pages[index - 1], prev);
+const following = configured(entry.data.next, pages[index + 1], next);
 ---
-<ReadingPagination previous={prev} next={next} class="pagination-links print:hidden" />
+<ReadingPagination previous={previous} next={following} class="pagination-links print:hidden" />
