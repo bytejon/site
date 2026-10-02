@@ -1,5 +1,5 @@
 ---
 import { posts, href } from '../../lib/site';
 export async function getStaticPaths() { return (await posts()).map(post => ({ params: { id: post.id } })); }
-return Astro.redirect(href(`writing/${Astro.params.id}/`));
+return Astro.redirect(href(`articles/${Astro.params.id}/`));
 ---

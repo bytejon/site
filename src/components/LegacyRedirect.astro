@@ -1,0 +1,26 @@
+---
+interface Props { target: string }
+const { target } = Astro.props;
+const canonical = new URL(target, Astro.site);
+---
+<!doctype html>
+<html lang="en" data-redirect-target={target} data-pagefind-ignore>
+  <head>
+    <meta charset="utf-8" />
+    <title>Page moved · Jon</title>
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="noindex" />
+    <script is:inline>
+      const destination = new URL(document.documentElement.dataset.redirectTarget, location.origin);
+      const incoming = new URLSearchParams(location.search);
+      for (const key of new Set(incoming.keys())) {
+        destination.searchParams.delete(key);
+        incoming.getAll(key).forEach(value => destination.searchParams.append(key, value));
+      }
+      destination.hash = location.hash;
+      location.replace(destination.href);
+    </script>
+    <noscript><meta http-equiv="refresh" content={`0;url=${target}`} /></noscript>
+  </head>
+  <body data-pagefind-ignore><p>This page moved to <a href={target}>Articles</a>.</p></body>
+</html>

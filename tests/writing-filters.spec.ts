@@ -3,7 +3,7 @@ import {choose} from './choices';
 test.beforeEach(()=>test.skip(process.env.TEST_DEMOS!=='true','Local tag fixtures'));
 test('one tag system supports mixed selections, toggling, clearing, keyboard and history',async({page})=>{
  for(const theme of ['light','dark']) {
-  await page.goto('writing/');await choose(page,'Color theme',theme);
+  await page.goto('articles/');await choose(page,'Color theme',theme);
   const toggle=page.getByRole('button',{name:'Filters',exact:true}),panel=page.locator('.filter-options'),rows=page.locator('.writing-list > li:visible');
   await expect(panel).toBeHidden();await expect(page.locator('.active-filters')).toBeHidden();
   for(let i=0;i<3;i++){await toggle.click();await expect(panel).toBeVisible();await toggle.click();await expect(panel).toBeHidden();}
@@ -26,11 +26,11 @@ test('one tag system supports mixed selections, toggling, clearing, keyboard and
  }
 });
 test('legacy and repeated tag URLs normalize into the same match-any selection',async({page})=>{
- await page.goto('writing/?type=tutorial&topic=navigation&source=test#writing');await expect(page.locator('.writing-list > li:visible')).toHaveCount(3);
+ await page.goto('articles/?type=tutorial&topic=navigation&source=test#writing');await expect(page.locator('.writing-list > li:visible')).toHaveCount(3);
  await expect(page.locator('.filter-chip')).toHaveCount(2);await page.getByRole('button',{name:'Remove tag filter: Tutorial',exact:true}).click();
  const url=new URL(page.url());expect(url.searchParams.getAll('tag')).toEqual(['navigation']);expect(url.searchParams.has('type')).toBe(false);expect(url.searchParams.has('topic')).toBe(false);expect(url.searchParams.get('source')).toBe('test');expect(url.hash).toBe('#writing');
- await page.goto('writing/?tag=Article&tag=math&tag=article&tag=unknown');await expect(page.locator('.filter-chip')).toHaveCount(2);await expect(page.locator('.writing-list > li:visible')).toHaveCount(3);
- await page.goto('writing/?tag=unknown');await expect(page.locator('.writing-list > li:visible')).toHaveCount(5);
+ await page.goto('articles/?tag=Article&tag=math&tag=article&tag=unknown');await expect(page.locator('.filter-chip')).toHaveCount(2);await expect(page.locator('.writing-list > li:visible')).toHaveCount(3);
+ await page.goto('articles/?tag=unknown');await expect(page.locator('.writing-list > li:visible')).toHaveCount(5);
  // A valid tag with no remaining matching rows gives a clear empty result.
  await page.evaluate(()=>document.querySelectorAll('.writing-list > li').forEach(el=>{(el as HTMLElement).dataset.tags='[]';}));
  await choose(page,'Tags','math');await expect(page.locator('[data-empty]')).toBeVisible();await expect(page.locator('.writing-list')).toBeHidden();

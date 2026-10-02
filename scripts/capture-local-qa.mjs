@@ -5,7 +5,7 @@ const browser=await chromium.launch();
 const page=await browser.newPage({viewport:{width:1280,height:900}});
 async function theme(value){await page.getByRole('button',{name:'Color theme',exact:true}).first().click();await page.getByRole('listbox',{name:'Color theme',exact:true}).locator(`[data-value="${value}"]`).click();await expect(page.locator('.site-nav .nav-links a:not([aria-current])').first()).toHaveCSS('color',value==='dark'?'rgb(232, 233, 237)':'rgb(37, 44, 53)');await page.locator('body').click({position:{x:1200,y:100}});}
 for(const value of ['light','dark']){
- await page.goto('http://127.0.0.1:4321/writing/demo-code-tools/');await theme(value);
+ await page.goto('http://127.0.0.1:4321/articles/demo-code-tools/');await theme(value);
  const tabs=page.locator('starlight-tabs.code-tabset').first();await tabs.waitFor();
  await page.evaluate(()=>{const tabs=document.querySelector('starlight-tabs.code-tabset');window.scrollTo(0,tabs.getBoundingClientRect().top+scrollY-150);});
  await page.screenshot({path:`${output}/code-${value}.png`});

@@ -20,7 +20,7 @@ test('controls and list interiors have comfortable spacing', async ({ page }) =>
   await page.goto('about/');
   expect((await page.locator('h1').boundingBox())!.x).toBe(homeX);
   await comfortable(page.locator('.accounts a').first(), 16);
-  await page.goto('writing/');
+  await page.goto('articles/');
   await comfortable(page.locator('.writing-filters .filter-toggle'), 12);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   if (process.env.TEST_AUTHORING !== 'true') return;
@@ -38,13 +38,13 @@ test('controls and list interiors have comfortable spacing', async ({ page }) =>
 });
 test('authoring components retain internal padding', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Local unpublished component fixtures');
-  await page.goto('writing/authoring-example/');
+  await page.goto('articles/authoring-example/');
   const padding = await page.locator('.note').first().evaluate(el => { const c = getComputedStyle(el); return [c.paddingTop, c.paddingLeft]; });
   expect(padding).toEqual(['16px', '20px']);
   await comfortable(page.locator('.expressive-code button').first());
-  await page.goto('writing/series-article/chapter/');
+  await page.goto('articles/series-article/chapter/');
   await comfortable(page.getByRole('navigation', { name: 'Chapters', exact: true }).getByRole('link').first(), 16);
-  await page.goto('writing/');
+  await page.goto('articles/');
   await choose(page, 'Tags', 'article');
   await expect(page.locator('.writing-list')).toBeVisible();
 });

@@ -9,16 +9,16 @@ const latest = (await posts()).slice(0, 3);
 <SiteLayout title="Jon">
   <section class="hero">
     <h1>Jon</h1>
-    <p class="lede">Writing, tutorials, and open-source projects.</p>
+    <p class="lede">Articles, tutorials, and open-source projects.</p>
   </section>
   <section aria-labelledby="explore"><h2 id="explore">Explore</h2>
     <ul class="section-list">
-      <li><a class="section-row" href={href('writing/')}><strong><IconPencil size={20} stroke={1.6} aria-hidden="true" focusable="false" />Writing</strong><p>Articles and tutorials about interests, work, and ideas.</p><Arrow /></a></li>
+      <li><a class="section-row" href={href('articles/')}><strong><IconPencil size={20} stroke={1.6} aria-hidden="true" focusable="false" />Articles</strong><p>Articles and tutorials about interests, work, and ideas.</p><Arrow /></a></li>
       <li><a class="section-row" href={href('projects/')}><strong><IconCode size={20} stroke={1.6} aria-hidden="true" focusable="false" />Projects</strong><p>Open-source code and its documentation.</p><Arrow /></a></li>
       <li><a class="section-row" href={href('about/')}><strong><IconUser size={20} stroke={1.6} aria-hidden="true" focusable="false" />About</strong><p>Accounts and profiles.</p><Arrow /></a></li>
     </ul>
   </section>
-  <section aria-labelledby="recent"><div class="section-heading"><h2 id="recent">Recent writing</h2><a href={href('writing/')}>All writing <Arrow /></a></div>
-    {latest.length ? <ul class="section-list">{latest.map(post => <li><EntryRow url={href(`writing/${post.id}/`)} title={post.data.title} description={post.data.description} tags={post.data.tags} date={post.data.date} /></li>)}</ul> : <p class="empty">No posts published yet.</p>}
+  <section aria-labelledby="recent"><div class="section-heading"><h2 id="recent">Recent articles</h2><a href={href('articles/')}>All articles <Arrow /></a></div>
+    {latest.length ? <ul class="section-list">{latest.map(post => <li><EntryRow url={href(`articles/${post.id}/`)} title={post.data.title} description={post.data.description} tags={post.data.tags} date={post.data.date} /></li>)}</ul> : <p class="empty">No articles published yet.</p>}
   </section>
 </SiteLayout>

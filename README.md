@@ -8,9 +8,11 @@ Use Node.js 24 and npm: `npm ci`, `npm run dev`. Check a production build with `
 
 Development includes drafts. Production excludes draft routes, lists, RSS, sitemap, and search content. Never set `INCLUDE_DRAFTS` in deployment.
 
-## Writing: Markdown first
+## Articles: Markdown first
 
-Add `src/content/writing/my-entry.md` to create `/writing/my-entry/`:
+Articles live at `/articles/`. Existing `/writing/` listing and nested entry links redirect to the matching Articles route, preserving filters and anchors in JavaScript-enabled browsers. Content files stay in `src/content/writing/`; the collection name does not change.
+
+Add `src/content/writing/my-entry.md` to create `/articles/my-entry/`:
 
 ```md
 ---
@@ -69,25 +71,25 @@ print(`Point: {point.x}`)
 ```
 ````
 
-Writing and Starlight projects share Expressive Code's theme-aware syntax colors, copy buttons, and keyboard-accessible overflowing code blocks. `vendor/luau/` contains the pinned MIT-licensed dedicated `source.luau` grammar from JohnnyMorganz/Luau.tmLanguage. Luau is not aliased to Lua; verification checks Luau-specific token scopes.
+Articles and Starlight projects share Expressive Code's theme-aware syntax colors, copy buttons, and keyboard-accessible overflowing code blocks. `vendor/luau/` contains the pinned MIT-licensed dedicated `source.luau` grammar from JohnnyMorganz/Luau.tmLanguage. Luau is not aliased to Lua; verification checks Luau-specific token scopes.
 
 ## Projects
 
-Project docs remain in `src/content/docs/projects/`, with Starlight nested navigation, search, and on-this-page navigation. Copy `examples/projects/example-project/` there and replace its text. `sidebar: { order: 1 }` sets order. Project root frontmatter can optionally include `tags: [luau, tools]` and `date: 2026-10-02`; omit them when they do not apply. Writing and project entries show a full-width wrapping title, followed by tags, description, and the date at the bottom. Article and Tutorial tags appear first; repeated tags are omitted from display without changing frontmatter or filters. Keep unpublished docs outside `src/content/docs`; sidebar hiding is not privacy.
+Project docs remain in `src/content/docs/projects/`, with Starlight nested navigation, search, and on-this-page navigation. Copy `examples/projects/example-project/` there and replace its text. `sidebar: { order: 1 }` sets order. Project root frontmatter can optionally include `tags: [luau, tools]` and `date: 2026-10-02`; omit them when they do not apply. Article and project entries show a full-width wrapping title, followed by tags, description, and the date at the bottom. Article and Tutorial tags appear first; repeated tags are omitted from display without changing frontmatter or filters. Keep unpublished docs outside `src/content/docs`; sidebar hiding is not privacy.
 
 ## Navigation and appearance
 
-Navigation is Writing, Projects, About. Home/About are editable in `src/pages/`. About contains the six requested accounts; Discord is text. The supplied transparent vector logo is in `public/logo.svg` and `public/favicon.svg`.
+Navigation is Articles, Projects, About. Home/About are editable in `src/pages/`. About contains the six requested accounts; Discord is text. The supplied transparent vector logo is in `public/logo.svg` and `public/favicon.svg`.
 
-Theme uses the shared `ChoicePicker.astro` popover with selected checkmarks, arrow-key navigation, visible focus, Escape, Tab, and outside-click dismissal. Theme remains icon-only with Auto, Dark, Light in that order. Auto follows the OS by default; explicit preferences persist across all layouts/reloads via `starlight-theme`. The provider runs before CSS. Shared tokens supply warm light, subtle cool dark, and blue accents. Mobile menus support keyboard and Escape. Headers use one fixed, centered 896px maximum width and consistent responsive gutters on every page. The Projects landing page uses the same layout as Writing and About, rendering the existing `src/content/docs/projects/index.md`; project entries link into nested Starlight documentation. Chapter/project content keeps its wider grids. Header height, background, typography, border, navigation and theme positions are shared; nested project search lives in the sidebar and retains its keyboard shortcut. Semibold navigation uses a blue active rectangle with white text and visible focus. Hover transitions respect reduced motion. Shared 4/8/12/16/20/24px spacing tokens set component interiors; controls and sidebar links have at least 44px hit areas. Lists and profile rows have 16px horizontal padding, filters 12px, and callouts/code 16px vertical and 20px horizontal padding.
+Theme uses the shared `ChoicePicker.astro` popover with selected checkmarks, arrow-key navigation, visible focus, Escape, Tab, and outside-click dismissal. Theme remains icon-only with Auto, Dark, Light in that order. Auto follows the OS by default; explicit preferences persist across all layouts/reloads via `starlight-theme`. The provider runs before CSS. Shared tokens supply warm light, subtle cool dark, and blue accents. Mobile menus support keyboard and Escape. Headers use one fixed, centered 896px maximum width and consistent responsive gutters on every page. The Projects landing page uses the same layout as Articles and About, rendering the existing `src/content/docs/projects/index.md`; project entries link into nested Starlight documentation. Chapter/project content keeps its wider grids. Header height, background, typography, border, navigation and theme positions are shared; nested project search lives in the sidebar and retains its keyboard shortcut. Semibold navigation uses a blue active rectangle with white text and visible focus. Hover transitions respect reduced motion. Shared 4/8/12/16/20/24px spacing tokens set component interiors; controls and sidebar links have at least 44px hit areas. Lists and profile rows have 16px horizontal padding, filters 12px, and callouts/code 16px vertical and 20px horizontal padding.
 
-`/blog/` redirects to `/writing/`; existing blog entry/tag routes redirect to Writing; `/tutorials/` redirects to Writing filtered to Tutorials. GitHub Pages uses static HTML refresh redirects with destination links, not HTTP 301s. There were no published articles or individual tutorials to migrate. The retired neutral Tutorials starter is preserved in `examples/tutorials/index.md`. RSS, canonicals, Pagefind search, and `/sitemap.xml` use Writing routes.
+`/blog/` redirects to `/articles/`; existing blog entry/tag routes redirect to Articles; `/tutorials/` redirects to Writing filtered to Tutorials. GitHub Pages uses static HTML refresh redirects with destination links, not HTTP 301s. There were no published articles or individual tutorials to migrate. The retired neutral Tutorials starter is preserved in `examples/tutorials/index.md`. RSS, canonicals, Pagefind search, and `/sitemap.xml` use Articles routes.
 
 ## Browser checks
 
 ### Local feature demonstrations (not published)
 
-The `demo-*` Writing files and `src/content/docs/projects/demo-project/` are clearly labeled test material, not Jon's articles or a real released project. Five root entries cover a single-page article, single-page MDX tutorial, chapter-based article and tutorial, and multi-file code tabs with Luau scope folding. Five project pages cover nested docs, Markdown callouts, MDX/custom components, Starlight tabs, API tables, and math. Three draft sentinels check direct drafts and a child of a draft parent. Demo filenames and directories use the reserved `demo-` prefix and are ignored by Git. The content loaders exclude them from every default build, including development. Set `INCLUDE_DEMOS=true` explicitly for local inspection. GitHub Actions never sets this flag and runs `verify:production` to reject leaked demo routes/content in HTML, assets, RSS, or sitemaps.
+The `demo-*` article files and `src/content/docs/projects/demo-project/` are clearly labeled test material, not Jon's articles or a real released project. Five root entries cover a single-page article, single-page MDX tutorial, chapter-based article and tutorial, and multi-file code tabs with Luau scope folding. Five project pages cover nested docs, Markdown callouts, MDX/custom components, Starlight tabs, API tables, and math. Three draft sentinels check direct drafts and a child of a draft parent. Demo filenames and directories use the reserved `demo-` prefix and are ignored by Git. The content loaders exclude them from every default build, including development. Set `INCLUDE_DEMOS=true` explicitly for local inspection. GitHub Actions never sets this flag and runs `verify:production` to reject leaked demo routes/content in HTML, assets, RSS, or sitemaps.
 
 Build and start the local preview from this repository:
 
@@ -97,9 +99,9 @@ node node_modules/astro/bin/astro.mjs build
 node node_modules/astro/bin/astro.mjs preview --host 127.0.0.1 --port 4321
 ```
 
-Open `http://127.0.0.1:4321/writing/` or `http://127.0.0.1:4321/projects/demo-project/`. Preview serves the latest build; rebuild after editing files. For edits with live refresh, `node node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port 4321` can be used instead, but dev deliberately includes drafts and does not represent production search/RSS/draft exclusions.
+Open `http://127.0.0.1:4321/articles/` or `http://127.0.0.1:4321/projects/demo-project/`. Preview serves the latest build; rebuild after editing files. For edits with live refresh, `node node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port 4321` can be used instead, but dev deliberately includes drafts and does not represent production search/RSS/draft exclusions.
 
-Math works in both `.md` and `.mdx`, in Writing and project docs. Write `$a^2+b^2=c^2$` for inline math, or put `$$` on separate lines around a display equation:
+Math works in both `.md` and `.mdx`, in Articles and project docs. Write `$a^2+b^2=c^2$` for inline math, or put `$$` on separate lines around a display equation:
 
 ```text
 $$
@@ -146,4 +148,4 @@ Luau folding uses the vendored MIT-licensed Tree-sitter Luau grammar at build ti
 
 For multi-file examples in MDX, import `Tabs` and `TabItem` from `@astrojs/starlight/components`, put one titled fenced code block in each `TabItem`, and use filenames as labels. The code-only tab set shares one restrained toolbar with a visible in-border active underline; mixed code/prose and nested tab groups keep their own scoped layouts. Examples remain in the local `demo-code-tools.mdx` fixture.
 
-Writing entries generate a right-side heading outline for both Articles and Tutorials, with active-heading tracking and fixed-header anchor offsets. On narrow screens it becomes an expandable On this page section. Single-page entries omit the left chapter navigation. Chapter entries may set `navTitle` for a short sidebar/breadcrumb label while keeping the full article title. Project documentation separates breadcrumb ancestry from contextual sibling groups; `sidebar.label` gives a readable page label and `sidebar.order` sets order.
+Article entries generate a right-side heading outline for both Articles and Tutorials, with active-heading tracking and fixed-header anchor offsets. On narrow screens it becomes an expandable On this page section. Single-page entries omit the left chapter navigation. Chapter entries may set `navTitle` for a short sidebar/breadcrumb label while keeping the full article title. Project documentation separates breadcrumb ancestry from contextual sibling groups; `sidebar.label` gives a readable page label and `sidebar.order` sets order.

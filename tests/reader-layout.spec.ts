@@ -16,7 +16,7 @@ test('context breadcrumbs and spacious sibling navigation work in both themes',a
   await expect(page.locator('.project-navigation a').first()).toHaveCSS('padding-left','12px');
   if(await menu.isVisible())await page.keyboard.press('Escape');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-  await page.goto('writing/demo-article-series/details/');
+  await page.goto('articles/demo-article-series/details/');
   await expect(page.getByRole('navigation',{name:'Breadcrumb',exact:true}).getByRole('link')).toHaveCount(3);
   await expect(page.getByRole('navigation',{name:'Breadcrumb',exact:true}).locator('[aria-current]')).toHaveText('Nested details');
   await expect(page.getByRole('navigation',{name:'Chapters',exact:true}).getByRole('link')).toHaveCount(4);
@@ -29,7 +29,7 @@ test('social profiles open safely in a new tab and the logo shadow is light-only
  for(const link of await links.all()) {await expect(link).toHaveAttribute('target','_blank');await expect(link).toHaveAttribute('rel','noopener noreferrer');}
  await expect(page.locator('.accounts li').last().locator('a')).toHaveCount(0);
  await expect(page.locator('.site-footer a[href="https://github.com/bytejon"]')).toHaveAttribute('target','_blank');
- for (const link of await page.locator('header a[href="/writing/"]').all()) await expect(link).not.toHaveAttribute('target','_blank');
+ for (const link of await page.locator('header a[href="/articles/"]').all()) await expect(link).not.toHaveAttribute('target','_blank');
  await choose(page,'Color theme','light');expect(await page.locator('.site-logo').evaluate(el=>getComputedStyle(el).filter)).toContain('drop-shadow');
  await choose(page,'Color theme','dark');await expect(page.locator('.site-logo')).toHaveCSS('filter','none');
 });

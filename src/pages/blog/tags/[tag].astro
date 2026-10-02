@@ -1,5 +1,5 @@
 ---
 import { posts, href } from '../../../lib/site';
 export async function getStaticPaths() { return [...new Set((await posts()).flatMap(p => p.data.tags))].map(tag => ({ params: { tag } })); }
-return Astro.redirect(href(`writing/?tag=${encodeURIComponent(Astro.params.tag!)}`));
+return Astro.redirect(href(`articles/?tag=${encodeURIComponent(Astro.params.tag!)}`));
 ---

@@ -34,7 +34,7 @@ test('About contains six requested accounts and no invented bio', async ({ page 
 
 test('filter disclosure and toggle selection support keyboard and reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('writing/');
+  await page.goto('articles/');
   const trigger = page.getByRole('button', { name: 'Filters', exact: true });
   await expect(page.locator('.filter-options')).toBeHidden();
   await trigger.focus(); await page.keyboard.press('Enter');
@@ -51,7 +51,7 @@ test('filter disclosure and toggle selection support keyboard and reduced motion
   await expect(page.getByRole('button', { name: 'Remove tag filter: Tutorial' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(trigger).toBeFocused();
-  await expect(page).toHaveURL(/\/writing\/$/);
+  await expect(page).toHaveURL(/\/articles\/$/);
 });
 
 test('nested docs keep the shared theme popover and search', async ({ page }) => {

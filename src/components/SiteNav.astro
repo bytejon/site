@@ -4,7 +4,7 @@ import ThemeSelect from './ThemeSelect.astro';
 import { href } from '../lib/site';
 interface Props { docs?: boolean }
 const { docs = false } = Astro.props;
-const links = [['Writing', 'writing/'], ['Projects', 'projects/'], ['About', 'about/']];
+const links = [['Articles', 'articles/'], ['Projects', 'projects/'], ['About', 'about/']];
 const current = Astro.url.pathname;
 ---
 <nav class="site-nav" aria-label="Site">

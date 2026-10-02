@@ -5,7 +5,7 @@ interface Props { tags: string[] }
 const { tags } = Astro.props;
 const groups = [{ name: 'tag', label: 'Tags', options: [{ value: '', label: 'All tags' }, ...tags.map(tag => ({ value: tag, label: tagLabel(tag) }))] }];
 ---
-<form class="writing-filters" aria-label="Filter writing">
+<form class="writing-filters" aria-label="Filter articles">
   <input type="hidden" name="tag" value="" />
   <div class="filter-toolbar">
     <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="writing-filter-options"><IconAdjustmentsHorizontal size={17} aria-hidden="true" />Filters</button>

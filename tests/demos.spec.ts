@@ -3,7 +3,7 @@ import { choose } from './choices';
 test.beforeEach(() => test.skip(process.env.TEST_DEMOS !== 'true', 'Local feature demonstration content'));
 
 test('math renders in Markdown and MDX with accessible output and both themes', async ({ page }) => {
-  for (const path of ['writing/demo-math-and-markdown/', 'writing/demo-component-tutorial/', 'projects/demo-project/reference/math/', 'projects/demo-project/guides/components/']) {
+  for (const path of ['articles/demo-math-and-markdown/', 'articles/demo-component-tutorial/', 'projects/demo-project/reference/math/', 'projects/demo-project/guides/components/']) {
     await page.goto(path);
     await expect(page.locator('h1')).toContainText('Test');
     await expect(page.locator('.katex:visible').first()).toBeVisible();
@@ -23,7 +23,7 @@ test('math renders in Markdown and MDX with accessible output and both themes', 
 
 test('Luau copy, Markdown anchors, tables, tasks, and footnotes work', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read','clipboard-write']);
-  await page.goto('writing/demo-math-and-markdown/');
+  await page.goto('articles/demo-math-and-markdown/');
   await expect(page.locator('table')).toBeVisible();
   await expect(page.locator('input[type="checkbox"]')).toHaveCount(2);
   await expect(page.locator('[data-footnote-ref]')).toHaveCount(1);
@@ -39,11 +39,11 @@ test('Luau copy, Markdown anchors, tables, tasks, and footnotes work', async ({ 
 });
 
 test('single entries and article/tutorial chapter trees have appropriate navigation', async ({ page }) => {
-  await page.goto('writing/demo-component-tutorial/');
+  await page.goto('articles/demo-component-tutorial/');
   await expect(page.getByRole('navigation',{name:'Chapters',exact:true})).toHaveCount(0);
   await expect(page.getByRole('complementary',{name:'Demo component',exact:true})).toBeVisible();
   for (const kind of ['article','tutorial']) {
-    await page.goto(`writing/demo-${kind}-series/`);
+    await page.goto(`articles/demo-${kind}-series/`);
     const chapters=page.getByRole('navigation',{name:'Chapters',exact:true});
     await expect(chapters.getByRole('link')).toHaveCount(4);
     await page.locator('a[rel="next"]').click();
@@ -58,14 +58,14 @@ test('single entries and article/tutorial chapter trees have appropriate navigat
 });
 
 test('demo filters compose, survive reload, and root dates and RSS remain correct', async ({ page }) => {
-  await page.goto('writing/');
+  await page.goto('articles/');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(5);
   await choose(page,'Tags','math');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(1);
   await choose(page,'Tags','components'); await page.reload();
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
   await expect(page.locator('[name="tag"]')).toHaveValue('components');
-  await page.goto('writing/demo-article-series/details/');
+  await page.goto('articles/demo-article-series/details/');
   await expect(page.locator('time')).toHaveAttribute('datetime','2026-10-01T00:00:00.000Z');
   const rss=await (await page.request.get('rss.xml')).text();
   expect((rss.match(/<item>/g)||[]).length).toBe(5);
@@ -98,5 +98,5 @@ test('project nested navigation, MDX tabs, and search work; draft sentinels stay
   expect(search).toBe(0);
   const sitemap=await (await page.request.get('sitemap.xml')).text();
   expect(sitemap).not.toContain('hidden-draft');
-  for(const path of ['writing/demo-hidden-draft/','writing/demo-hidden-draft/child/','projects/demo-project/hidden-draft/']) expect((await page.request.get(path)).status()).toBe(404);
+  for(const path of ['articles/demo-hidden-draft/','articles/demo-hidden-draft/child/','projects/demo-project/hidden-draft/']) expect((await page.request.get(path)).status()).toBe(404);
 });

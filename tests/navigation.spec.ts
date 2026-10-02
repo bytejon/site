@@ -27,7 +27,7 @@ for (const path of ['', 'projects/']) {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await expect(button).toBeHidden();
     await expect(page.locator(':popover-open')).toHaveCount(0);
-    await expect(page.getByRole('navigation', { name: 'Site', exact: true }).getByRole('link', { name: 'Writing', exact: true })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Site', exact: true }).getByRole('link', { name: 'Articles', exact: true })).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });
     await button.click();
     await page.getByRole('navigation', { name: 'Site menu', exact: true }).getByRole('link', { name: 'About', exact: true }).click();
@@ -38,8 +38,8 @@ for (const path of ['', 'projects/']) {
 }
 
 test('topbar has identical centered bounds across layout families', async ({ page }) => {
-  const paths = ['', 'writing/', 'about/', 'projects/'];
-  if (process.env.TEST_AUTHORING === 'true') paths.push('writing/single-article/', 'writing/single-tutorial/', 'writing/series-article/chapter/', 'writing/series-tutorial/chapter/', 'projects/example-project/reference/api/');
+  const paths = ['', 'articles/', 'about/', 'projects/'];
+  if (process.env.TEST_AUTHORING === 'true') paths.push('articles/single-article/', 'articles/single-tutorial/', 'articles/series-article/chapter/', 'articles/series-tutorial/chapter/', 'projects/example-project/reference/api/');
   for (const width of [390, 700, 1440, 1920]) {
     await page.setViewportSize({ width, height: 1000 });
     let reference: { x: number; width: number; logoX: number; right: number; height: number; writingX: number; themeX: number } | undefined;
@@ -67,7 +67,7 @@ test('topbar has identical centered bounds across layout families', async ({ pag
 
 test('active navigation uses a contrasting blue rectangle', async ({ page }) => {
   for (const theme of ['light', 'dark']) {
-    for (const section of ['Writing', 'Projects']) {
+    for (const section of ['Articles', 'Projects']) {
     await page.goto(`${section.toLowerCase()}/`);
     await choose(page, 'Color theme', theme);
     await page.setViewportSize({ width: 1440, height: 1000 });

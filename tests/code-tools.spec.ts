@@ -7,7 +7,7 @@ test.beforeEach(()=>test.skip(process.env.TEST_DEMOS!=='true','Local demonstrati
 test('Luau scopes fold independently, retain source line numbers, and copy full code',async({page,context})=>{
  await context.grantPermissions(['clipboard-read','clipboard-write']);
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
- await page.goto('writing/demo-code-tools/');
+ await page.goto('articles/demo-code-tools/');
  const panel=page.getByRole('tabpanel',{name:'scopes.luau',exact:true});
  const frame=panel.locator('[data-code-tools]');
  await expect(frame.locator('.scope-toggle')).toHaveCount(9);
@@ -43,7 +43,7 @@ test('Luau scopes fold independently, retain source line numbers, and copy full 
 });
 
 test('code tabs support keyboard and code surfaces remain readable in both themes',async({page})=>{
- await page.goto('writing/demo-code-tools/');
+ await page.goto('articles/demo-code-tools/');
  const luau=page.getByRole('tab',{name:'scopes.luau',exact:true});
  await luau.focus();await page.keyboard.press('ArrowRight');
  const json=page.getByRole('tab',{name:'settings.json',exact:true});
@@ -70,7 +70,7 @@ test('code tabs support keyboard and code surfaces remain readable in both theme
 
 test('mouse/touch tabs change actual code, preserve folds, and nested tabs stay independent',async({page,context})=>{
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
- await context.grantPermissions(['clipboard-read','clipboard-write']);await page.goto('writing/demo-code-tools/');
+ await context.grantPermissions(['clipboard-read','clipboard-write']);await page.goto('articles/demo-code-tools/');
  const click=async(locator:any)=>test.info().project.name==='mobile'?locator.tap():locator.click();
  const luau=page.getByRole('tabpanel',{name:'scopes.luau',exact:true});const json=page.getByRole('tabpanel',{name:'settings.json',exact:true});
  await luau.locator('.scope-toggle[data-fold-start="4"]').click();
@@ -82,12 +82,12 @@ test('mouse/touch tabs change actual code, preserve folds, and nested tabs stay 
  await click(page.getByRole('tab',{name:'Code examples',exact:true}));await expect(page.getByRole('tabpanel',{name:'nested.json',exact:true}).locator('pre')).toBeVisible();
  await page.getByRole('tab',{name:'nested.json',exact:true}).focus();await page.keyboard.press('Home');await expect(page.getByRole('tabpanel',{name:'nested.luau',exact:true}).locator('pre')).toContainText('inner Luau file');
  expect(errors).toEqual([]);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
- await page.goto('writing/demo-math-and-markdown/');const header=page.locator('[data-code-tools] .code-toolbar').first();await expect(header).toHaveCSS('padding-left','16px');expect((await header.boundingBox())!.height).toBe(44);await expect(page.locator('.expand-scopes')).toHaveCount(0);
+ await page.goto('articles/demo-math-and-markdown/');const header=page.locator('[data-code-tools] .code-toolbar').first();await expect(header).toHaveCSS('padding-left','16px');expect((await header.boundingBox())!.height).toBe(44);await expect(page.locator('.expand-scopes')).toHaveCount(0);
 });
 
 test('copy feedback changes only the icon, announces the result, and resets',async({page,context})=>{
  await context.grantPermissions(['clipboard-read','clipboard-write']);
- await page.goto('writing/demo-code-tools/');
+ await page.goto('articles/demo-code-tools/');
  const frame=page.getByRole('tabpanel',{name:'scopes.luau',exact:true}).locator('[data-code-tools]');
  const toolbar=frame.locator('.code-toolbar'); const copy=frame.locator('.copy button');
  await copy.scrollIntoViewIfNeeded();

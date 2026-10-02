@@ -4,7 +4,7 @@ import ThemeProvider from '@astrojs/starlight/components/ThemeProvider.astro';
 import { href } from '../lib/site';
 import '../styles/site.css';
 interface Props { title: string; description?: string; wide?: boolean; draft?: boolean }
-const { title, wide = false, draft = false, description = 'Writing, tutorials, and open-source projects by Jon.' } = Astro.props;
+const { title, wide = false, draft = false, description = 'Articles, tutorials, and open-source projects by Jon.' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
@@ -17,7 +17,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={href('favicon.svg')} type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title="Jon's writing" href={href('rss.xml')} />
+    <link rel="alternate" type="application/rss+xml" title="Jon's articles" href={href('rss.xml')} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />

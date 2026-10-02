@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 import {choose} from './choices';
 test.beforeEach(()=>test.skip(process.env.TEST_DEMOS!=='true','Local code fixtures'));
 test('compact gutter aligns one/two/three-digit numbers and remains stable while folding',async({page})=>{
- await page.goto('writing/demo-code-tools/');
+ await page.goto('articles/demo-code-tools/');
  for(const theme of ['light','dark']) {
   await choose(page,'Color theme',theme);
   for(const title of ['scopes.luau','gutter.luau']) {

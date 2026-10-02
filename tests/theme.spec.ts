@@ -22,7 +22,7 @@ test('theme persists between custom and documentation layouts and reloads', asyn
   if (await menu.isVisible()) await menu.click();
   await choose(page, 'Color theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.goto('writing/');
+  await page.goto('articles/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -37,7 +37,7 @@ test('theme persists between custom and documentation layouts and reloads', asyn
 
 test('Luau code follows the selected theme', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for local draft verification');
-  await page.goto('writing/authoring-example/');
+  await page.goto('articles/authoring-example/');
   await choose(page, 'Color theme', 'dark');
   const token = page.locator('pre[data-language="luau"] span[style]').first();
   const darkColor = await token.evaluate(el => getComputedStyle(el).color);

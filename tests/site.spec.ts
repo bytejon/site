@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-for (const path of ['', 'writing/', 'about/', 'projects/']) {
+for (const path of ['', 'articles/', 'about/', 'projects/']) {
   test(`page ${path || 'home'} is navigable and fits the viewport`, async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -14,19 +14,19 @@ for (const path of ['', 'writing/', 'about/', 'projects/']) {
   });
 }
 
-test('home navigation opens Writing and return link works', async ({ page }) => {
+test('home navigation opens Articles and return link works', async ({ page }) => {
   await page.goto('');
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible()) await menu.click();
-  await page.locator('a:visible').filter({ hasText: /^Writing$/ }).first().click();
-  await expect(page.locator('h1')).toHaveText('Writing');
+  await page.locator('a:visible').filter({ hasText: /^Articles$/ }).first().click();
+  await expect(page.locator('h1')).toHaveText('Articles');
   await page.getByRole('link', { name: 'Jon', exact: true }).click();
   await expect(page.locator('h1')).toHaveText('Jon');
 });
 
 test('draft MDX and nested docs authoring fixtures', async ({ page }) => {
   test.skip(process.env.TEST_AUTHORING !== 'true', 'Only for a local authoring fixture build');
-  await page.goto('writing/authoring-example/');
+  await page.goto('articles/authoring-example/');
   await expect(page.getByRole('complementary', { name: 'Custom component example' })).toBeVisible();
   await expect(page.locator('pre[data-language="luau"]')).toBeVisible();
   const code = page.locator('pre[data-language="luau"]');

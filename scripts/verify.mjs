@@ -60,7 +60,7 @@ for (const word of ['export', 'type', 'number', 'continue']) {
 assert(scopeTokens.some(t => t.scopes.some(s => /interpolat|template/.test(s))), 'Luau string interpolation not tokenized');
 highlighter.dispose();
 if (drafts) {
-  const example = load(await readFile('dist/writing/authoring-example/index.html', 'utf8'));
+  const example = load(await readFile('dist/articles/authoring-example/index.html', 'utf8'));
   assert(example('aside[aria-label="Custom component example"]').length, 'MDX component did not render');
   assert(example('.expressive-code pre[data-language="luau"]').length, 'Luau fence did not render with Expressive Code');
   assert(example('.expressive-code span[style]').length > 10, 'Expected syntax-colored Luau tokens');

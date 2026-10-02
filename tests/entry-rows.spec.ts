@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { choose } from './choices';
 test.beforeEach(() => test.skip(process.env.TEST_DEMOS !== 'true', 'Local feature demonstration content'));
-for (const path of ['writing/', 'projects/', '']) {
+for (const path of ['articles/', 'projects/', '']) {
   test(`entry titles wrap above optional metadata: ${path || 'home'}`, async ({ page }) => {
     await page.goto(path);
     const row = page.locator('.entry-row').first();

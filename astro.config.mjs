@@ -23,7 +23,7 @@ export default defineConfig({
     starlight({
       title: 'Jon',
       favicon: '/favicon.svg',
-      description: 'Writing, tutorials, and open-source projects by Jon.',
+      description: 'Articles, tutorials, and open-source projects by Jon.',
       expressiveCode: false,
       customCss: ['./src/styles/site.css'],
       components: {
@@ -39,7 +39,7 @@ export default defineConfig({
       ],
       editLink: { baseUrl: 'https://github.com/bytejon/site/edit/main/' },
     }),
-    sitemap({ filter: page => !/\/(blog|tutorials)(\/|$)/.test(new URL(page).pathname) }),
+    sitemap({ filter: page => !/\/(blog|tutorials|writing)(\/|$)/.test(new URL(page).pathname) }),
     mdx(),
   ],
 });

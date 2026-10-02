@@ -1,0 +1,76 @@
+---
+import { render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { tagLabel } from '../../lib/tags';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import PageOutline from '../../components/PageOutline.astro';
+import type { Writing } from '../../lib/site';
+import { writingPages, rootOf, chapterTree, href, formatDate } from '../../lib/site';
+export async function getStaticPaths() {
+  const pages = await writingPages();
+  return pages.map(post => ({ params: { id: post.id }, props: { post, pages } }));
+}
+const { post, pages } = Astro.props;
+const root = rootOf(post, pages);
+const chapters = chapterTree(root, pages);
+const index = chapters.findIndex(item => item.page.id === post.id);
+const previous = chapters[index - 1]?.page;
+const next = chapters[index + 1]?.page;
+const { Content, headings } = await render(post);
+const outline = headings.filter(h => h.depth === 2 || h.depth === 3);
+const ancestry: Writing[] = [post];
+let ancestor: Writing = post;
+while (ancestor.data.parent) {
+  ancestor = pages.find((page: Writing) => page.id === ancestor.data.parent)!;
+  ancestry.unshift(ancestor);
+}
+const breadcrumb = [{ label: 'Articles', href: href('articles/') }, ...ancestry.map((page, index) => ({ label: index === 0 ? page.data.title : page.data.navTitle || page.data.title, href: page.id !== post.id ? href(`articles/${page.id}/`) : undefined }))];
+---
+<SiteLayout title={post.data.title} description={post.data.description} wide={chapters.length > 1 || outline.length > 0} draft={post.data.draft}>
+  <div class:list={["writing-reader", { "has-chapters": chapters.length > 1, "has-outline": outline.length > 0 }]}>
+    {chapters.length > 1 && <aside class="chapter-sidebar" data-pagefind-ignore>
+      <details open><summary>Chapters</summary><nav aria-label="Chapters"><ol>{chapters.map(({ page, depth }) => <li style={`--depth: ${depth}`}><a href={href(`articles/${page.id}/`)} aria-current={page.id === post.id ? 'page' : undefined}>{page.data.navTitle || page.data.title}</a></li>)}</ol></nav></details>
+    </aside>}
+    <PageOutline headings={outline} />
+    <article class="prose">
+      <Breadcrumb items={breadcrumb} />
+      <h1>{post.data.title}</h1>
+      <div class="post-meta"><time datetime={root.data.date!.toISOString()}>{formatDate(root.data.date!)}</time></div>
+      {post.data.draft && <aside class="note" data-pagefind-ignore><strong>Unpublished authoring example</strong><p>This draft demonstrates the site's features. It is not published writing by Jon.</p></aside>}
+      <Content />
+      {root.data.tags.length > 0 && <ul class="tags" aria-label="Tags">{root.data.tags.map(tag => <li><a href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a></li>)}</ul>}
+      {chapters.length > 1 && <nav class="chapter-pagination" aria-label="Chapter navigation" data-pagefind-ignore>{previous ? <a rel="prev" href={href(`articles/${previous.id}/`)}>← {previous.data.title}</a> : <span />}{next && <a rel="next" href={href(`articles/${next.id}/`)}>{next.data.title} →</a>}</nav>}
+    </article>
+  </div>
+</SiteLayout>
+<style>
+  .writing-reader { min-width: 0; }
+  .has-chapters { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+  .has-outline { display: grid; grid-template-columns: minmax(0, 720px) 220px; gap: 48px; justify-content: center; }
+  .has-chapters.has-outline { grid-template-columns: 200px minmax(0, 720px) 200px; gap: 32px; }
+  .writing-reader :global(.reader-outline) { grid-column: 2; grid-row: 1; }
+  .has-chapters :global(.reader-outline) { grid-column: 3; }
+  article { grid-column: 1; grid-row: 1; }
+  .has-chapters article { grid-column: 2; }
+  .prose { width: 100%; min-width: 0; }
+  .chapter-sidebar { font-size: .9rem; }
+  .chapter-sidebar details { position: sticky; top: calc(var(--sl-nav-height) + 32px); }
+  summary { font-weight: 600; cursor: pointer; min-height: var(--control-size); padding: 16px 20px; }
+  ol { list-style: none; padding: 0; }
+  .chapter-sidebar li { padding-left: calc(max(0, var(--depth) - 1) * 14px); margin-block: 4px; }
+  .chapter-sidebar a { display: block; min-height: var(--control-size); padding: 10px 12px; line-height: 1.5; color: var(--muted); text-decoration: none; border-radius: 4px; position: relative; }
+  .chapter-sidebar a[aria-current='page'] { color: var(--accent); background: var(--surface); font-weight: 600; }
+  .chapter-sidebar a[aria-current='page']::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px; background: var(--accent); }
+  .chapter-pagination { display: flex; justify-content: space-between; gap: 32px; border-top: 1px solid var(--line); margin-top: 48px; padding-top: 24px; }
+  .chapter-pagination > * { flex: 1; min-width: 0; }
+  .chapter-pagination a { padding: 16px 20px; font-size: .95rem; line-height: 1.5; text-decoration: none; }
+  .chapter-pagination a[rel='next'] { text-align: right; }
+  .page-outline { padding-block: 16px; margin-bottom: 32px; font-size: .9rem; }
+  .page-outline ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 4px; list-style: none; margin-block: 12px 0; padding: 0; }
+  .page-outline li { padding-left: calc(var(--outline-depth) * 16px); }
+  .page-outline a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 8px; text-decoration: none; }
+  .page-outline a:hover { text-decoration: underline; }
+  @media (max-width: 1099px) { .has-outline, .has-chapters.has-outline { display: block; } .chapter-sidebar { margin-bottom: 24px; } .chapter-sidebar details { position: static; } }
+  @media (max-width: 799px) { .has-chapters { display: block; } }
+  @media (max-width: 479px) { .page-outline ul { grid-template-columns: 1fr; } .chapter-pagination { gap: 16px; } .chapter-pagination a { padding-inline: 8px; } }
+</style>
