@@ -1,12 +1,12 @@
 ---
 import Arrow from './Arrow.astro';
 import Tag from './Tag.astro';
+import DateMetadata from './DateMetadata.astro';
 import { normalizeTags, tagLabel } from '../lib/tags';
-import { href, formatDate } from '../lib/site';
+import { href } from '../lib/site';
 interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; updated?: Date; tagLinks?: boolean; draft?: boolean }
 const { url, title, description, tags = [], date, updated, tagLinks = false, draft = false } = Astro.props;
 const labels = normalizeTags(tags);
-const changed = date && updated && updated > date;
 ---
 <div class="section-row entry-row">
   <a class="entry-title-link" href={url}>
@@ -14,5 +14,5 @@ const changed = date && updated && updated > date;
   {description && <p class="entry-description">{description}</p>}
   </a>
   {labels.length > 0 && <span class="entry-topics" aria-label="Tags">{labels.map(tag => tagLinks ? <a class="entry-tag tag-link" href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a> : <Tag label={tagLabel(tag)} />)}</span>}
-  {date && <span class="entry-meta"><time datetime={date.toISOString()}>{formatDate(date)}</time>{changed && <span class="updated-date">Updated <time datetime={updated!.toISOString()}>{formatDate(updated!)}</time></span>}</span>}
+  {(date || updated) && <span class="entry-meta"><DateMetadata date={date} updated={updated} /></span>}
 </div>

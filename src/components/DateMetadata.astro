@@ -1,0 +1,9 @@
+---
+import { IconCalendar, IconHistory } from '@tabler/icons-astro';
+import { formatDate } from '../lib/site';
+interface Props { date?: Date; updated?: Date }
+const { date, updated } = Astro.props;
+const changed = updated && (!date || updated > date);
+---
+{date && <span class="published-date"><IconCalendar size={14} stroke={1.5} aria-hidden="true" /><time datetime={date.toISOString()}>{formatDate(date)}</time></span>}
+{changed && <span class="updated-date">{date && <span class="date-separator" aria-hidden="true">·</span>}<IconHistory size={14} stroke={1.5} aria-hidden="true" />Updated <time datetime={updated!.toISOString()}>{formatDate(updated!)}</time></span>}

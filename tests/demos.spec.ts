@@ -66,7 +66,7 @@ test('demo filters compose, survive reload, and root dates and RSS remain correc
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
   await expect(page.locator('[name="tag"]')).toHaveValue('components');
   await page.goto('articles/demo-article-series/details/');
-  await expect(page.locator('.post-meta > time')).toHaveAttribute('datetime','2026-10-01T00:00:00.000Z');
+  await expect(page.locator('.post-meta .published-date > time')).toHaveAttribute('datetime','2026-10-01T00:00:00.000Z');
   const rss=await (await page.request.get('rss.xml')).text();
   expect((rss.match(/<item>/g)||[]).length).toBe(5);
   expect(rss).toContain('Test article: math, Markdown, and Luau');

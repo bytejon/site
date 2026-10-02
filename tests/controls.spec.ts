@@ -42,7 +42,7 @@ test('filter disclosure and toggle selection support keyboard and reduced motion
   await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'All tags', exact: true })).toBeFocused();
   await page.keyboard.press('Tab'); await page.keyboard.press('Tab'); await page.keyboard.press('Space');
-  await expect(page.getByRole('button', { name: 'Tutorial', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'tutorial', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(page).toHaveURL(/\?tag=tutorial$/);
   await page.keyboard.press('Escape');
   await expect(page.locator('.filter-options')).toBeHidden();
@@ -50,7 +50,7 @@ test('filter disclosure and toggle selection support keyboard and reduced motion
   await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Clear all', exact: true })).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'Remove tag filter: Tutorial' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Remove tag filter: tutorial' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(trigger).toBeFocused();
   await expect(page).toHaveURL(/\/articles\/$/);

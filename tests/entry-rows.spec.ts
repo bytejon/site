@@ -9,7 +9,7 @@ for (const path of ['articles/', 'projects/', '']) {
     const url = await row.locator('.entry-title-link').getAttribute('href');
     const labels = await row.locator('.entry-tag').allTextContents();
     expect(new Set(labels.map(label => label.toLowerCase())).size).toBe(labels.length);
-    if (path !== 'projects/') expect(labels[0]).toMatch(/^(Article|Tutorial)$/);
+    if (path !== 'projects/') expect(labels[0]).toMatch(/^(article|tutorial)$/);
     expect(await row.evaluate(el => {
       const topics = el.querySelector('.entry-topics');
       const description = el.querySelector('.entry-description');
