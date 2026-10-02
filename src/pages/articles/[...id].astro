@@ -56,7 +56,7 @@ const breadcrumb = [{ label: 'Articles', href: href('articles/') }, ...ancestry.
       {post.data.draft && <aside class="note" data-pagefind-ignore><strong>Unpublished authoring example</strong><p>This draft demonstrates the site's features. It is not published writing by Jon.</p></aside>}
       <Content />
       {chapters.length > 1 && <ReadingPagination class="chapter-pagination" label="Page navigation" previous={previous && { href: href(`articles/${previous.id}/`), label: previous.data.navTitle || previous.data.title }} next={next && { href: href(`articles/${next.id}/`), label: next.data.navTitle || next.data.title }} />}
-      {related.length > 0 && <section class="related-articles" aria-labelledby="related-articles"><h2 id="related-articles">Related articles</h2><ul class="section-list">{related.map(entry => <li><EntryRow url={href(`articles/${entry.id}/`)} title={entry.data.title} description={entry.data.description} tags={entry.data.tags} date={entry.data.date} updated={entry.data.updated} tagLinks /></li>)}</ul></section>}
+      {related.length > 0 && <section class="related-articles" aria-labelledby="related-articles"><h2 id="related-articles">Related articles</h2><ul class="section-list">{related.map(entry => <li><EntryRow url={href(`articles/${entry.id}/`)} title={entry.data.title} description={entry.data.description} tags={entry.data.tags} date={entry.data.date} updated={entry.data.updated} wholeLink /></li>)}</ul></section>}
     </article>
   </div>
 </SiteLayout>

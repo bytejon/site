@@ -10,6 +10,6 @@ const tags = normalizeTags([...new Set(entries.flatMap(p => p.data.tags))].sort(
 <SiteLayout title="Articles">
   <h1 class="page-label">Articles</h1>
   <WritingFilters tags={tags} />
-  {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-tags={JSON.stringify(post.data.tags)}><EntryRow url={href(`articles/${post.id}/`)} title={post.data.title} tags={post.data.tags} date={post.data.date} updated={post.data.updated} tagLinks description={post.data.description} draft={post.data.draft} /></li>)}</ul>}
+  {entries.length > 0 && <ul class="section-list writing-list">{entries.map(post => <li data-tags={JSON.stringify(post.data.tags)}><EntryRow url={href(`articles/${post.id}/`)} title={post.data.title} tags={post.data.tags} date={post.data.date} updated={post.data.updated} wholeLink description={post.data.description} draft={post.data.draft} /></li>)}</ul>}
   <p class="empty" data-empty hidden={entries.length > 0}>No articles to show.</p>
 </SiteLayout>

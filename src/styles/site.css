@@ -153,13 +153,19 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 .section-row.entry-row { display: block; position: relative; border-radius: 8px; }
 .section-row.entry-row .entry-title { display: block; font-size: 1.1rem; line-height: 1.5; overflow-wrap: anywhere; }
 .entry-row .entry-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; font-size: .78rem; line-height: 1.5; }
-.entry-tag { display: inline-block; padding: 1px 6px; border: 1px solid #739de5; border-radius: 3px; background: #173565; color: #e5efff; overflow-wrap: anywhere; font-size: .75rem; }
+.entry-tag { display: inline-flex; align-items: center; min-height: 32px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--accent); overflow-wrap: anywhere; font-size: .75rem; line-height: 1.5; }
 .entry-row .entry-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; color: var(--muted); font-size: .85rem; line-height: 1.5; }
 .section-row.entry-row .entry-description { margin-top: 8px; line-height: 1.6; }
 .section-row.entry-row .entry-title .arrow-icon { margin-left: 8px; opacity: .7; }
-.entry-row > .entry-title-link:hover { background: var(--surface); }
-.entry-row > .entry-title-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; background: var(--surface); }
-.entry-row > .entry-title-link { padding: 8px; margin: -8px -8px 0; border-radius: 6px; }
+.entry-row:not(.article-entry) > .entry-title-link:hover { background: var(--surface); }
+.entry-row:not(.article-entry) > .entry-title-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; background: var(--surface); }
+.entry-row:not(.article-entry) > .entry-title-link { padding: 8px; margin: -8px -8px 0; border-radius: 6px; }
+.personal-site .article-entry-link { color: var(--ink); text-decoration: none; }
+.section-row.article-entry, .related-articles .section-row.article-entry { padding: 0; }
+.article-entry-link { padding: 24px 16px; border-radius: 8px; }
+.related-articles .article-entry-link { padding: 16px; }
+.article-entry-link:hover, .article-entry-link:focus-visible { background: var(--surface); }
+.article-entry-link:hover .entry-title, .article-entry-link:focus-visible .entry-title { color: var(--accent); }
 @media (prefers-reduced-motion: no-preference) { .entry-title-link { transition: background-color 140ms ease; } }
 .note { padding: var(--space-4) var(--space-5); }
 .prose > ul:not(.tags), .prose > ol { padding-inline-start: var(--space-6); }
@@ -207,7 +213,7 @@ html { scroll-padding-top: calc(var(--sl-nav-height) + 16px); }
 .note { padding: 20px 24px; }
 .filter-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 4px 8px; font: inherit; font-size: .75rem; cursor: pointer; }
 .filter-chip > span { font-size: 1.1rem; line-height: 1; }
-.filter-chip:hover { background: #21467e; }
+.filter-chip:hover { background: var(--paper); }
 .filter-reset { min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--muted); font: inherit; font-size: .82rem; cursor: pointer; }
 .filter-reset:not(:disabled):hover { color: var(--ink); background: var(--surface); }
 .filter-reset:disabled { color: var(--muted); opacity: .5; cursor: default; }
@@ -282,7 +288,7 @@ starlight-tabs.code-tabset > [role='tabpanel'] > .expressive-code .frame.has-too
 .project-overview-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; }
 .project-overview-links a { display: inline-flex; align-items: center; min-height: 44px; }
 
-.personal-site .tags a { min-height: 32px; padding: 3px 6px; border: 1px solid #739de5; border-radius: 3px; background: #173565; color: #e5efff; text-decoration: none; font-size: .75rem; }
+.personal-site .tags a { min-height: 32px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--accent); text-decoration: none; font-size: .75rem; line-height: 1.5; }
 .personal-site .tags a:hover { background: #21467e; text-decoration: underline; }
 .personal-site .article-tags { margin-block: 12px 8px; gap: 6px; font-size: .75rem; line-height: 1.5; }
 .personal-site .article-tags a { min-height: 32px; padding: 3px 6px; color: var(--accent); background: var(--surface); border-color: var(--line); }

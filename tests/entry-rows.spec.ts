@@ -43,15 +43,14 @@ for (const path of ['articles/', 'projects/', '']) {
     await expect(page).toHaveURL(new RegExp(url!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'));
   });
 }
-test('entry title and description link surfaces stay separate from tags',async({page},info)=>{
- for(const theme of ['light','dark'])for(const path of ['articles/','projects/']) {
+test('project title and description retain their link surface',async({page},info)=>{
+ for(const theme of ['light','dark'])for(const path of ['projects/']) {
   await page.goto(path);await choose(page,'Color theme',theme);const row=page.locator('.entry-row:has(.entry-description)').first(),title=row.locator('.entry-title-link'),description=row.locator('.entry-description');const destination=await title.getAttribute('href');
   await expect(title.locator('.entry-description')).toHaveCount(1);await expect(title).not.toHaveAttribute('tabindex','-1');await expect(row.locator('a:not(.tag-link)')).toHaveCount(1);await expect(row.locator('a a')).toHaveCount(0);await expect(title.locator('svg')).toBeVisible();
   await page.mouse.move(0,0);const initial=await title.evaluate(el=>getComputedStyle(el).backgroundColor);
   await title.hover();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe(initial);
   await page.mouse.move(0,0);await page.keyboard.press('Tab');await title.focus();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('solid');await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineWidth)).toBe('3px');
   await page.screenshot({path:`test-results/affordance-${path.slice(0,-1)}-${info.project.name}-${theme}-focus.png`});
-  if(path==='articles/') {await page.keyboard.press('Tab');await expect(row.locator('.tag-link').first()).toBeFocused();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('none');await row.locator('.tag-link').first().hover();await expect.poll(()=>title.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(initial);}
   if(info.project.name==='mobile')await description.tap();else await description.click();await expect(page).toHaveURL(new RegExp(destination!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
   await page.goto(path);await page.locator('.entry-row:has(.entry-description)').first().locator('.entry-title-link').focus();await page.keyboard.press('Enter');await expect(page).toHaveURL(new RegExp(destination!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
  }

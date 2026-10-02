@@ -5,7 +5,7 @@ test('tag links are separate accessible links and dates/related roots are author
  await page.goto('articles/');await expect(page.locator('a a')).toHaveCount(0);
  const row=page.locator('.entry-row').filter({hasText:'Test article: math, Markdown, and Luau'}).first();
  await expect(row.locator('.updated-date')).toContainText('October 2, 2026');
- const tag=row.getByRole('link',{name:'math',exact:true});await tag.focus();await page.keyboard.press('Enter');
+ await row.locator('.entry-title-link').click();const tag=page.locator('.article-tags').getByRole('link',{name:'math',exact:true});await tag.focus();await page.keyboard.press('Enter');
  await expect(page).toHaveURL(/tag=math/);await expect(page.locator('.writing-list > li:visible')).toHaveCount(process.env.TEST_FEATURE_DRAFTS==='true'?2:1);
  await row.locator('.entry-title-link').click();await expect(page.locator('.post-meta .updated-date')).toContainText('October 2, 2026');
  const related=page.getByRole('region',{name:'Related articles',exact:true});await expect(related).toBeVisible();
@@ -61,15 +61,10 @@ test('article footers omit the return control and separate pagination from relat
   }
  }
 });
-test('tag hover and keyboard focus do not highlight or activate entry titles; edit links are absent',async({page})=>{
- for(const theme of ['light','dark']) for(const path of ['articles/','articles/demo-math-and-markdown/','']) {
-  await page.goto(path);await choose(page,'Color theme',theme);
-  const row=page.locator('.entry-row:has(.tag-link)').first();const title=row.locator('.entry-title-link');const tag=row.locator('.tag-link').first();
-  const color=await title.locator('strong').evaluate(el=>getComputedStyle(el).color);
-  await tag.hover();await expect.poll(()=>title.locator('strong').evaluate(el=>getComputedStyle(el).color)).toBe(color);
-  await tag.focus();await expect.poll(()=>title.locator('strong').evaluate(el=>getComputedStyle(el).color)).toBe(color);
-  await page.keyboard.press('Enter');await expect(page).toHaveURL(/\/articles\/\?tag=/);
-  await page.goto(path);await page.locator('.entry-row:has(.tag-link)').first().locator('.entry-title-link').click();await expect(page).toHaveURL(/\/articles\/[^?]+\/$/);
+test('entry tags are static and public edit links are absent',async({page})=>{
+ for(const path of ['articles/','articles/demo-math-and-markdown/','']) {
+  await page.goto(path);await expect(page.locator('.entry-row .tag-link')).toHaveCount(0);
+  await expect(page.locator('.entry-row a a')).toHaveCount(0);
  }
  await page.goto('projects/demo-project/');await expect(page.getByRole('link',{name:/edit (this )?page/i})).toHaveCount(0);
 });

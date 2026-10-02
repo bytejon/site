@@ -3,16 +3,22 @@ import Arrow from './Arrow.astro';
 import Tag from './Tag.astro';
 import DateMetadata from './DateMetadata.astro';
 import { normalizeTags, tagLabel } from '../lib/tags';
-import { href } from '../lib/site';
-interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; updated?: Date; tagLinks?: boolean; draft?: boolean }
-const { url, title, description, tags = [], date, updated, tagLinks = false, draft = false } = Astro.props;
+interface Props { url: string; title: string; description?: string; tags?: string[]; date?: Date; updated?: Date; wholeLink?: boolean; draft?: boolean }
+const { url, title, description, tags = [], date, updated, wholeLink = false, draft = false } = Astro.props;
 const labels = normalizeTags(tags);
 ---
-<div class="section-row entry-row">
-  <a class="entry-title-link" href={url}>
-  <strong class="entry-title">{title}{draft ? ' (draft)' : ''}<Arrow /></strong>
-  {description && <p class="entry-description">{description}</p>}
-  </a>
-  {labels.length > 0 && <span class="entry-topics" aria-label="Tags">{labels.map(tag => tagLinks ? <a class="entry-tag tag-link" href={href(`articles/?tag=${encodeURIComponent(tag)}`)}>{tagLabel(tag)}</a> : <Tag label={tagLabel(tag)} />)}</span>}
-  {(date || updated) && <span class="entry-meta"><DateMetadata date={date} updated={updated} /></span>}
+<div class:list={['section-row', 'entry-row', { 'article-entry': wholeLink }]}>
+  {wholeLink ? <a class="entry-title-link article-entry-link" href={url}>
+    <strong class="entry-title">{title}{draft ? ' (draft)' : ''}<Arrow /></strong>
+    {description && <p class="entry-description">{description}</p>}
+    {labels.length > 0 && <span class="entry-topics" aria-label="Tags">{labels.map(tag => <Tag label={tagLabel(tag)} />)}</span>}
+    {(date || updated) && <span class="entry-meta"><DateMetadata date={date} updated={updated} /></span>}
+  </a> : <>
+    <a class="entry-title-link" href={url}>
+      <strong class="entry-title">{title}{draft ? ' (draft)' : ''}<Arrow /></strong>
+      {description && <p class="entry-description">{description}</p>}
+    </a>
+    {labels.length > 0 && <span class="entry-topics" aria-label="Tags">{labels.map(tag => <Tag label={tagLabel(tag)} />)}</span>}
+    {(date || updated) && <span class="entry-meta"><DateMetadata date={date} updated={updated} /></span>}
+  </>}
 </div>

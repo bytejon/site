@@ -58,16 +58,20 @@ test('selected tags follow all filter controls and disabled Clear all is skipped
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }
 });
-test('real article tag links add to list context without duplicates or stale filters',async({page})=>{
+test('detail tag links remain additive while entry tags navigate to articles',async({page})=>{
  await page.goto('articles/?tag=math&source=test');
  const row=page.locator('.entry-row').filter({hasText:'Test article: math, Markdown, and Luau'}).first();
- const luau=row.getByRole('link',{name:'luau',exact:true});await expect(luau).toHaveAttribute('href',/tag=math.*tag=luau|tag=luau.*tag=math/);
- await luau.click();await expect(page.locator('.filter-chip')).toHaveCount(2);expect(new URL(page.url()).searchParams.get('source')).toBe('test');
- await row.getByRole('link',{name:'math',exact:true}).click();await expect(page.locator('.filter-chip')).toHaveCount(2);expect(new URL(page.url()).searchParams.getAll('tag')).toEqual(['math','luau']);
- await row.locator('.entry-title-link').click();await page.locator('.tags').getByRole('link',{name:'testing',exact:true}).click();await expect(page.locator('.filter-chip')).toHaveCount(3);expect(new URL(page.url()).searchParams.getAll('tag')).toEqual(['math','luau','testing']);
- await page.goBack();await expect(page.locator('h1')).toContainText('math, Markdown');await page.locator('.related-articles .tag-link').filter({hasText:'navigation'}).first().click();await expect(page.locator('.filter-chip')).toHaveCount(3);expect(new URL(page.url()).searchParams.getAll('tag')).toEqual(['math','luau','navigation']);
- await page.getByRole('button',{name:'Clear all',exact:true}).click();await expect(page.locator('.filter-chip')).toHaveCount(0);await row.getByRole('link',{name:'math',exact:true}).click();await expect(page.locator('.filter-chip')).toHaveCount(1);
- await page.goto('articles/demo-math-and-markdown/');await page.locator('.tags').getByRole('link',{name:'luau',exact:true}).click();await expect(page.locator('.filter-chip')).toHaveCount(1);expect(new URL(page.url()).searchParams.getAll('tag')).toEqual(['luau']);
+ await expect(row.locator('a')).toHaveCount(1);
+ await row.locator('.entry-tag').filter({hasText:'luau'}).click();
+ await expect(page).toHaveURL(/articles\/demo-math-and-markdown\/$/);
+ await page.locator('.article-tags').getByRole('link',{name:'luau',exact:true}).click();
+ expect(new URL(page.url()).searchParams.getAll('tag')).toEqual(['math','luau']);
+ expect(new URL(page.url()).searchParams.get('source')).toBe('test');
+ await row.locator('.entry-title-link').click();
+ await page.locator('.article-tags').getByRole('link',{name:'testing',exact:true}).click();
+ expect(new URL(page.url()).searchParams.getAll('tag')).toEqual(['math','luau','testing']);
+ await page.goto('articles/demo-math-and-markdown/');await page.locator('.article-tags').getByRole('link',{name:'luau',exact:true}).click();
+ expect(new URL(page.url()).searchParams.getAll('tag')).toEqual(['luau']);
 });
 test('article and project pagination share outlined directional navigation',async({page})=>{
  for(const theme of ['light','dark']) {
